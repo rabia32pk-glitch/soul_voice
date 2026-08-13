@@ -2,55 +2,148 @@ import 'package:flutter/material.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 
 class AppTheme {
-  static ThemeData darkTheme = ThemeData(
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: AppColors.background,
+  // =========================
+  // LIGHT THEME
+  // =========================
 
-    colorScheme: const ColorScheme.dark(
+  static ThemeData lightTheme = ThemeData(
+    brightness: Brightness.light,
+
+    scaffoldBackgroundColor: Colors.white,
+
+    colorScheme: const ColorScheme.light(
       primary: AppColors.primary,
       secondary: AppColors.success,
-      surface: AppColors.surface,
+      surface: Colors.white,
     ),
 
     appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.background,
-      foregroundColor: AppColors.textPrimary,
+      backgroundColor: Colors.white,
+      foregroundColor: Colors.black,
       elevation: 0,
     ),
 
     cardTheme: CardThemeData(
-      color: AppColors.surface,
+      color: Colors.white,
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(18)),
+        borderRadius: BorderRadius.all(
+          Radius.circular(18),
+        ),
       ),
     ),
 
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: AppColors.surface,
-      hintStyle: const TextStyle(color: AppColors.textSecondary),
+      fillColor: Colors.white,
+
+      hintStyle: const TextStyle(
+        color: Colors.black54,
+      ),
+
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide.none,
       ),
+
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide.none,
       ),
+
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: AppColors.primary),
+        borderSide: const BorderSide(
+          color: AppColors.primary,
+        ),
       ),
     ),
 
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.black,
-        minimumSize: const Size(double.infinity, 52),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        foregroundColor: Colors.black,
+        minimumSize: const Size(
+          double.infinity,
+          52,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+      ),
+    ),
+  );
+
+  // =========================
+  // DARK THEME
+  // =========================
+
+  static ThemeData darkTheme = ThemeData(
+    brightness: Brightness.dark,
+
+    scaffoldBackgroundColor: Colors.black,
+
+    colorScheme: const ColorScheme.dark(
+      primary: AppColors.primary,
+      secondary: AppColors.success,
+      surface: Color(0xFF121212),
+    ),
+
+    appBarTheme: const AppBarTheme(
+      backgroundColor: Colors.black,
+      foregroundColor: Colors.white,
+      elevation: 0,
+    ),
+
+    cardTheme: CardThemeData(
+      color: const Color(0xFF121212),
+      elevation: 0,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(
+          Radius.circular(18),
+        ),
+      ),
+    ),
+
+    inputDecorationTheme: InputDecorationTheme(
+      filled: true,
+      fillColor: const Color(0xFF121212),
+
+      hintStyle: const TextStyle(
+        color: Colors.white70,
+      ),
+
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide.none,
+      ),
+
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide.none,
+      ),
+
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: const BorderSide(
+          color: AppColors.primary,
+        ),
+      ),
+    ),
+
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: Colors.black,
+        minimumSize: const Size(
+          double.infinity,
+          52,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
       ),
     ),
   );

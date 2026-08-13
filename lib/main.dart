@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:soul_voice/core/theme/app_themes.dart';
-import 'package:soul_voice/screens/splash.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:soul_voice/core/theme/app_themes.dart';
+import 'package:soul_voice/core/theme/theme_cubit.dart';
+import 'package:soul_voice/screens/splash.dart';
 
 void main() {
   runApp(const SoulVoiceApp());
@@ -12,11 +14,22 @@ class SoulVoiceApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Soul Voice',
-      theme: AppTheme.darkTheme,
-      home: const SplashScreen(),
+    return BlocProvider(
+      create: (_) => ThemeCubit(),
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Soul Voice',
+
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeMode,
+
+            home: const SplashScreen(),
+          );
+        },
+      ),
     );
   }
 }
