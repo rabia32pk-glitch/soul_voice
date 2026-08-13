@@ -1,0 +1,11 @@
+* [33m8c6f86e[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mrabia[m[33m)[m Remove accidental tatus file
+* [33mc9373e4[m Latest project updates
+*   [33m3fb600b[m add theme management and profile screen; implement favorite quotes functionality
+[32m|[m[33m\[m  
+* [33m|[m [33m322e8f9[m profile navigation changes
+[33m|[m [33m|[m * [33m9f76780[m[33m ([m[1;31morigin/rabia[m[33m)[m profile_update
+[33m|[m [33m|[m[33m/[m  
+[33m|[m * [33m9fbd586[m update_files
+[33m|[m[33m/[m  
+* [33me76871d[m ui create
+* [33m186f8c4[m[33m ([m[1;31morigin/qandeel[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/ayesha[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m initial project setup
