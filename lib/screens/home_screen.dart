@@ -4,7 +4,12 @@ import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/categories_screen.dart';
 import 'package:soul_voice/screens/favourite_screens.dart';
 import 'package:soul_voice/screens/notifications_screen.dart';
+<<<<<<< HEAD:lib/screens/home_screen.dart
 import 'package:soul_voice/screens/profile.dart';
+=======
+import 'package:soul_voice/screens/profie.dart';
+import 'package:soul_voice/screens/profile_screen.dart';
+>>>>>>> 9fbd5868950daff0d0a8ef991bb084d0c0dc129a:lib/screens/home.dart
 import 'package:soul_voice/screens/quotes.dart';
 import 'package:soul_voice/screens/search_screen.dart';
 import 'package:soul_voice/services/models/quote_model.dart';

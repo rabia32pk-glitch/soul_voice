@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 
 class QuotesScreen extends StatelessWidget {
@@ -20,7 +21,9 @@ class QuotesScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        iconTheme: const IconThemeData(
+          color: AppColors.textPrimary,
+        ),
       ),
 
       body: ListView(
@@ -38,7 +41,8 @@ class QuotesScreen extends StatelessWidget {
           ),
 
           QuoteCard(
-            quote: 'Peace begins with a calm mind and a hopeful heart.',
+            quote:
+                'Peace begins with a calm mind and a hopeful heart.',
             author: 'Soul Voice',
           ),
         ],
@@ -51,11 +55,85 @@ class QuotesScreen extends StatelessWidget {
 // QUOTE CARD
 // =====================================================
 
-class QuoteCard extends StatelessWidget {
+class QuoteCard extends StatefulWidget {
   final String quote;
   final String author;
 
-  const QuoteCard({super.key, required this.quote, required this.author});
+  const QuoteCard({
+    super.key,
+    required this.quote,
+    required this.author,
+  });
+
+  @override
+  State<QuoteCard> createState() => _QuoteCardState();
+}
+
+class _QuoteCardState extends State<QuoteCard> {
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavoriteStatus();
+  }
+
+  // =====================================================
+  // LOAD SAVED FAVORITE
+  // =====================================================
+
+  Future<void> _loadFavoriteStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final savedFavorite =
+        prefs.getBool('favorite_${widget.quote}') ?? false;
+
+    if (!mounted) return;
+
+    setState(() {
+      isFavorite = savedFavorite;
+    });
+  }
+
+  // =====================================================
+  // FAVORITE / UNFAVORITE
+  // =====================================================
+
+  Future<void> _toggleFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+
+    await prefs.setBool(
+      'favorite_${widget.quote}',
+      isFavorite,
+    );
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          isFavorite
+              ? 'Your quote has been added to favorites ❤️'
+              : 'Your quote has been removed from favorites',
+        ),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 20,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +143,9 @@ class QuoteCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: AppColors.border,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,7 +159,7 @@ class QuoteCard extends StatelessWidget {
           const SizedBox(height: 10),
 
           Text(
-            quote,
+            widget.quote,
             style: const TextStyle(
               color: AppColors.textPrimary,
               fontSize: 16,
@@ -90,7 +170,7 @@ class QuoteCard extends StatelessWidget {
           const SizedBox(height: 12),
 
           Text(
-            '— $author',
+            '— ${widget.author}',
             style: const TextStyle(
               color: AppColors.textSecondary,
               fontSize: 12,
@@ -102,10 +182,15 @@ class QuoteCard extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.favorite_border_rounded,
-                  color: AppColors.primary,
+                onPressed: _toggleFavorite,
+                icon: Icon(
+                  isFavorite
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
+                  color: isFavorite
+                      ? Colors.yellow
+                      : AppColors.primary,
+                  size: 28,
                 ),
               ),
 

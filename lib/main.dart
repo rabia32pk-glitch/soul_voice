@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+<<<<<<< HEAD
+=======
 import 'package:soul_voice/core/theme/app_themes.dart';
+import 'package:soul_voice/core/theme/theme_cubit.dart';
 import 'package:soul_voice/screens/splash.dart';
 
+>>>>>>> 9fbd5868950daff0d0a8ef991bb084d0c0dc129a
 void main() {
   runApp(const SoulVoiceApp());
 }
@@ -24,6 +30,7 @@ class _SoulVoiceAppState extends State<SoulVoiceApp> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return MaterialApp(
       debugShowCheckedModeBanner: false,
 
@@ -40,6 +47,23 @@ class _SoulVoiceAppState extends State<SoulVoiceApp> {
       home: SplashScreen(
         isDarkMode: isDarkMode,
         onThemeChanged: toggleTheme,
+=======
+    return BlocProvider(
+      create: (_) => ThemeCubit(),
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Soul Voice',
+
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeMode,
+
+            home: const SplashScreen(),
+          );
+        },
+>>>>>>> 9fbd5868950daff0d0a8ef991bb084d0c0dc129a
       ),
     );
   }

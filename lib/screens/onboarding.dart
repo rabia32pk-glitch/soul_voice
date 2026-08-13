@@ -13,14 +13,11 @@ class OnboardingScreen extends StatefulWidget {
   });
 
   @override
-  State<OnboardingScreen> createState() =>
-      _OnboardingScreenState();
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnboardingScreenState
-    extends State<OnboardingScreen> {
-  final PageController _pageController =
-      PageController();
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  final PageController _pageController = PageController();
 
   int _currentPage = 0;
 
@@ -60,8 +57,7 @@ class _OnboardingScreenState
   void _nextPage() {
     if (_currentPage < pages.length - 1) {
       _pageController.nextPage(
-        duration:
-            const Duration(milliseconds: 400),
+        duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
       );
     } else {
@@ -78,14 +74,12 @@ class _OnboardingScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       body: SafeArea(
         child: Column(
           children: [
             // ================= PAGES =================
-
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -101,116 +95,82 @@ class _OnboardingScreenState
                   final page = pages[index];
 
                   return Padding(
-                    padding:
-                        const EdgeInsets.symmetric(
-                      horizontal: 30,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 28),
 
-                    child: SingleChildScrollView(
-                      child: SizedBox(
-                        height:
-                            MediaQuery.of(context)
-                                    .size
-                                    .height -
-                                180,
+                    child: SafeArea(
+                      child: SingleChildScrollView(
+                        child: SizedBox(
+                          height: MediaQuery.of(context).size.height - 180,
 
-                        child: Column(
-                          mainAxisAlignment:
-                              MainAxisAlignment.center,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
 
-                          children: [
-                            // ================= ICON =================
+                              children: [
+                                // ================= ICON =================
+                                Container(
+                                  height: 190,
+                                  width: 190,
 
-                            Container(
-                              height: 190,
-                              width: 190,
+                                  decoration: BoxDecoration(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
 
-                              decoration:
-                                  BoxDecoration(
-                                color:
-                                    Theme.of(
-                                  context,
-                                )
-                                        .colorScheme
-                                        .surface,
+                                    shape: BoxShape.circle,
 
-                                shape:
-                                    BoxShape.circle,
+                                    border: Border.all(
+                                      color: AppColors.primary,
+                                      width: 1.5,
+                                    ),
+                                  ),
 
-                                border:
-                                    Border.all(
-                                  color:
-                                      AppColors
-                                          .primary,
-                                  width: 1.5,
-                                ),
-                              ),
+                                  child: Icon(
+                                    _getIcon(page['icon']!),
 
-                              child: Icon(
-                                _getIcon(
-                                  page['icon']!,
+                                    size: 80,
+
+                                    color: AppColors.primary,
+                                  ),
                                 ),
 
-                                size: 80,
+                                const SizedBox(height: 55),
 
-                                color:
-                                    AppColors
-                                        .primary,
-                              ),
-                            ),
+                                // ================= TITLE =================
+                                Text(
+                                  page['title']!,
+                                  textAlign: TextAlign.center,
 
-                            const SizedBox(
-                              height: 55,
-                            ),
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
 
-                            // ================= TITLE =================
+                                    fontSize: 28,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
 
-                            Text(
-                              page['title']!,
-                              textAlign:
-                                  TextAlign.center,
+                                const SizedBox(height: 18),
 
-                              style: TextStyle(
-                                color:
-                                    Theme.of(
-                                  context,
-                                )
-                                        .colorScheme
-                                        .onSurface,
+                                // ================= DESCRIPTION =================
+                                Text(
+                                  page['description']!,
+                                  textAlign: TextAlign.center,
 
-                                fontSize: 28,
-                                fontWeight:
-                                    FontWeight.bold,
-                              ),
-                            ),
-
-                            const SizedBox(
-                              height: 18,
-                            ),
-
-                            // ================= DESCRIPTION =================
-
-                            Text(
-                              page['description']!,
-                              textAlign:
-                                  TextAlign.center,
-
-                              style: TextStyle(
-                                color:
-                                    Theme.of(
-                                  context,
-                                )
+                                  style: TextStyle(
+                                    color: Theme.of(context)
                                         .colorScheme
                                         .onSurface
-                                        .withValues(
-                                          alpha: 0.65,
-                                        ),
+                                        .withValues(alpha: 0.65),
 
-                                fontSize: 16,
-                                height: 1.5,
-                              ),
+                                    fontSize: 16,
+                                    height: 1.5,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
@@ -220,46 +180,27 @@ class _OnboardingScreenState
             ),
 
             // ================= DOTS =================
-
             Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
 
               children: List.generate(
                 pages.length,
 
-                (index) =>
-                    AnimatedContainer(
-                  duration:
-                      const Duration(
-                    milliseconds: 300,
-                  ),
+                (index) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
 
-                  margin:
-                      const EdgeInsets
-                          .symmetric(
-                    horizontal: 4,
-                  ),
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
 
                   height: 8,
 
-                  width: _currentPage == index
-                      ? 28
-                      : 8,
+                  width: _currentPage == index ? 28 : 8,
 
-                  decoration:
-                      BoxDecoration(
-                    color:
-                        _currentPage == index
-                            ? AppColors
-                                .primary
-                            : AppColors
-                                .border,
+                  decoration: BoxDecoration(
+                    color: _currentPage == index
+                        ? AppColors.primary
+                        : AppColors.border,
 
-                    borderRadius:
-                        BorderRadius.circular(
-                      20,
-                    ),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
               ),
@@ -268,12 +209,8 @@ class _OnboardingScreenState
             const SizedBox(height: 30),
 
             // ================= CONTINUE =================
-
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(
-                horizontal: 28,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 28),
 
               child: SizedBox(
                 width: double.infinity,
@@ -283,8 +220,7 @@ class _OnboardingScreenState
                   onPressed: _nextPage,
 
                   child: Text(
-                    _currentPage ==
-                            pages.length - 1
+                    _currentPage == pages.length - 1
                         ? 'Get Started'
                         : 'Continue',
                   ),
@@ -295,7 +231,6 @@ class _OnboardingScreenState
             const SizedBox(height: 15),
 
             // ================= SKIP =================
-
             TextButton(
               onPressed: _openLogin,
 
@@ -303,12 +238,9 @@ class _OnboardingScreenState
                 'Skip',
 
                 style: TextStyle(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(
-                        alpha: 0.65,
-                      ),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.65),
                 ),
               ),
             ),
