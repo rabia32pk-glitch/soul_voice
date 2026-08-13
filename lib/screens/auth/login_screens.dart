@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
+
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/auth/signup_screen.dart';
 import 'package:soul_voice/screens/auth/forgot_password.dart';
-import 'package:soul_voice/screens/home.dart';
+import 'package:soul_voice/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final bool isDarkMode;
+  final ValueChanged<bool> onThemeChanged;
+
+  const LoginScreen({
+    super.key,
+    required this.isDarkMode,
+    required this.onThemeChanged,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -16,23 +24,36 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final textColor = Theme.of(context).colorScheme.onSurface;
+
+    final secondaryColor = Theme.of(
+      context,
+    ).colorScheme.onSurface.withValues(alpha: 0.65);
+
+    final surfaceColor = Theme.of(context).colorScheme.surface;
+
+    final borderColor = Theme.of(context).dividerColor;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 28),
+
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+
             children: [
               const SizedBox(height: 45),
 
-              // Logo
+              // ================= LOGO =================
               Center(
                 child: Container(
                   height: 76,
                   width: 76,
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: surfaceColor,
                     borderRadius: BorderRadius.circular(22),
                     border: Border.all(color: AppColors.primary, width: 1.5),
                   ),
@@ -46,11 +67,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 32),
 
-              const Center(
+              // ================= TITLE =================
+              Center(
                 child: Text(
                   'Welcome Back',
                   style: TextStyle(
-                    color: AppColors.textPrimary,
+                    color: textColor,
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
@@ -59,22 +81,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 8),
 
-              const Center(
+              Center(
                 child: Text(
                   'Sign in to continue your journey',
-                  style: TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 15,
-                  ),
+                  style: TextStyle(color: secondaryColor, fontSize: 15),
                 ),
               ),
 
               const SizedBox(height: 42),
 
-              const Text(
+              // ================= EMAIL =================
+              Text(
                 'Email',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: textColor,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -84,7 +104,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
               TextField(
                 keyboardType: TextInputType.emailAddress,
-                style: const TextStyle(color: AppColors.textPrimary),
+
+                style: TextStyle(color: textColor),
+
                 decoration: const InputDecoration(
                   hintText: 'Enter your email',
                   prefixIcon: Icon(Icons.email_outlined),
@@ -93,10 +115,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 20),
 
-              const Text(
+              // ================= PASSWORD =================
+              Text(
                 'Password',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: textColor,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -106,16 +129,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
               TextField(
                 obscureText: _obscurePassword,
-                style: const TextStyle(color: AppColors.textPrimary),
+
+                style: TextStyle(color: textColor),
+
                 decoration: InputDecoration(
                   hintText: 'Enter your password',
+
                   prefixIcon: const Icon(Icons.lock_outline),
+
                   suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
                         _obscurePassword = !_obscurePassword;
                       });
                     },
+
                     icon: Icon(
                       _obscurePassword
                           ? Icons.visibility_off_outlined
@@ -127,17 +155,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 10),
 
+              // ================= FORGOT PASSWORD =================
               Align(
                 alignment: Alignment.centerRight,
+
                 child: TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const ForgotPasswordScreen(),
+                        builder: (_) => const ForgotPasswordScreen(),
                       ),
                     );
                   },
+
                   child: const Text(
                     'Forgot Password?',
                     style: TextStyle(color: AppColors.primary),
@@ -147,6 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 12),
 
+              // ================= LOGIN =================
               SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -154,9 +186,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomeScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => HomeScreen()),
                     );
                   },
                   child: const Text(
@@ -165,38 +195,45 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 24),
 
+              // ================= OR =================
               Row(
                 children: [
-                  const Expanded(child: Divider(color: AppColors.border)),
+                  Expanded(child: Divider(color: borderColor)),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 14),
+
                     child: Text(
                       'OR',
-                      style: TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: secondaryColor, fontSize: 12),
                     ),
                   ),
-                  const Expanded(child: Divider(color: AppColors.border)),
+
+                  Expanded(child: Divider(color: borderColor)),
                 ],
               ),
 
               const SizedBox(height: 24),
 
+              // ================= GOOGLE =================
               SizedBox(
                 width: double.infinity,
                 height: 52,
+
                 child: OutlinedButton.icon(
                   onPressed: () {},
+
                   icon: const Icon(Icons.g_mobiledata_rounded),
+
                   label: const Text('Continue with Google'),
+
                   style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.textPrimary,
-                    side: const BorderSide(color: AppColors.border),
+                    foregroundColor: textColor,
+
+                    side: BorderSide(color: borderColor),
+
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -206,23 +243,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 30),
 
+              // ================= SIGN UP =================
               Center(
                 child: TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const SignupScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const SignupScreen()),
                     );
                   },
-                  child: const Text.rich(
+
+                  child: Text.rich(
                     TextSpan(
                       text: "Don't have an account? ",
-                      style: TextStyle(color: AppColors.textSecondary),
-                      children: [
+
+                      style: TextStyle(color: secondaryColor),
+
+                      children: const [
                         TextSpan(
                           text: 'Sign Up',
+
                           style: TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.bold,
@@ -233,6 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
+
               const SizedBox(height: 20),
             ],
           ),

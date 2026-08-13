@@ -4,9 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/onboarding.dart';
 
-
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+  final bool isDarkMode;
+  final ValueChanged<bool> onThemeChanged;
+
+  const SplashScreen({
+    super.key,
+    required this.isDarkMode,
+    required this.onThemeChanged,
+  });
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -17,13 +23,16 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 2), () {
       if (!mounted) return;
 
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const OnboardingScreen(),
+          builder: (context) => OnboardingScreen(
+            isDarkMode: widget.isDarkMode,
+            onThemeChanged: widget.onThemeChanged,
+          ),
         ),
       );
     });
@@ -32,49 +41,65 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor:
+          Theme.of(context).scaffoldBackgroundColor,
+
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment:
+              MainAxisAlignment.center,
           children: [
             Container(
               height: 100,
               width: 100,
               decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: BorderRadius.circular(28),
-                border: Border.all(
-                  color: AppColors.primary,
-                  width: 1.5,
+                shape: BoxShape.circle,
+                color: AppColors.primary.withValues(
+                  alpha: 0.15,
                 ),
               ),
               child: const Icon(
-                Icons.graphic_eq_rounded,
-                size: 52,
+                Icons.record_voice_over_rounded,
+                size: 55,
                 color: AppColors.primary,
               ),
             ),
 
-            const SizedBox(height: 24),
+            const SizedBox(height: 20),
 
-            const Text(
-              'SOUL VOICE',
+            Text(
+              'Soul Voice',
               style: TextStyle(
-                color: AppColors.textPrimary,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                letterSpacing: 2,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface,
               ),
             ),
 
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
 
-            const Text(
-              'Learn • Reflect • Grow',
+            Text(
+              'Your voice, your thoughts, your soul.',
+              textAlign: TextAlign.center,
               style: TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 14,
-                letterSpacing: 1,
+                fontSize: 13,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.65),
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            const SizedBox(
+              height: 24,
+              width: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.primary,
               ),
             ),
           ],

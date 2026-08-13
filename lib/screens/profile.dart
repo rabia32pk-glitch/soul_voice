@@ -1,27 +1,35 @@
 import 'package:flutter/material.dart';
+
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
+import 'package:soul_voice/screens/favourite_screens.dart';
+import 'package:soul_voice/screens/personal_information_screen.dart';
+import 'package:soul_voice/screens/settings_screen.dart';
+import 'package:soul_voice/screens/notifications_screen.dart';
+import 'package:soul_voice/screens/privacy_screen.dart';
+import 'package:soul_voice/screens/security_screen.dart';
+import 'package:soul_voice/screens/edit_profile_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final bool isDarkMode;
+  final ValueChanged<bool> onThemeChanged;
+
+  const ProfileScreen({
+    super.key,
+    required this.isDarkMode,
+    required this.onThemeChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
         centerTitle: true,
         title: const Text(
           'Profile',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontSize: 21,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
         ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
       ),
 
       body: SafeArea(
@@ -34,13 +42,12 @@ class ProfileScreen extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(22),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(22),
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: Theme.of(context).dividerColor),
                 ),
                 child: Column(
                   children: [
-                    // Profile Picture
                     Container(
                       height: 92,
                       width: 92,
@@ -58,10 +65,10 @@ class ProfileScreen extends StatelessWidget {
 
                     const SizedBox(height: 14),
 
-                    const Text(
+                    Text(
                       'User Name',
                       style: TextStyle(
-                        color: AppColors.textPrimary,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 21,
                         fontWeight: FontWeight.bold,
                       ),
@@ -69,10 +76,12 @@ class ProfileScreen extends StatelessWidget {
 
                     const SizedBox(height: 5),
 
-                    const Text(
+                    Text(
                       'user@example.com',
                       style: TextStyle(
-                        color: AppColors.textSecondary,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.65),
                         fontSize: 13,
                       ),
                     ),
@@ -83,7 +92,12 @@ class ProfileScreen extends StatelessWidget {
                       width: double.infinity,
                       child: OutlinedButton.icon(
                         onPressed: () {
-                          // Edit profile baad mein Firebase se connect hoga.
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const EditProfileScreen(),
+                            ),
+                          );
                         },
                         icon: const Icon(Icons.edit_outlined),
                         label: const Text('Edit Profile'),
@@ -112,14 +126,26 @@ class ProfileScreen extends StatelessWidget {
                 icon: Icons.person_outline_rounded,
                 title: 'Personal Information',
                 subtitle: 'Manage your profile information',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const PersonalInformationScreen(),
+                    ),
+                  );
+                },
               ),
 
               _ProfileOption(
                 icon: Icons.favorite_border_rounded,
                 title: 'My Favorites',
                 subtitle: 'View your saved quotes',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const FavoritesScreen()),
+                  );
+                },
               ),
 
               const SizedBox(height: 20),
@@ -137,7 +163,10 @@ class ProfileScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const SettingsScreen(),
+                      builder: (_) => SettingsScreen(
+                        isDarkMode: isDarkMode,
+                        onThemeChanged: onThemeChanged,
+                      ),
                     ),
                   );
                 },
@@ -147,19 +176,30 @@ class ProfileScreen extends StatelessWidget {
                 icon: Icons.notifications_none_rounded,
                 title: 'Notifications',
                 subtitle: 'Manage notification preferences',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const NotificationsScreen(),
+                    ),
+                  );
+                },
               ),
 
               _ProfileOption(
                 icon: Icons.dark_mode_outlined,
                 title: 'Dark Theme',
-                subtitle: 'Dark mode is enabled',
+                subtitle: isDarkMode
+                    ? 'Dark mode is enabled'
+                    : 'Dark mode is disabled',
                 trailing: Switch(
-                  value: true,
-                  onChanged: (value) {},
+                  value: isDarkMode,
+                  onChanged: onThemeChanged,
                   activeThumbColor: AppColors.primary,
                 ),
-                onTap: () {},
+                onTap: () {
+                  onThemeChanged(!isDarkMode);
+                },
               ),
 
               const SizedBox(height: 20),
@@ -173,14 +213,24 @@ class ProfileScreen extends StatelessWidget {
                 icon: Icons.lock_outline_rounded,
                 title: 'Privacy',
                 subtitle: 'Manage your privacy settings',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const PrivacyScreen()),
+                  );
+                },
               ),
 
               _ProfileOption(
                 icon: Icons.security_outlined,
                 title: 'Security',
                 subtitle: 'Manage your account security',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SecurityScreen()),
+                  );
+                },
               ),
 
               const SizedBox(height: 25),
@@ -207,7 +257,6 @@ class ProfileScreen extends StatelessWidget {
 
               const SizedBox(height: 14),
 
-              // ================= DELETE ACCOUNT =================
               TextButton(
                 onPressed: () {
                   _showDeleteAccountDialog(context);
@@ -227,17 +276,10 @@ class ProfileScreen extends StatelessWidget {
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (_) {
         return AlertDialog(
-          backgroundColor: AppColors.surface,
-          title: const Text(
-            'Logout',
-            style: TextStyle(color: AppColors.textPrimary),
-          ),
-          content: const Text(
-            'Are you sure you want to logout?',
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
+          title: const Text('Logout'),
+          content: const Text('Are you sure you want to logout?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -263,17 +305,10 @@ class ProfileScreen extends StatelessWidget {
   void _showDeleteAccountDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (_) {
         return AlertDialog(
-          backgroundColor: AppColors.surface,
-          title: const Text(
-            'Delete Account',
-            style: TextStyle(color: AppColors.textPrimary),
-          ),
-          content: const Text(
-            'This action cannot be undone. Are you sure?',
-            style: TextStyle(color: AppColors.textSecondary),
-          ),
+          title: const Text('Delete Account'),
+          content: const Text('This action cannot be undone. Are you sure?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -312,8 +347,8 @@ class _SectionTitle extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Text(
         title,
-        style: const TextStyle(
-          color: AppColors.textPrimary,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: 18,
           fontWeight: FontWeight.bold,
         ),
@@ -337,8 +372,8 @@ class _ProfileOption extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
-    this.trailing,
     required this.onTap,
+    this.trailing,
   });
 
   @override
@@ -346,14 +381,13 @@ class _ProfileOption extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: ListTile(
         onTap: onTap,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-
         leading: Container(
           height: 42,
           width: 42,
@@ -363,21 +397,23 @@ class _ProfileOption extends StatelessWidget {
           ),
           child: Icon(icon, color: AppColors.primary),
         ),
-
         title: Text(
           title,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
         ),
-
         subtitle: Text(
           subtitle,
-          style: const TextStyle(color: AppColors.textSecondary, fontSize: 11),
+          style: TextStyle(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.65),
+            fontSize: 11,
+          ),
         ),
-
         trailing:
             trailing ??
             const Icon(
@@ -385,128 +421,6 @@ class _ProfileOption extends StatelessWidget {
               color: AppColors.textSecondary,
               size: 16,
             ),
-      ),
-    );
-  }
-}
-
-// =====================================================
-// SETTINGS SCREEN
-// =====================================================
-
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
-        title: const Text(
-          'Settings',
-          style: TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
-      ),
-
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          const Text(
-            'Preferences',
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-
-          const SizedBox(height: 14),
-
-          _SettingsTile(
-            icon: Icons.notifications_none_rounded,
-            title: 'Notifications',
-            subtitle: 'Control your notifications',
-            onTap: () {},
-          ),
-
-          _SettingsTile(
-            icon: Icons.language_rounded,
-            title: 'Language',
-            subtitle: 'English',
-            onTap: () {},
-          ),
-
-          _SettingsTile(
-            icon: Icons.lock_outline_rounded,
-            title: 'Privacy',
-            subtitle: 'Manage privacy settings',
-            onTap: () {},
-          ),
-
-          _SettingsTile(
-            icon: Icons.info_outline_rounded,
-            title: 'About Soul Voice',
-            subtitle: 'App information',
-            onTap: () {},
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// =====================================================
-// SETTINGS TILE
-// =====================================================
-
-class _SettingsTile extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  const _SettingsTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        leading: Icon(icon, color: AppColors.primary),
-        title: Text(
-          title,
-          style: const TextStyle(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
-        ),
-        trailing: const Icon(
-          Icons.arrow_forward_ios_rounded,
-          color: AppColors.textSecondary,
-          size: 15,
-        ),
       ),
     );
   }
