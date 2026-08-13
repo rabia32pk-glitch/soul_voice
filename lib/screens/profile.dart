@@ -9,7 +9,6 @@ import 'package:soul_voice/screens/privacy_screen.dart';
 import 'package:soul_voice/screens/security_screen.dart';
 import 'package:soul_voice/screens/edit_profile_screen.dart';
 
-<<<<<<< HEAD:lib/screens/profile.dart
 class ProfileScreen extends StatelessWidget {
   final bool isDarkMode;
   final ValueChanged<bool> onThemeChanged;
@@ -24,7 +23,6 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-
       appBar: AppBar(
         centerTitle: true,
         title: const Text(
@@ -32,7 +30,6 @@ class ProfileScreen extends StatelessWidget {
           style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
         ),
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
@@ -63,31 +60,9 @@ class ProfileScreen extends StatelessWidget {
                         size: 48,
                       ),
                     ),
-=======
-class AppTheme {
-  // =========================
-  // LIGHT THEME
-  // =========================
 
-  static ThemeData lightTheme = ThemeData(
-    brightness: Brightness.light,
+                    const SizedBox(height: 14),
 
-    scaffoldBackgroundColor: Colors.white,
-
-    colorScheme: const ColorScheme.light(
-      primary: AppColors.primary,
-      secondary: AppColors.success,
-      surface: Colors.white,
-    ),
->>>>>>> 9fbd5868950daff0d0a8ef991bb084d0c0dc129a:lib/screens/profie.dart
-
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
-      elevation: 0,
-    ),
-
-<<<<<<< HEAD:lib/screens/profile.dart
                     Text(
                       'User Name',
                       style: TextStyle(
@@ -227,7 +202,7 @@ class AppTheme {
 
               const SizedBox(height: 20),
 
-              // ================= PRIVACY =================
+              // ================= PRIVACY & SECURITY =================
               const _SectionTitle(title: 'Privacy & Security'),
 
               const SizedBox(height: 10),
@@ -280,6 +255,7 @@ class AppTheme {
 
               const SizedBox(height: 14),
 
+              // ================= DELETE ACCOUNT =================
               TextButton(
                 onPressed: () {
                   _showDeleteAccountDialog(context);
@@ -291,20 +267,13 @@ class AppTheme {
               ),
             ],
           ),
-=======
-    cardTheme: CardThemeData(
-      color: Colors.white,
-      elevation: 0,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(18),
->>>>>>> 9fbd5868950daff0d0a8ef991bb084d0c0dc129a:lib/screens/profie.dart
         ),
       ),
-    ),
+    );
+  }
 
-<<<<<<< HEAD:lib/screens/profile.dart
+  // ================= LOGOUT DIALOG =================
+
   void _showLogoutDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -333,6 +302,8 @@ class AppTheme {
       },
     );
   }
+
+  // ================= DELETE ACCOUNT DIALOG =================
 
   void _showDeleteAccountDialog(BuildContext context) {
     showDialog(
@@ -457,119 +428,3 @@ class _ProfileOption extends StatelessWidget {
     );
   }
 }
-=======
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: Colors.white,
-
-      hintStyle: const TextStyle(
-        color: Colors.black54,
-      ),
-
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
-      ),
-
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
-      ),
-
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: AppColors.primary,
-        ),
-      ),
-    ),
-
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.black,
-        minimumSize: const Size(
-          double.infinity,
-          52,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-      ),
-    ),
-  );
-
-  // =========================
-  // DARK THEME
-  // =========================
-
-  static ThemeData darkTheme = ThemeData(
-    brightness: Brightness.dark,
-
-    scaffoldBackgroundColor: Colors.black,
-
-    colorScheme: const ColorScheme.dark(
-      primary: AppColors.primary,
-      secondary: AppColors.success,
-      surface: Color(0xFF121212),
-    ),
-
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.black,
-      foregroundColor: Colors.white,
-      elevation: 0,
-    ),
-
-    cardTheme: CardThemeData(
-      color: const Color(0xFF121212),
-      elevation: 0,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(18),
-        ),
-      ),
-    ),
-
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: const Color(0xFF121212),
-
-      hintStyle: const TextStyle(
-        color: Colors.white70,
-      ),
-
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
-      ),
-
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
-      ),
-
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: AppColors.primary,
-        ),
-      ),
-    ),
-
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.black,
-        minimumSize: const Size(
-          double.infinity,
-          52,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-      ),
-    ),
-  );
-}
->>>>>>> 9fbd5868950daff0d0a8ef991bb084d0c0dc129a:lib/screens/profie.dart
