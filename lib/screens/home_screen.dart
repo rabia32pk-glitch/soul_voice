@@ -4,7 +4,7 @@ import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/categories_screen.dart';
 import 'package:soul_voice/screens/favourite_screens.dart';
 import 'package:soul_voice/screens/notifications_screen.dart';
-import 'package:soul_voice/screens/profile.dart';
+import 'package:soul_voice/screens/profile_screen.dart';
 import 'package:soul_voice/screens/quotes.dart';
 import 'package:soul_voice/screens/search_screen.dart';
 import 'package:soul_voice/services/models/quote_model.dart';
@@ -44,60 +44,33 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final categories = [
-      {
-        'name': 'Faith',
-        'icon': Icons.auto_awesome_rounded,
-        'tag': 'faith',
-      },
-      {
-        'name': 'Life',
-        'icon': Icons.wb_sunny_outlined,
-        'tag': 'life',
-      },
+      {'name': 'Faith', 'icon': Icons.auto_awesome_rounded, 'tag': 'faith'},
+      {'name': 'Life', 'icon': Icons.wb_sunny_outlined, 'tag': 'life'},
       {
         'name': 'Wisdom',
         'icon': Icons.lightbulb_outline_rounded,
         'tag': 'wisdom',
       },
-      {
-        'name': 'Success',
-        'icon': Icons.trending_up_rounded,
-        'tag': 'success',
-      },
-      {
-        'name': 'Love',
-        'icon': Icons.favorite_border_rounded,
-        'tag': 'love',
-      },
-      {
-        'name': 'Peace',
-        'icon': Icons.spa_outlined,
-        'tag': 'peace',
-      },
+      {'name': 'Success', 'icon': Icons.trending_up_rounded, 'tag': 'success'},
+      {'name': 'Love', 'icon': Icons.favorite_border_rounded, 'tag': 'love'},
+      {'name': 'Peace', 'icon': Icons.spa_outlined, 'tag': 'peace'},
     ];
 
     return Scaffold(
       backgroundColor: AppColors.background,
 
       // ================= BODY =================
-
       body: SafeArea(
         child: RefreshIndicator(
           color: AppColors.primary,
           onRefresh: _refreshQuotes,
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(
-              20,
-              20,
-              20,
-              100,
-            ),
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ================= HEADER =================
-
                 Row(
                   children: [
                     Expanded(
@@ -137,8 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  const NotificationsScreen(),
+                              builder: (_) => const NotificationsScreen(),
                             ),
                           );
                         },
@@ -154,27 +126,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 22),
 
                 // ================= SEARCH =================
-
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const SearchScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const SearchScreen()),
                     );
                   },
                   child: Container(
                     height: 52,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
                       color: AppColors.surface,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: AppColors.border,
-                      ),
+                      border: Border.all(color: AppColors.border),
                     ),
                     child: const Row(
                       children: [
@@ -198,10 +163,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 28),
 
                 // ================= CATEGORIES =================
-
                 Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
                       'Categories',
@@ -216,16 +179,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                const CategoriesScreen(),
+                            builder: (_) => const CategoriesScreen(),
                           ),
                         );
                       },
                       child: const Text(
                         'See All',
-                        style: TextStyle(
-                          color: AppColors.primary,
-                        ),
+                        style: TextStyle(color: AppColors.primary),
                       ),
                     ),
                   ],
@@ -234,14 +194,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 8),
 
                 // ================= CATEGORY CARDS =================
-
                 SizedBox(
                   height: 105,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: categories.length,
-                    separatorBuilder: (_, __) =>
-                        const SizedBox(width: 12),
+                    separatorBuilder: (_, __) => const SizedBox(width: 12),
                     itemBuilder: (context, index) {
                       final category = categories[index];
 
@@ -252,10 +210,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) =>
-                                  CategoryQuotesScreen(
-                                category:
-                                    category['tag'] as String,
+                              builder: (_) => CategoryQuotesScreen(
+                                category: category['tag'] as String,
                               ),
                             ),
                           );
@@ -268,7 +224,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 28),
 
                 // ================= DAILY QUOTE =================
-
                 const Text(
                   'Daily Quote',
                   style: TextStyle(
@@ -286,13 +241,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(22),
-                    border: Border.all(
-                      color: AppColors.border,
-                    ),
+                    border: Border.all(color: AppColors.border),
                   ),
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Row(
                         children: [
@@ -339,8 +291,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 14),
 
                       Row(
-                        mainAxisAlignment:
-                            MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
                             onPressed: () {},
@@ -365,10 +316,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 28),
 
                 // ================= FEATURED QUOTES =================
-
                 Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text(
                       'Featured Quotes',
@@ -395,13 +344,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 8),
 
                 // ================= API QUOTES =================
-
                 FutureBuilder<List<QuoteModel>>(
                   future: _quotesFuture,
                   builder: (context, snapshot) {
                     // Loading
-                    if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                         child: Padding(
                           padding: EdgeInsets.all(35),
@@ -419,11 +366,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.all(22),
                         decoration: BoxDecoration(
                           color: AppColors.surface,
-                          borderRadius:
-                              BorderRadius.circular(18),
-                          border: Border.all(
-                            color: AppColors.border,
-                          ),
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: AppColors.border),
                         ),
                         child: Column(
                           children: [
@@ -451,8 +395,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               'connection and try again.',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color:
-                                    AppColors.textSecondary,
+                                color: AppColors.textSecondary,
                                 fontSize: 13,
                               ),
                             ),
@@ -465,9 +408,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   _loadQuotes();
                                 });
                               },
-                              child: const Text(
-                                'Try Again',
-                              ),
+                              child: const Text('Try Again'),
                             ),
                           ],
                         ),
@@ -484,9 +425,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: const Text(
                           'No quotes found.',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                          ),
+                          style: TextStyle(color: AppColors.textSecondary),
                         ),
                       );
                     }
@@ -497,10 +436,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           .take(5)
                           .map(
                             (quote) => Padding(
-                              padding:
-                                  const EdgeInsets.only(
-                                bottom: 12,
-                              ),
+                              padding: const EdgeInsets.only(bottom: 12),
                               child: _QuoteCard(
                                 quote: quote.content,
                                 author: quote.author,
@@ -518,7 +454,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       // ================= BOTTOM NAVIGATION =================
-
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         backgroundColor: AppColors.surface,
@@ -537,31 +472,22 @@ class _HomeScreenState extends State<HomeScreen> {
           if (index == 1) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const QuotesScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const QuotesScreen()),
             );
           }
-
           // Favorites
           else if (index == 2) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const FavoritesScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const FavoritesScreen()),
             );
           }
-
           // Profile
           else if (index == 3) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => ProfileScreen(
-                  isDarkMode: false,
-                  onThemeChanged: (value) {},
-                ),
+                builder: (_) =>   ProfileScreen( ),
               ),
             );
           }
@@ -590,7 +516,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-
 // =====================================================
 // CATEGORY CARD
 // =====================================================
@@ -616,19 +541,12 @@ class _CategoryCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: AppColors.border,
-          ),
+          border: Border.all(color: AppColors.border),
         ),
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: AppColors.primary,
-              size: 28,
-            ),
+            Icon(icon, color: AppColors.primary, size: 28),
             const SizedBox(height: 10),
             Text(
               name,
@@ -646,7 +564,6 @@ class _CategoryCard extends StatelessWidget {
   }
 }
 
-
 // =====================================================
 // QUOTE CARD
 // =====================================================
@@ -655,10 +572,7 @@ class _QuoteCard extends StatelessWidget {
   final String quote;
   final String author;
 
-  const _QuoteCard({
-    required this.quote,
-    required this.author,
-  });
+  const _QuoteCard({required this.quote, required this.author});
 
   @override
   Widget build(BuildContext context) {
@@ -668,13 +582,10 @@ class _QuoteCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.border,
-        ),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Icon(
             Icons.format_quote_rounded,
@@ -686,8 +597,7 @@ class _QuoteCard extends StatelessWidget {
 
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   quote,
