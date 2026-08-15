@@ -11,7 +11,7 @@ plugins {
 android {
     namespace = "com.example.soul_voice"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = "30.0.15729638"
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
