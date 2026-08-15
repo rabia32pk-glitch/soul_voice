@@ -1,150 +1,864 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
+import 'package:soul_voice/core/theme/theme_cubit.dart';
 
-class AppTheme {
-  // =========================
-  // LIGHT THEME
-  // =========================
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
 
-  static ThemeData lightTheme = ThemeData(
-    brightness: Brightness.light,
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        final isDark = themeMode == ThemeMode.dark;
 
-    scaffoldBackgroundColor: Colors.white,
+        final backgroundColor =
+            isDark ? AppColors.background : Colors.white;
 
-    colorScheme: const ColorScheme.light(
-      primary: AppColors.primary,
-      secondary: AppColors.success,
-      surface: Colors.white,
-    ),
+        final surfaceColor =
+            isDark ? AppColors.surface : const Color(0xFFF7F7F7);
 
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.white,
-      foregroundColor: Colors.black,
-      elevation: 0,
-    ),
+        final primaryTextColor =
+            isDark ? AppColors.textPrimary : Colors.black87;
 
-    cardTheme: CardThemeData(
-      color: Colors.white,
-      elevation: 0,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(18),
+        final secondaryTextColor =
+            isDark ? AppColors.textSecondary : Colors.black54;
+
+        final borderColor =
+            isDark ? AppColors.border : const Color(0xFFE0E0E0);
+
+        return Scaffold(
+          backgroundColor: backgroundColor,
+
+          appBar: AppBar(
+            backgroundColor: backgroundColor,
+            elevation: 0,
+            centerTitle: true,
+
+            title: Text(
+              'Profile',
+              style: TextStyle(
+                color: primaryTextColor,
+                fontSize: 21,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            iconTheme: IconThemeData(
+              color: primaryTextColor,
+            ),
+          ),
+
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                20,
+                10,
+                20,
+                30,
+              ),
+
+              child: Column(
+                children: [
+
+                  // =====================================================
+                  // PROFILE
+                  // =====================================================
+
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(22),
+
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(22),
+                      border: Border.all(
+                        color: borderColor,
+                      ),
+                    ),
+
+                    child: Column(
+                      children: [
+
+                        // Profile Picture
+                        Container(
+                          height: 92,
+                          width: 92,
+
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+
+                            color: AppColors.primary.withValues(
+                              alpha: 0.15,
+                            ),
+
+                            border: Border.all(
+                              color: AppColors.primary,
+                              width: 2,
+                            ),
+                          ),
+
+                          child: const Icon(
+                            Icons.person_rounded,
+                            color: AppColors.primary,
+                            size: 48,
+                          ),
+                        ),
+
+                        const SizedBox(height: 14),
+
+                        Text(
+                          'User Name',
+
+                          style: TextStyle(
+                            color: primaryTextColor,
+                            fontSize: 21,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+
+                        const SizedBox(height: 5),
+
+                        Text(
+                          'user@example.com',
+
+                          style: TextStyle(
+                            color: secondaryTextColor,
+                            fontSize: 13,
+                          ),
+                        ),
+
+                        const SizedBox(height: 18),
+
+                        SizedBox(
+                          width: double.infinity,
+
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              // Edit profile baad mein Firebase se connect hoga.
+                            },
+
+                            icon: const Icon(
+                              Icons.edit_outlined,
+                            ),
+
+                            label: const Text(
+                              'Edit Profile',
+                            ),
+
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.primary,
+
+                              side: const BorderSide(
+                                color: AppColors.primary,
+                              ),
+
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 13,
+                              ),
+
+                              shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(14),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  // =====================================================
+                  // ACCOUNT
+                  // =====================================================
+
+                  _SectionTitle(
+                    title: 'Account',
+                    textColor: primaryTextColor,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  _ProfileOption(
+                    icon: Icons.person_outline_rounded,
+                    title: 'Personal Information',
+                    subtitle:
+                        'Manage your profile information',
+                    surfaceColor: surfaceColor,
+                    borderColor: borderColor,
+                    titleColor: primaryTextColor,
+                    subtitleColor: secondaryTextColor,
+                    onTap: () {},
+                  ),
+
+                  _ProfileOption(
+                    icon: Icons.favorite_border_rounded,
+                    title: 'My Favorites',
+                    subtitle: 'View your saved quotes',
+                    surfaceColor: surfaceColor,
+                    borderColor: borderColor,
+                    titleColor: primaryTextColor,
+                    subtitleColor: secondaryTextColor,
+                    onTap: () {},
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // =====================================================
+                  // SETTINGS
+                  // =====================================================
+
+                  _SectionTitle(
+                    title: 'Settings',
+                    textColor: primaryTextColor,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  _ProfileOption(
+                    icon: Icons.settings_outlined,
+                    title: 'Settings',
+                    subtitle:
+                        'App preferences and options',
+                    surfaceColor: surfaceColor,
+                    borderColor: borderColor,
+                    titleColor: primaryTextColor,
+                    subtitleColor: secondaryTextColor,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const SettingsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  _ProfileOption(
+                    icon: Icons.notifications_none_rounded,
+                    title: 'Notifications',
+                    subtitle:
+                        'Manage notification preferences',
+                    surfaceColor: surfaceColor,
+                    borderColor: borderColor,
+                    titleColor: primaryTextColor,
+                    subtitleColor: secondaryTextColor,
+                    onTap: () {},
+                  ),
+
+                  // =====================================================
+                  // DARK MODE
+                  // =====================================================
+
+                  _ProfileOption(
+                    icon: isDark
+                        ? Icons.dark_mode_rounded
+                        : Icons.light_mode_rounded,
+
+                    title: 'Dark Theme',
+
+                    subtitle: isDark
+                        ? 'Dark mode is enabled'
+                        : 'Light mode is enabled',
+
+                    surfaceColor: surfaceColor,
+                    borderColor: borderColor,
+                    titleColor: primaryTextColor,
+                    subtitleColor: secondaryTextColor,
+
+                    trailing: Switch(
+                      value: isDark,
+
+                      onChanged: (value) {
+                        context
+                            .read<ThemeCubit>()
+                            .setTheme(value);
+                      },
+
+                      activeThumbColor: AppColors.primary,
+                    ),
+
+                    onTap: () {
+                      context
+                          .read<ThemeCubit>()
+                          .setTheme(!isDark);
+                    },
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // =====================================================
+                  // PRIVACY & SECURITY
+                  // =====================================================
+
+                  _SectionTitle(
+                    title: 'Privacy & Security',
+                    textColor: primaryTextColor,
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  _ProfileOption(
+                    icon: Icons.lock_outline_rounded,
+                    title: 'Privacy',
+                    subtitle:
+                        'Manage your privacy settings',
+                    surfaceColor: surfaceColor,
+                    borderColor: borderColor,
+                    titleColor: primaryTextColor,
+                    subtitleColor: secondaryTextColor,
+                    onTap: () {},
+                  ),
+
+                  _ProfileOption(
+                    icon: Icons.security_outlined,
+                    title: 'Security',
+                    subtitle:
+                        'Manage your account security',
+                    surfaceColor: surfaceColor,
+                    borderColor: borderColor,
+                    titleColor: primaryTextColor,
+                    subtitleColor: secondaryTextColor,
+                    onTap: () {},
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  // =====================================================
+                  // LOGOUT
+                  // =====================================================
+
+                  SizedBox(
+                    width: double.infinity,
+
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        _showLogoutDialog(context);
+                      },
+
+                      icon: const Icon(
+                        Icons.logout_rounded,
+                      ),
+
+                      label: const Text(
+                        'Logout',
+                      ),
+
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor:
+                            Colors.redAccent,
+
+                        side: const BorderSide(
+                          color: Colors.redAccent,
+                        ),
+
+                        padding:
+                            const EdgeInsets.symmetric(
+                          vertical: 14,
+                        ),
+
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(14),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  // =====================================================
+                  // DELETE ACCOUNT
+                  // =====================================================
+
+                  TextButton(
+                    onPressed: () {
+                      _showDeleteAccountDialog(context);
+                    },
+
+                    child: const Text(
+                      'Delete Account',
+
+                      style: TextStyle(
+                        color: Colors.redAccent,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // =====================================================
+  // LOGOUT DIALOG
+  // =====================================================
+
+  void _showLogoutDialog(BuildContext context) {
+    final isDark =
+        Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor:
+              isDark ? AppColors.surface : Colors.white,
+
+          title: Text(
+            'Logout',
+
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.textPrimary
+                  : Colors.black87,
+            ),
+          ),
+
+          content: Text(
+            'Are you sure you want to logout?',
+
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.textSecondary
+                  : Colors.black54,
+            ),
+          ),
+
+          actions: [
+
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+
+              child: const Text(
+                'Cancel',
+              ),
+            ),
+
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+
+              child: const Text(
+                'Logout',
+
+                style: TextStyle(
+                  color: Colors.redAccent,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // =====================================================
+  // DELETE ACCOUNT DIALOG
+  // =====================================================
+
+  void _showDeleteAccountDialog(
+    BuildContext context,
+  ) {
+    final isDark =
+        Theme.of(context).brightness == Brightness.dark;
+
+    showDialog(
+      context: context,
+
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor:
+              isDark ? AppColors.surface : Colors.white,
+
+          title: Text(
+            'Delete Account',
+
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.textPrimary
+                  : Colors.black87,
+            ),
+          ),
+
+          content: Text(
+            'This action cannot be undone. Are you sure?',
+
+            style: TextStyle(
+              color: isDark
+                  ? AppColors.textSecondary
+                  : Colors.black54,
+            ),
+          ),
+
+          actions: [
+
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+
+              child: const Text(
+                'Cancel',
+              ),
+            ),
+
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+
+              child: const Text(
+                'Delete',
+
+                style: TextStyle(
+                  color: Colors.redAccent,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+// =====================================================
+// SECTION TITLE
+// =====================================================
+
+class _SectionTitle extends StatelessWidget {
+  final String title;
+  final Color textColor;
+
+  const _SectionTitle({
+    required this.title,
+    required this.textColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+
+      child: Text(
+        title,
+
+        style: TextStyle(
+          color: textColor,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
         ),
       ),
-    ),
+    );
+  }
+}
 
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: Colors.white,
+// =====================================================
+// PROFILE OPTION
+// =====================================================
 
-      hintStyle: const TextStyle(
-        color: Colors.black54,
+class _ProfileOption extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  final Color surfaceColor;
+  final Color borderColor;
+  final Color titleColor;
+  final Color subtitleColor;
+
+  final Widget? trailing;
+  final VoidCallback onTap;
+
+  const _ProfileOption({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.surfaceColor,
+    required this.borderColor,
+    required this.titleColor,
+    required this.subtitleColor,
+    required this.onTap,
+    this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+
+      decoration: BoxDecoration(
+        color: surfaceColor,
+
+        borderRadius:
+            BorderRadius.circular(16),
+
+        border: Border.all(
+          color: borderColor,
+        ),
       ),
 
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
+      child: ListTile(
+        onTap: onTap,
+
+        contentPadding:
+            const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 5,
+        ),
+
+        leading: Container(
+          height: 42,
+          width: 42,
+
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(
+              alpha: 0.12,
+            ),
+
+            borderRadius:
+                BorderRadius.circular(12),
+          ),
+
+          child: Icon(
+            icon,
+            color: AppColors.primary,
+          ),
+        ),
+
+        title: Text(
+          title,
+
+          style: TextStyle(
+            color: titleColor,
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+
+        subtitle: Text(
+          subtitle,
+
+          style: TextStyle(
+            color: subtitleColor,
+            fontSize: 11,
+          ),
+        ),
+
+        trailing:
+            trailing ??
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              color: subtitleColor,
+              size: 16,
+            ),
+      ),
+    );
+  }
+}
+
+// =====================================================
+// SETTINGS SCREEN
+// =====================================================
+
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark =
+        Theme.of(context).brightness == Brightness.dark;
+
+    final backgroundColor =
+        isDark ? AppColors.background : Colors.white;
+
+    final surfaceColor =
+        isDark ? AppColors.surface : const Color(0xFFF7F7F7);
+
+    final primaryTextColor =
+        isDark ? AppColors.textPrimary : Colors.black87;
+
+    final secondaryTextColor =
+        isDark ? AppColors.textSecondary : Colors.black54;
+
+    final borderColor =
+        isDark ? AppColors.border : const Color(0xFFE0E0E0);
+
+    return Scaffold(
+      backgroundColor: backgroundColor,
+
+      appBar: AppBar(
+        backgroundColor: backgroundColor,
+        elevation: 0,
+
+        title: Text(
+          'Settings',
+
+          style: TextStyle(
+            color: primaryTextColor,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+
+        iconTheme: IconThemeData(
+          color: primaryTextColor,
+        ),
       ),
 
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+
+        children: [
+
+          Text(
+            'Preferences',
+
+            style: TextStyle(
+              color: primaryTextColor,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+
+          const SizedBox(height: 14),
+
+          _SettingsTile(
+            icon: Icons.notifications_none_rounded,
+            title: 'Notifications',
+            subtitle: 'Control your notifications',
+            surfaceColor: surfaceColor,
+            borderColor: borderColor,
+            titleColor: primaryTextColor,
+            subtitleColor: secondaryTextColor,
+            onTap: () {},
+          ),
+
+          _SettingsTile(
+            icon: Icons.language_rounded,
+            title: 'Language',
+            subtitle: 'English',
+            surfaceColor: surfaceColor,
+            borderColor: borderColor,
+            titleColor: primaryTextColor,
+            subtitleColor: secondaryTextColor,
+            onTap: () {},
+          ),
+
+          _SettingsTile(
+            icon: Icons.lock_outline_rounded,
+            title: 'Privacy',
+            subtitle: 'Manage privacy settings',
+            surfaceColor: surfaceColor,
+            borderColor: borderColor,
+            titleColor: primaryTextColor,
+            subtitleColor: secondaryTextColor,
+            onTap: () {},
+          ),
+
+          _SettingsTile(
+            icon: Icons.info_outline_rounded,
+            title: 'About Soul Voice',
+            subtitle: 'App information',
+            surfaceColor: surfaceColor,
+            borderColor: borderColor,
+            titleColor: primaryTextColor,
+            subtitleColor: secondaryTextColor,
+            onTap: () {},
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// =====================================================
+// SETTINGS TILE
+// =====================================================
+
+class _SettingsTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  final Color surfaceColor;
+  final Color borderColor;
+  final Color titleColor;
+  final Color subtitleColor;
+
+  final VoidCallback onTap;
+
+  const _SettingsTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.surfaceColor,
+    required this.borderColor,
+    required this.titleColor,
+    required this.subtitleColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+
+      decoration: BoxDecoration(
+        color: surfaceColor,
+
+        borderRadius:
+            BorderRadius.circular(16),
+
+        border: Border.all(
+          color: borderColor,
+        ),
       ),
 
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
+      child: ListTile(
+        onTap: onTap,
+
+        leading: Icon(
+          icon,
           color: AppColors.primary,
         ),
-      ),
-    ),
 
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.black,
-        minimumSize: const Size(
-          double.infinity,
-          52,
+        title: Text(
+          title,
+
+          style: TextStyle(
+            color: titleColor,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+
+        subtitle: Text(
+          subtitle,
+
+          style: TextStyle(
+            color: subtitleColor,
+            fontSize: 12,
+          ),
         ),
-      ),
-    ),
-  );
 
-  // =========================
-  // DARK THEME
-  // =========================
-
-  static ThemeData darkTheme = ThemeData(
-    brightness: Brightness.dark,
-
-    scaffoldBackgroundColor: Colors.black,
-
-    colorScheme: const ColorScheme.dark(
-      primary: AppColors.primary,
-      secondary: AppColors.success,
-      surface: Color(0xFF121212),
-    ),
-
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.black,
-      foregroundColor: Colors.white,
-      elevation: 0,
-    ),
-
-    cardTheme: CardThemeData(
-      color: const Color(0xFF121212),
-      elevation: 0,
-      margin: EdgeInsets.zero,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(
-          Radius.circular(18),
+        trailing: Icon(
+          Icons.arrow_forward_ios_rounded,
+          color: subtitleColor,
+          size: 15,
         ),
       ),
-    ),
-
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: const Color(0xFF121212),
-
-      hintStyle: const TextStyle(
-        color: Colors.white70,
-      ),
-
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
-      ),
-
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide.none,
-      ),
-
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: AppColors.primary,
-        ),
-      ),
-    ),
-
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.black,
-        minimumSize: const Size(
-          double.infinity,
-          52,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-      ),
-    ),
-  );
+    );
+  }
 }
