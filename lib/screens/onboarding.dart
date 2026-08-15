@@ -3,14 +3,7 @@ import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/auth/login_screens.dart';
 
 class OnboardingScreen extends StatefulWidget {
-  final bool isDarkMode;
-  final ValueChanged<bool> onThemeChanged;
-
-  const OnboardingScreen({
-    super.key,
-    required this.isDarkMode,
-    required this.onThemeChanged,
-  });
+  const OnboardingScreen({super.key});
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -42,17 +35,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     },
   ];
 
+  // ================= OPEN LOGIN =================
+
   void _openLogin() {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => LoginScreen(
-          isDarkMode: widget.isDarkMode,
-          onThemeChanged: widget.onThemeChanged,
-        ),
+        builder: (_) => const LoginScreen(),
       ),
     );
   }
+
+  // ================= NEXT PAGE =================
 
   void _nextPage() {
     if (_currentPage < pages.length - 1) {
@@ -73,13 +67,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       body: SafeArea(
         child: Column(
           children: [
             // ================= PAGES =================
+
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -97,80 +94,66 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   return Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 28),
 
-                    child: SafeArea(
+                    child: Center(
                       child: SingleChildScrollView(
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height - 180,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // ================= ICON =================
 
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            Container(
+                              height: 190,
+                              width: 190,
 
-                              children: [
-                                // ================= ICON =================
-                                Container(
-                                  height: 190,
-                                  width: 190,
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.surface,
+                                shape: BoxShape.circle,
 
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.surface,
-
-                                    shape: BoxShape.circle,
-
-                                    border: Border.all(
-                                      color: AppColors.primary,
-                                      width: 1.5,
-                                    ),
-                                  ),
-
-                                  child: Icon(
-                                    _getIcon(page['icon']!),
-
-                                    size: 80,
-
-                                    color: AppColors.primary,
-                                  ),
+                                border: Border.all(
+                                  color: AppColors.primary,
+                                  width: 1.5,
                                 ),
+                              ),
 
-                                const SizedBox(height: 55),
-
-                                // ================= TITLE =================
-                                Text(
-                                  page['title']!,
-                                  textAlign: TextAlign.center,
-
-                                  style: TextStyle(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface,
-
-                                    fontSize: 28,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-
-                                const SizedBox(height: 18),
-
-                                // ================= DESCRIPTION =================
-                                Text(
-                                  page['description']!,
-                                  textAlign: TextAlign.center,
-
-                                  style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 0.65),
-
-                                    fontSize: 16,
-                                    height: 1.5,
-                                  ),
-                                ),
-                              ],
+                              child: Icon(
+                                _getIcon(page['icon']!),
+                                size: 80,
+                                color: AppColors.primary,
+                              ),
                             ),
-                          ),
+
+                            const SizedBox(height: 55),
+
+                            // ================= TITLE =================
+
+                            Text(
+                              page['title']!,
+                              textAlign: TextAlign.center,
+
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface,
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            const SizedBox(height: 18),
+
+                            // ================= DESCRIPTION =================
+
+                            Text(
+                              page['description']!,
+                              textAlign: TextAlign.center,
+
+                              style: TextStyle(
+                                color: theme.colorScheme.onSurface.withValues(
+                                  alpha: 0.65,
+                                ),
+                                fontSize: 16,
+                                height: 1.5,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -180,6 +163,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
 
             // ================= DOTS =================
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
 
@@ -198,7 +182,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   decoration: BoxDecoration(
                     color: _currentPage == index
                         ? AppColors.primary
-                        : AppColors.border,
+                        : theme.colorScheme.outline,
 
                     borderRadius: BorderRadius.circular(20),
                   ),
@@ -209,6 +193,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 30),
 
             // ================= CONTINUE =================
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28),
 
@@ -231,6 +216,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 15),
 
             // ================= SKIP =================
+
             TextButton(
               onPressed: _openLogin,
 
@@ -238,9 +224,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 'Skip',
 
                 style: TextStyle(
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.65),
+                  color: theme.colorScheme.onSurface.withValues(
+                    alpha: 0.65,
+                  ),
                 ),
               ),
             ),
@@ -251,6 +237,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       ),
     );
   }
+
+  // ================= ICON =================
 
   IconData _getIcon(String icon) {
     switch (icon) {

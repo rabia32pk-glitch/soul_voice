@@ -1,42 +1,51 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soul_voice/core/theme/app_themes.dart';
+import 'package:soul_voice/core/theme/theme_cubit.dart';
+import 'package:soul_voice/firebase_options.dart';
 import 'package:soul_voice/screens/splash.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(const SoulVoiceApp());
 }
 
-class SoulVoiceApp extends StatefulWidget {
+class SoulVoiceApp extends StatelessWidget {
   const SoulVoiceApp({super.key});
 
   @override
-  State<SoulVoiceApp> createState() => _SoulVoiceAppState();
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => ThemeCubit(),
+
+      child: const SoulVoiceAppView(),
+    );
+  }
 }
 
-class _SoulVoiceAppState extends State<SoulVoiceApp> {
-  bool isDarkMode = true;
-
-  void toggleTheme(bool value) {
-    setState(() {
-      isDarkMode = value;
-    });
-  }
+class SoulVoiceAppView extends StatelessWidget {
+  const SoulVoiceAppView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Soul Voice',
 
-      title: 'Soul Voice',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
 
-      theme: AppTheme.lightTheme,
+          themeMode: themeMode,
 
-      darkTheme: AppTheme.darkTheme,
-
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-
-      home: SplashScreen(isDarkMode: isDarkMode, onThemeChanged: toggleTheme),
+          home: const SplashScreen(),
+        );
+      },
     );
   }
 }

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "33449994871",
+    "project_id": "soul-voice-612eb",
+    "storage_bucket": "soul-voice-612eb.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:33449994871:android:8b68a72f3ad8ab63483472",
+        "android_client_info": {
+          "package_name": "com.example.soul_voice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "33449994871-4pfst0aj5bi0p9fdm7qookmrn1o2i208.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAcDeWgbrcHQKBIh8XEFCJx-icuy9RpJJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "33449994871-4pfst0aj5bi0p9fdm7qookmrn1o2i208.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

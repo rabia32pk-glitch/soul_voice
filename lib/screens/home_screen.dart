@@ -51,16 +51,8 @@ class _HomeScreenState extends State<HomeScreen> {
         'icon': Icons.lightbulb_outline_rounded,
         'tag': 'wisdom',
       },
-      {
-        'name': 'Success',
-        'icon': Icons.trending_up_rounded,
-        'tag': 'success',
-      },
-      {
-        'name': 'Love',
-        'icon': Icons.favorite_border_rounded,
-        'tag': 'love',
-      },
+      {'name': 'Success', 'icon': Icons.trending_up_rounded, 'tag': 'success'},
+      {'name': 'Love', 'icon': Icons.favorite_border_rounded, 'tag': 'love'},
       {'name': 'Peace', 'icon': Icons.spa_outlined, 'tag': 'peace'},
     ];
 
@@ -78,7 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ================= HEADER =================
-
                 Row(
                   children: [
                     Expanded(
@@ -134,14 +125,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 22),
 
                 // ================= SEARCH =================
-
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const SearchScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const SearchScreen()),
                     );
                   },
                   child: Container(
@@ -174,7 +162,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 28),
 
                 // ================= CATEGORIES =================
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -197,9 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       },
                       child: const Text(
                         'See All',
-                        style: TextStyle(
-                          color: AppColors.primary,
-                        ),
+                        style: TextStyle(color: AppColors.primary),
                       ),
                     ),
                   ],
@@ -212,8 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: categories.length,
-                    separatorBuilder: (_, __) =>
-                        const SizedBox(width: 12),
+                    separatorBuilder: (_, _) => const SizedBox(width: 12),
                     itemBuilder: (context, index) {
                       final category = categories[index];
 
@@ -238,7 +222,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 28),
 
                 // ================= DAILY QUOTE =================
-
                 const Text(
                   'Daily Quote',
                   style: TextStyle(
@@ -256,9 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(22),
-                    border: Border.all(
-                      color: AppColors.border,
-                    ),
+                    border: Border.all(color: AppColors.border),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -333,7 +314,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 28),
 
                 // ================= FEATURED QUOTES =================
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -362,12 +342,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 8),
 
                 // ================= API QUOTES =================
-
                 FutureBuilder<List<QuoteModel>>(
                   future: _quotesFuture,
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState ==
-                        ConnectionState.waiting) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
                       return const Center(
                         child: Padding(
                           padding: EdgeInsets.all(35),
@@ -385,9 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         decoration: BoxDecoration(
                           color: AppColors.surface,
                           borderRadius: BorderRadius.circular(18),
-                          border: Border.all(
-                            color: AppColors.border,
-                          ),
+                          border: Border.all(color: AppColors.border),
                         ),
                         child: Column(
                           children: [
@@ -444,9 +420,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: const Text(
                           'No quotes found.',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                          ),
+                          style: TextStyle(color: AppColors.textSecondary),
                         ),
                       );
                     }
@@ -456,8 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           .take(5)
                           .map(
                             (quote) => Padding(
-                              padding:
-                                  const EdgeInsets.only(bottom: 12),
+                              padding: const EdgeInsets.only(bottom: 12),
                               child: _QuoteCard(
                                 quote: quote.content,
                                 author: quote.author,
@@ -475,7 +448,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
 
       // ================= BOTTOM NAVIGATION =================
-
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
         backgroundColor: AppColors.surface,
@@ -492,23 +464,17 @@ class _HomeScreenState extends State<HomeScreen> {
           if (index == 1) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const QuotesScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const QuotesScreen()),
             );
           } else if (index == 2) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const FavoritesScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const FavoritesScreen()),
             );
           } else if (index == 3) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (_) => const ProfileScreen(),
-              ),
+              MaterialPageRoute(builder: (_) => const ProfileScreen()),
             );
           }
         },
@@ -561,18 +527,12 @@ class _CategoryCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: AppColors.border,
-          ),
+          border: Border.all(color: AppColors.border),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              color: AppColors.primary,
-              size: 28,
-            ),
+            Icon(icon, color: AppColors.primary, size: 28),
             const SizedBox(height: 10),
             Text(
               name,
@@ -598,10 +558,7 @@ class _QuoteCard extends StatelessWidget {
   final String quote;
   final String author;
 
-  const _QuoteCard({
-    required this.quote,
-    required this.author,
-  });
+  const _QuoteCard({required this.quote, required this.author});
 
   @override
   Widget build(BuildContext context) {
@@ -611,9 +568,7 @@ class _QuoteCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.border,
-        ),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

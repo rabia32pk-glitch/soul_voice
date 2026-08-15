@@ -1,11 +1,56 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
 
-class ProfileScreen extends StatelessWidget {
+import 'package:soul_voice/screens/edit_profile_screen.dart';
+import 'package:soul_voice/screens/favourite_screens.dart';
+import 'package:soul_voice/screens/notifications_screen.dart';
+import 'package:soul_voice/screens/privacy_screen.dart';
+import 'package:soul_voice/screens/security_screen.dart';
+
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String _name = 'User Name';
+  String _email = 'user@example.com';
+  String? _imagePath;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (!mounted) return;
+
+    setState(() {
+      _name = prefs.getString('profile_name') ?? 'User Name';
+      _email = prefs.getString('profile_email') ?? 'user@example.com';
+      _imagePath = prefs.getString('profile_image');
+    });
+  }
+
+  Future<void> _openEditProfile() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+    );
+
+    await _loadProfile();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,20 +58,21 @@ class ProfileScreen extends StatelessWidget {
       builder: (context, themeMode) {
         final isDark = themeMode == ThemeMode.dark;
 
-        final backgroundColor =
-            isDark ? AppColors.background : Colors.white;
+        final backgroundColor = isDark ? AppColors.background : Colors.white;
 
-        final surfaceColor =
-            isDark ? AppColors.surface : const Color(0xFFF7F7F7);
+        final surfaceColor = isDark
+            ? AppColors.surface
+            : const Color(0xFFF7F7F7);
 
-        final primaryTextColor =
-            isDark ? AppColors.textPrimary : Colors.black87;
+        final primaryTextColor = isDark
+            ? AppColors.textPrimary
+            : Colors.black87;
 
-        final secondaryTextColor =
-            isDark ? AppColors.textSecondary : Colors.black54;
+        final secondaryTextColor = isDark
+            ? AppColors.textSecondary
+            : Colors.black54;
 
-        final borderColor =
-            isDark ? AppColors.border : const Color(0xFFE0E0E0);
+        final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
 
         return Scaffold(
           backgroundColor: backgroundColor,
@@ -45,27 +91,18 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
 
-            iconTheme: IconThemeData(
-              color: primaryTextColor,
-            ),
+            iconTheme: IconThemeData(color: primaryTextColor),
           ),
 
           body: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(
-                20,
-                10,
-                20,
-                30,
-              ),
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
 
               child: Column(
                 children: [
-
                   // =====================================================
                   // PROFILE
                   // =====================================================
-
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(22),
@@ -73,43 +110,51 @@ class ProfileScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: surfaceColor,
                       borderRadius: BorderRadius.circular(22),
-                      border: Border.all(
-                        color: borderColor,
-                      ),
+                      border: Border.all(color: borderColor),
                     ),
 
                     child: Column(
                       children: [
+                        // ================= PROFILE IMAGE =================
+                        GestureDetector(
+                          onTap: _openEditProfile,
 
-                        // Profile Picture
-                        Container(
-                          height: 92,
-                          width: 92,
+                          child: Container(
+                            height: 92,
+                            width: 92,
 
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
 
-                            color: AppColors.primary.withValues(
-                              alpha: 0.15,
+                              color: AppColors.primary.withValues(alpha: 0.15),
+
+                              border: Border.all(
+                                color: AppColors.primary,
+                                width: 2,
+                              ),
                             ),
 
-                            border: Border.all(
-                              color: AppColors.primary,
-                              width: 2,
+                            child: ClipOval(
+                              child:
+                                  _imagePath != null &&
+                                      File(_imagePath!).existsSync()
+                                  ? Image.file(
+                                      File(_imagePath!),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : const Icon(
+                                      Icons.person_rounded,
+                                      color: AppColors.primary,
+                                      size: 48,
+                                    ),
                             ),
-                          ),
-
-                          child: const Icon(
-                            Icons.person_rounded,
-                            color: AppColors.primary,
-                            size: 48,
                           ),
                         ),
 
                         const SizedBox(height: 14),
 
                         Text(
-                          'User Name',
+                          _name,
 
                           style: TextStyle(
                             color: primaryTextColor,
@@ -121,7 +166,7 @@ class ProfileScreen extends StatelessWidget {
                         const SizedBox(height: 5),
 
                         Text(
-                          'user@example.com',
+                          _email,
 
                           style: TextStyle(
                             color: secondaryTextColor,
@@ -135,32 +180,21 @@ class ProfileScreen extends StatelessWidget {
                           width: double.infinity,
 
                           child: OutlinedButton.icon(
-                            onPressed: () {
-                              // Edit profile baad mein Firebase se connect hoga.
-                            },
+                            onPressed: _openEditProfile,
 
-                            icon: const Icon(
-                              Icons.edit_outlined,
-                            ),
+                            icon: const Icon(Icons.edit_outlined),
 
-                            label: const Text(
-                              'Edit Profile',
-                            ),
+                            label: const Text('Edit Profile'),
 
                             style: OutlinedButton.styleFrom(
                               foregroundColor: AppColors.primary,
 
-                              side: const BorderSide(
-                                color: AppColors.primary,
-                              ),
+                              side: const BorderSide(color: AppColors.primary),
 
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 13,
-                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 13),
 
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(14),
+                                borderRadius: BorderRadius.circular(14),
                               ),
                             ),
                           ),
@@ -174,24 +208,20 @@ class ProfileScreen extends StatelessWidget {
                   // =====================================================
                   // ACCOUNT
                   // =====================================================
-
-                  _SectionTitle(
-                    title: 'Account',
-                    textColor: primaryTextColor,
-                  ),
+                  _SectionTitle(title: 'Account', textColor: primaryTextColor),
 
                   const SizedBox(height: 10),
 
                   _ProfileOption(
                     icon: Icons.person_outline_rounded,
                     title: 'Personal Information',
-                    subtitle:
-                        'Manage your profile information',
+                    subtitle: 'Manage your profile information',
                     surfaceColor: surfaceColor,
                     borderColor: borderColor,
                     titleColor: primaryTextColor,
                     subtitleColor: secondaryTextColor,
-                    onTap: () {},
+
+                    onTap: _openEditProfile,
                   ),
 
                   _ProfileOption(
@@ -202,7 +232,15 @@ class ProfileScreen extends StatelessWidget {
                     borderColor: borderColor,
                     titleColor: primaryTextColor,
                     subtitleColor: secondaryTextColor,
-                    onTap: () {},
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const FavoritesScreen(),
+                        ),
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 20),
@@ -210,29 +248,24 @@ class ProfileScreen extends StatelessWidget {
                   // =====================================================
                   // SETTINGS
                   // =====================================================
-
-                  _SectionTitle(
-                    title: 'Settings',
-                    textColor: primaryTextColor,
-                  ),
+                  _SectionTitle(title: 'Settings', textColor: primaryTextColor),
 
                   const SizedBox(height: 10),
 
                   _ProfileOption(
                     icon: Icons.settings_outlined,
                     title: 'Settings',
-                    subtitle:
-                        'App preferences and options',
+                    subtitle: 'App preferences and options',
                     surfaceColor: surfaceColor,
                     borderColor: borderColor,
                     titleColor: primaryTextColor,
                     subtitleColor: secondaryTextColor,
+
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              const SettingsScreen(),
+                          builder: (_) => const SettingsScreen(),
                         ),
                       );
                     },
@@ -241,19 +274,25 @@ class ProfileScreen extends StatelessWidget {
                   _ProfileOption(
                     icon: Icons.notifications_none_rounded,
                     title: 'Notifications',
-                    subtitle:
-                        'Manage notification preferences',
+                    subtitle: 'Manage notification preferences',
                     surfaceColor: surfaceColor,
                     borderColor: borderColor,
                     titleColor: primaryTextColor,
                     subtitleColor: secondaryTextColor,
-                    onTap: () {},
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsScreen(),
+                        ),
+                      );
+                    },
                   ),
 
                   // =====================================================
                   // DARK MODE
                   // =====================================================
-
                   _ProfileOption(
                     icon: isDark
                         ? Icons.dark_mode_rounded
@@ -274,18 +313,14 @@ class ProfileScreen extends StatelessWidget {
                       value: isDark,
 
                       onChanged: (value) {
-                        context
-                            .read<ThemeCubit>()
-                            .setTheme(value);
+                        context.read<ThemeCubit>().setTheme(value);
                       },
 
                       activeThumbColor: AppColors.primary,
                     ),
 
                     onTap: () {
-                      context
-                          .read<ThemeCubit>()
-                          .setTheme(!isDark);
+                      context.read<ThemeCubit>().setTheme(!isDark);
                     },
                   ),
 
@@ -294,7 +329,6 @@ class ProfileScreen extends StatelessWidget {
                   // =====================================================
                   // PRIVACY & SECURITY
                   // =====================================================
-
                   _SectionTitle(
                     title: 'Privacy & Security',
                     textColor: primaryTextColor,
@@ -305,25 +339,39 @@ class ProfileScreen extends StatelessWidget {
                   _ProfileOption(
                     icon: Icons.lock_outline_rounded,
                     title: 'Privacy',
-                    subtitle:
-                        'Manage your privacy settings',
+                    subtitle: 'Manage your privacy settings',
                     surfaceColor: surfaceColor,
                     borderColor: borderColor,
                     titleColor: primaryTextColor,
                     subtitleColor: secondaryTextColor,
-                    onTap: () {},
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PrivacyScreen(),
+                        ),
+                      );
+                    },
                   ),
 
                   _ProfileOption(
                     icon: Icons.security_outlined,
                     title: 'Security',
-                    subtitle:
-                        'Manage your account security',
+                    subtitle: 'Manage your account security',
                     surfaceColor: surfaceColor,
                     borderColor: borderColor,
                     titleColor: primaryTextColor,
                     subtitleColor: secondaryTextColor,
-                    onTap: () {},
+
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SecurityScreen(),
+                        ),
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 25),
@@ -331,7 +379,6 @@ class ProfileScreen extends StatelessWidget {
                   // =====================================================
                   // LOGOUT
                   // =====================================================
-
                   SizedBox(
                     width: double.infinity,
 
@@ -340,30 +387,19 @@ class ProfileScreen extends StatelessWidget {
                         _showLogoutDialog(context);
                       },
 
-                      icon: const Icon(
-                        Icons.logout_rounded,
-                      ),
+                      icon: const Icon(Icons.logout_rounded),
 
-                      label: const Text(
-                        'Logout',
-                      ),
+                      label: const Text('Logout'),
 
                       style: OutlinedButton.styleFrom(
-                        foregroundColor:
-                            Colors.redAccent,
+                        foregroundColor: Colors.redAccent,
 
-                        side: const BorderSide(
-                          color: Colors.redAccent,
-                        ),
+                        side: const BorderSide(color: Colors.redAccent),
 
-                        padding:
-                            const EdgeInsets.symmetric(
-                          vertical: 14,
-                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
 
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(14),
                         ),
                       ),
                     ),
@@ -374,7 +410,6 @@ class ProfileScreen extends StatelessWidget {
                   // =====================================================
                   // DELETE ACCOUNT
                   // =====================================================
-
                   TextButton(
                     onPressed: () {
                       _showDeleteAccountDialog(context);
@@ -383,10 +418,7 @@ class ProfileScreen extends StatelessWidget {
                     child: const Text(
                       'Delete Account',
 
-                      style: TextStyle(
-                        color: Colors.redAccent,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: Colors.redAccent, fontSize: 13),
                     ),
                   ),
                 ],
@@ -403,24 +435,20 @@ class ProfileScreen extends StatelessWidget {
   // =====================================================
 
   void _showLogoutDialog(BuildContext context) {
-    final isDark =
-        Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
       context: context,
 
       builder: (context) {
         return AlertDialog(
-          backgroundColor:
-              isDark ? AppColors.surface : Colors.white,
+          backgroundColor: isDark ? AppColors.surface : Colors.white,
 
           title: Text(
             'Logout',
 
             style: TextStyle(
-              color: isDark
-                  ? AppColors.textPrimary
-                  : Colors.black87,
+              color: isDark ? AppColors.textPrimary : Colors.black87,
             ),
           ),
 
@@ -428,22 +456,17 @@ class ProfileScreen extends StatelessWidget {
             'Are you sure you want to logout?',
 
             style: TextStyle(
-              color: isDark
-                  ? AppColors.textSecondary
-                  : Colors.black54,
+              color: isDark ? AppColors.textSecondary : Colors.black54,
             ),
           ),
 
           actions: [
-
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
 
-              child: const Text(
-                'Cancel',
-              ),
+              child: const Text('Cancel'),
             ),
 
             TextButton(
@@ -454,9 +477,7 @@ class ProfileScreen extends StatelessWidget {
               child: const Text(
                 'Logout',
 
-                style: TextStyle(
-                  color: Colors.redAccent,
-                ),
+                style: TextStyle(color: Colors.redAccent),
               ),
             ),
           ],
@@ -469,27 +490,21 @@ class ProfileScreen extends StatelessWidget {
   // DELETE ACCOUNT DIALOG
   // =====================================================
 
-  void _showDeleteAccountDialog(
-    BuildContext context,
-  ) {
-    final isDark =
-        Theme.of(context).brightness == Brightness.dark;
+  void _showDeleteAccountDialog(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
       context: context,
 
       builder: (context) {
         return AlertDialog(
-          backgroundColor:
-              isDark ? AppColors.surface : Colors.white,
+          backgroundColor: isDark ? AppColors.surface : Colors.white,
 
           title: Text(
             'Delete Account',
 
             style: TextStyle(
-              color: isDark
-                  ? AppColors.textPrimary
-                  : Colors.black87,
+              color: isDark ? AppColors.textPrimary : Colors.black87,
             ),
           ),
 
@@ -497,22 +512,17 @@ class ProfileScreen extends StatelessWidget {
             'This action cannot be undone. Are you sure?',
 
             style: TextStyle(
-              color: isDark
-                  ? AppColors.textSecondary
-                  : Colors.black54,
+              color: isDark ? AppColors.textSecondary : Colors.black54,
             ),
           ),
 
           actions: [
-
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
 
-              child: const Text(
-                'Cancel',
-              ),
+              child: const Text('Cancel'),
             ),
 
             TextButton(
@@ -523,9 +533,7 @@ class ProfileScreen extends StatelessWidget {
               child: const Text(
                 'Delete',
 
-                style: TextStyle(
-                  color: Colors.redAccent,
-                ),
+                style: TextStyle(color: Colors.redAccent),
               ),
             ),
           ],
@@ -543,10 +551,7 @@ class _SectionTitle extends StatelessWidget {
   final String title;
   final Color textColor;
 
-  const _SectionTitle({
-    required this.title,
-    required this.textColor,
-  });
+  const _SectionTitle({required this.title, required this.textColor});
 
   @override
   Widget build(BuildContext context) {
@@ -603,40 +608,27 @@ class _ProfileOption extends StatelessWidget {
       decoration: BoxDecoration(
         color: surfaceColor,
 
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        border: Border.all(
-          color: borderColor,
-        ),
+        border: Border.all(color: borderColor),
       ),
 
       child: ListTile(
         onTap: onTap,
 
-        contentPadding:
-            const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 5,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
 
         leading: Container(
           height: 42,
           width: 42,
 
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(
-              alpha: 0.12,
-            ),
+            color: AppColors.primary.withValues(alpha: 0.12),
 
-            borderRadius:
-                BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(12),
           ),
 
-          child: Icon(
-            icon,
-            color: AppColors.primary,
-          ),
+          child: Icon(icon, color: AppColors.primary),
         ),
 
         title: Text(
@@ -652,10 +644,7 @@ class _ProfileOption extends StatelessWidget {
         subtitle: Text(
           subtitle,
 
-          style: TextStyle(
-            color: subtitleColor,
-            fontSize: 11,
-          ),
+          style: TextStyle(color: subtitleColor, fontSize: 11),
         ),
 
         trailing:
@@ -679,23 +668,19 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark =
-        Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final backgroundColor =
-        isDark ? AppColors.background : Colors.white;
+    final backgroundColor = isDark ? AppColors.background : Colors.white;
 
-    final surfaceColor =
-        isDark ? AppColors.surface : const Color(0xFFF7F7F7);
+    final surfaceColor = isDark ? AppColors.surface : const Color(0xFFF7F7F7);
 
-    final primaryTextColor =
-        isDark ? AppColors.textPrimary : Colors.black87;
+    final primaryTextColor = isDark ? AppColors.textPrimary : Colors.black87;
 
-    final secondaryTextColor =
-        isDark ? AppColors.textSecondary : Colors.black54;
+    final secondaryTextColor = isDark
+        ? AppColors.textSecondary
+        : Colors.black54;
 
-    final borderColor =
-        isDark ? AppColors.border : const Color(0xFFE0E0E0);
+    final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -713,16 +698,13 @@ class SettingsScreen extends StatelessWidget {
           ),
         ),
 
-        iconTheme: IconThemeData(
-          color: primaryTextColor,
-        ),
+        iconTheme: IconThemeData(color: primaryTextColor),
       ),
 
       body: ListView(
         padding: const EdgeInsets.all(20),
 
         children: [
-
           Text(
             'Preferences',
 
@@ -743,7 +725,13 @@ class SettingsScreen extends StatelessWidget {
             borderColor: borderColor,
             titleColor: primaryTextColor,
             subtitleColor: secondaryTextColor,
-            onTap: () {},
+
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+              );
+            },
           ),
 
           _SettingsTile(
@@ -765,7 +753,13 @@ class SettingsScreen extends StatelessWidget {
             borderColor: borderColor,
             titleColor: primaryTextColor,
             subtitleColor: secondaryTextColor,
-            onTap: () {},
+
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const PrivacyScreen()),
+              );
+            },
           ),
 
           _SettingsTile(
@@ -819,38 +813,26 @@ class _SettingsTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: surfaceColor,
 
-        borderRadius:
-            BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(16),
 
-        border: Border.all(
-          color: borderColor,
-        ),
+        border: Border.all(color: borderColor),
       ),
 
       child: ListTile(
         onTap: onTap,
 
-        leading: Icon(
-          icon,
-          color: AppColors.primary,
-        ),
+        leading: Icon(icon, color: AppColors.primary),
 
         title: Text(
           title,
 
-          style: TextStyle(
-            color: titleColor,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: titleColor, fontWeight: FontWeight.w600),
         ),
 
         subtitle: Text(
           subtitle,
 
-          style: TextStyle(
-            color: subtitleColor,
-            fontSize: 12,
-          ),
+          style: TextStyle(color: subtitleColor, fontSize: 12),
         ),
 
         trailing: Icon(
