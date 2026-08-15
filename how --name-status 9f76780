@@ -1,8 +1,0 @@
-[33mcommit 9f7678001b266fb6266294f1458d426cc66fe6e1[m[33m ([m[1;31morigin/rabia[m[33m)[m
-Author: bscsproject <bscsproject33@gmail.com>
-Date:   Thu Aug 13 21:31:35 2026 +0500
-
-    profile_update
-
- lib/screens/profile_screen.dart | 1313 [32m++++++++++++++++++++++[m[31m-----------------[m
- 1 file changed, 728 insertions(+), 585 deletions(-)
