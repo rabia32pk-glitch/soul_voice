@@ -6,13 +6,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
+import 'package:soul_voice/screens/auth/login_screens.dart';
 
 import 'package:soul_voice/screens/edit_profile_screen.dart';
 import 'package:soul_voice/screens/favourite_screens.dart';
 import 'package:soul_voice/screens/notifications_screen.dart';
 import 'package:soul_voice/screens/privacy_screen.dart';
 import 'package:soul_voice/screens/security_screen.dart';
-
+import 'package:soul_voice/screens/splash.dart';
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -470,16 +471,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
 
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-
-              child: const Text(
-                'Logout',
-
-                style: TextStyle(color: Colors.redAccent),
-              ),
-            ),
+  onPressed: () {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const LoginScreen(),
+      ),
+      (route) => false,
+    );
+  },
+  child: const Text(
+    'Logout',
+    style: TextStyle(color: Colors.redAccent),
+  ),
+),
           ],
         );
       },
@@ -526,16 +531,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
 
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
+  onPressed: () async {
+    final prefs = await SharedPreferences.getInstance();
 
-              child: const Text(
-                'Delete',
+    // Saved user data clear
+    await prefs.clear();
 
-                style: TextStyle(color: Colors.redAccent),
-              ),
-            ),
+    if (!context.mounted) return;
+
+    // Delete ke baad Splash Screen par
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const SplashScreen(),
+      ),
+      (route) => false,
+    );
+  },
+  child: const Text(
+    'Delete',
+    style: TextStyle(color: Colors.redAccent),
+  ),
+),
           ],
         );
       },

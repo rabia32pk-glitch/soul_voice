@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 
-class PrivacyScreen extends StatelessWidget {
+class PrivacyScreen extends StatefulWidget {
   const PrivacyScreen({super.key});
 
   @override
+  State<PrivacyScreen> createState() => _PrivacyScreenState();
+}
+
+class _PrivacyScreenState extends State<PrivacyScreen> {
+  String? _selectedOption;
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -42,17 +47,31 @@ class PrivacyScreen extends StatelessWidget {
 
           const SizedBox(height: 30),
 
-          const ListTile(
-            leading: Icon(Icons.visibility_outlined),
-            title: Text('Profile Visibility'),
-            subtitle: Text('Control who can see your profile.'),
-          ),
+          RadioListTile<String>(
+  value: 'public',
+  groupValue: _selectedOption,
+  onChanged: (value) {
+    setState(() {
+      _selectedOption = value;
+    });
+  },
+  secondary: const Icon(Icons.visibility_outlined),
+  title: const Text('Profile Visibility'),
+  subtitle: const Text('Control who can see your profile.'),
+),
 
-          const ListTile(
-            leading: Icon(Icons.data_usage_outlined),
-            title: Text('Data Usage'),
-            subtitle: Text('Manage your application data.'),
-          ),
+          RadioListTile<String>(
+  value: 'data_usage',
+  groupValue: _selectedOption,
+  onChanged: (value) {
+    setState(() {
+      _selectedOption = value;
+    });
+  },
+  secondary: const Icon(Icons.data_usage_outlined),
+  title: const Text('Data Usage'),
+  subtitle: const Text('Manage your application data.'),
+),
         ],
       ),
     );
