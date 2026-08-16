@@ -751,16 +751,7 @@ class SettingsScreen extends StatelessWidget {
             },
           ),
 
-          _SettingsTile(
-            icon: Icons.language_rounded,
-            title: 'Language',
-            subtitle: 'English',
-            surfaceColor: surfaceColor,
-            borderColor: borderColor,
-            titleColor: primaryTextColor,
-            subtitleColor: secondaryTextColor,
-            onTap: () {},
-          ),
+          
 
           _SettingsTile(
             icon: Icons.lock_outline_rounded,
