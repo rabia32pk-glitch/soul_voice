@@ -1,3 +1,4 @@
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -33,7 +34,8 @@ class _SplashScreenState extends State<SplashScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor:
+          Theme.of(context).scaffoldBackgroundColor,
 
       body: Center(
         child: Column(
@@ -60,7 +62,9 @@ class _SplashScreenState extends State<SplashScreen> {
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                color: theme.colorScheme.onSurface,
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface,
               ),
             ),
 
@@ -93,3 +97,4 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+

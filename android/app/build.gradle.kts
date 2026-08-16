@@ -1,10 +1,17 @@
 plugins {
     id("com.android.application")
+<<<<<<< Updated upstream
 
     // START: FlutterFire Configuration
     id("com.google.gms.google-services")
     // END: FlutterFire Configuration
 
+=======
+    // START: FlutterFire Configuration
+    id("com.google.gms.google-services")
+    // END: FlutterFire Configuration
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+>>>>>>> Stashed changes
     id("dev.flutter.flutter-gradle-plugin")
 }
 

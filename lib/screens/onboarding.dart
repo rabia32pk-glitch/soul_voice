@@ -40,9 +40,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _openLogin() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (_) => const LoginScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => LoginScreen()),
     );
   }
 
@@ -76,7 +74,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: Column(
           children: [
             // ================= PAGES =================
-
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -100,7 +97,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             // ================= ICON =================
-
                             Container(
                               height: 190,
                               width: 190,
@@ -117,7 +113,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
                               child: Icon(
                                 _getIcon(page['icon']!),
+
                                 size: 80,
+
                                 color: AppColors.primary,
                               ),
                             ),
@@ -125,7 +123,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             const SizedBox(height: 55),
 
                             // ================= TITLE =================
-
                             Text(
                               page['title']!,
                               textAlign: TextAlign.center,
@@ -140,7 +137,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             const SizedBox(height: 18),
 
                             // ================= DESCRIPTION =================
-
                             Text(
                               page['description']!,
                               textAlign: TextAlign.center,
@@ -163,7 +159,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
 
             // ================= DOTS =================
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
 
@@ -193,7 +188,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 30),
 
             // ================= CONTINUE =================
-
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28),
 
@@ -216,7 +210,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             const SizedBox(height: 15),
 
             // ================= SKIP =================
-
             TextButton(
               onPressed: _openLogin,
 
@@ -224,9 +217,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 'Skip',
 
                 style: TextStyle(
-                  color: theme.colorScheme.onSurface.withValues(
-                    alpha: 0.65,
-                  ),
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
                 ),
               ),
             ),
