@@ -65,13 +65,6 @@ class SettingsScreen extends StatelessWidget {
           ),
 
           _SettingsTile(
-            icon: Icons.language_rounded,
-            title: 'Language',
-            subtitle: 'English',
-            onTap: () {},
-          ),
-
-          _SettingsTile(
             icon: Icons.lock_outline_rounded,
             title: 'Privacy',
             subtitle: 'Manage privacy settings',
