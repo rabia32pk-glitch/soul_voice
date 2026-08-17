@@ -4,7 +4,7 @@ import 'package:soul_voice/core/theme/constants/app_colors.dart';
 
 class QuotesScreen extends StatelessWidget {
   const QuotesScreen({super.key});
-
+      
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,7 +110,7 @@ class _QuoteCardState extends State<QuoteCard> {
       'favorite_${widget.quote}',
       isFavorite,
     );
-
+  
     if (!mounted) return;
 
     ScaffoldMessenger.of(context).hideCurrentSnackBar();
@@ -181,7 +181,7 @@ class _QuoteCardState extends State<QuoteCard> {
 
           Row(
             children: [
-              IconButton(
+       IconButton(
                 onPressed: _toggleFavorite,
                 icon: Icon(
                   isFavorite

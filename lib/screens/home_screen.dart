@@ -13,7 +13,7 @@ import '../services/quote_api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
+   
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final QuoteApiService _quoteApiService = QuoteApiService();
 
   late Future<List<QuoteModel>> _quotesFuture;
-
+    bool isFavorite = false;
   @override
   void initState() {
     super.initState();
@@ -311,19 +311,26 @@ class _HomeScreenState extends State<HomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.share_outlined,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.favorite_border_rounded,
-                              color: AppColors.primary,
-                            ),
-                          ),
+                        onPressed: () {
+  setState(() {
+    isFavorite = !isFavorite;
+  });
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        isFavorite
+            ? 'Your quote has been added to favorites ❤️'
+            : 'Your quote has been removed from favorites 💔',
+      ),
+      duration: Duration(seconds: 2),
+    ),
+  );
+},
+icon: Icon(
+  isFavorite ? Icons.favorite : Icons.favorite_border,
+  color: isFavorite ? Colors.red : AppColors.primary
+),
+),
                         ],
                       ),
                     ],
@@ -534,6 +541,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+
 }
 
 // =====================================================
