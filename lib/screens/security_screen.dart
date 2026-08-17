@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:soul_voice/Account_verification.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 
 class SecurityScreen extends StatelessWidget {
@@ -67,34 +68,34 @@ class SecurityScreen extends StatelessWidget {
           ),
 
           const SizedBox(height: 20),
+           ListView(
+  children: [
 
-          ListTile(
-            leading: const Icon(
-              Icons.lock_reset_rounded,
-            ),
-            title: const Text(
-              'Change Password',
-            ),
-            trailing: const Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 15,
-            ),
-            onTap: () {},
-          ),
+    // Change Password
+    ListTile(
+      title: const Text('Change Password'),
+      onTap: () {},
+    ),
 
-          ListTile(
-            leading: const Icon(
-              Icons.verified_user_outlined,
-            ),
-            title: const Text(
-              'Account Verification',
-            ),
-            trailing: const Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 15,
-            ),
-            onTap: () {},
-          ),
+    
+    ListTile(
+      leading: const Icon(Icons.verified_user_outlined),
+      title: const Text('Account Verification'),
+      trailing: const Icon(
+        Icons.arrow_forward_ios_rounded,
+        size: 15,
+      ),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const Accountverification()));
+      },
+    
+    ),
+
+  ],
+      ),
         ],
       ),
     );

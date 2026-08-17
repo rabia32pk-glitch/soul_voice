@@ -8,6 +8,9 @@ import 'package:soul_voice/services/quote_api_service.dart';
 class QuoteScreen extends StatefulWidget {
   const QuoteScreen({super.key});
 
+class QuotesScreen extends StatelessWidget {
+  const QuotesScreen({super.key});
+      
   @override
   State<QuoteScreen> createState() => _QuoteScreenState();
 }
@@ -40,6 +43,64 @@ class _QuoteScreenState extends State<QuoteScreen> {
   void initState() {
     super.initState();
     loadQuote();
+    _loadFavoriteStatus();
+  }
+
+  // =====================================================
+  // LOAD SAVED FAVORITE
+  // =====================================================
+
+  Future<void> _loadFavoriteStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    final savedFavorite =
+        prefs.getBool('favorite_${widget.quote}') ?? false;
+
+    if (!mounted) return;
+
+    setState(() {
+      isFavorite = savedFavorite;
+    });
+  }
+
+  // =====================================================
+  // FAVORITE / UNFAVORITE
+  // =====================================================
+
+  Future<void> _toggleFavorite() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    setState(() {
+      isFavorite = !isFavorite;
+    });
+
+    await prefs.setBool(
+      'favorite_${widget.quote}',
+      isFavorite,
+    );
+  
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          isFavorite
+              ? 'Your quote has been added to favorites ❤️'
+              : 'Your quote has been removed from favorites',
+        ),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 20,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+      ),
+    );
   }
 
   @override
@@ -108,6 +169,47 @@ class _QuoteScreenState extends State<QuoteScreen> {
           ),
         );
       },
+
+          const SizedBox(height: 12),
+
+          Text(
+            '— ${widget.author}',
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 12,
+            ),
+          ),
+
+          const SizedBox(height: 15),
+
+          Row(
+            children: [
+       IconButton(
+                onPressed: _toggleFavorite,
+                icon: Icon(
+                  isFavorite
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
+                  color: isFavorite
+                      ? Colors.yellow
+                      : AppColors.primary,
+                  size: 28,
+                ),
+              ),
+
+              const Spacer(),
+
+              IconButton(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.share_outlined,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

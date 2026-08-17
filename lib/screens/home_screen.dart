@@ -11,7 +11,7 @@ import '../services/quote_api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
+   
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final QuoteApiService _quoteApiService = QuoteApiService();
 
   late Future<List<QuoteModel>> _quotesFuture;
-
+    bool isFavorite = false;
   @override
   void initState() {
     super.initState();
@@ -241,6 +241,68 @@ class _HomeScreenState extends State<HomeScreen> {
                     // ================= DAILY QUOTE =================
                     Text(
                       'Daily Quote',
+                      const Text(
+                        '"Your journey may be difficult, '
+                        'but every step makes you stronger."',
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                          height: 1.4,
+                        ),
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      const Text(
+                        'Daily Inspiration',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 13,
+                        ),
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(
+                        onPressed: () {
+  setState(() {
+    isFavorite = !isFavorite;
+  });
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        isFavorite
+            ? 'Your quote has been added to favorites ❤️'
+            : 'Your quote has been removed from favorites 💔',
+      ),
+      duration: Duration(seconds: 2),
+    ),
+  );
+},
+icon: Icon(
+  isFavorite ? Icons.favorite : Icons.favorite_border,
+  color: isFavorite ? Colors.red : AppColors.primary
+),
+),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 28),
+
+                // ================= FEATURED QUOTES =================
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Featured Quotes',
                       style: TextStyle(
                         color: primaryTextColor,
                         fontSize: 20,
@@ -472,6 +534,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
 }
 
 // =====================================================
