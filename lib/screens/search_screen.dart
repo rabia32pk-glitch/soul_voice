@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/services/models/quote_model.dart';
-import '../services/quote_api_service.dart';
+import 'package:soul_voice/services/quote_api_service.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -11,21 +11,42 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  final QuoteApiService _quoteApiService = QuoteApiService();
+  final QuoteApiService _apiService = QuoteApiService();
   final TextEditingController _searchController = TextEditingController();
 
-  Future<List<QuoteModel>>? _searchFuture;
+  List<QuoteModel> _searchResults = [];
+  bool _isLoading = false;
+  bool _hasSearched = false;
 
-  final List<String> categories = [
-    'Faith',
-    'Life',
-    'Wisdom',
-    'Success',
-    'Love',
-    'Peace',
-  ];
+  void _performSearch(String query) async {
+    final trimmedQuery = query.trim();
+    if (trimmedQuery.isEmpty) {
+      setState(() {
+        _searchResults = [];
+        _hasSearched = false;
+        _isLoading = false;
+      });
+      return;
+    }
 
-  String? selectedCategory;
+    setState(() {
+      _isLoading = true;
+      _hasSearched = true;
+    });
+
+    try {
+      final results = await _apiService.getQuotesByCategory(trimmedQuery);
+      setState(() {
+        _searchResults = results;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _searchResults = [];
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -33,70 +54,40 @@ class _SearchScreenState extends State<SearchScreen> {
     super.dispose();
   }
 
-  void _searchQuotes() {
-    final query = _searchController.text.trim();
-
-    if (query.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter something to search.')),
-      );
-      return;
-    }
-
-    FocusScope.of(context).unfocus();
-
-    setState(() {
-      _searchFuture = _quoteApiService.searchQuotes(query);
-    });
-  }
-
-  void _searchByCategory(String category) {
-    FocusScope.of(context).unfocus();
-
-    setState(() {
-      selectedCategory = category;
-      _searchFuture = _quoteApiService.getQuotesByCategory(
-        category.toLowerCase(),
-      );
-    });
-  }
-
-  void _clearSearch() {
-    _searchController.clear();
-
-    setState(() {
-      selectedCategory = null;
-      _searchFuture = null;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: AppColors.textPrimary,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text(
           'Search Quotes',
           style: TextStyle(
             color: AppColors.textPrimary,
+            fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary),
       ),
-
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ================= SEARCH BAR =================
+              const SizedBox(height: 10),
+
+              // ================= SEARCH INPUT =================
               Container(
-                height: 54,
+                height: 52,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(16),
@@ -104,171 +95,75 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 child: Row(
                   children: [
-                    const SizedBox(width: 15),
-
                     const Icon(
                       Icons.search_rounded,
                       color: AppColors.textSecondary,
                     ),
-
-                    const SizedBox(width: 10),
-
+                    const SizedBox(width: 12),
                     Expanded(
                       child: TextField(
                         controller: _searchController,
+                        autofocus: true,
                         style: const TextStyle(color: AppColors.textPrimary),
                         decoration: const InputDecoration(
-                          hintText: 'Search quotes...',
-                          hintStyle: TextStyle(color: AppColors.textSecondary),
+                          hintText: 'Search by category or keyword...',
+                          hintStyle: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 14,
+                          ),
                           border: InputBorder.none,
                         ),
-                        onSubmitted: (_) {
-                          _searchQuotes();
+                        onSubmitted: (value) => _performSearch(value),
+                        onChanged: (value) {
+                          if (value.isEmpty) {
+                            _performSearch('');
+                          }
                         },
                       ),
                     ),
-
                     if (_searchController.text.isNotEmpty)
-                      IconButton(
-                        onPressed: _clearSearch,
-                        icon: const Icon(
+                      GestureDetector(
+                        onTap: () {
+                          _searchController.clear();
+                          _performSearch('');
+                        },
+                        child: const Icon(
                           Icons.close_rounded,
                           color: AppColors.textSecondary,
+                          size: 20,
                         ),
                       ),
-
-                    Container(
-                      margin: const EdgeInsets.only(right: 6),
-                      child: IconButton(
-                        onPressed: _searchQuotes,
-                        icon: const Icon(
-                          Icons.arrow_forward_rounded,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 28),
+              const SizedBox(height: 20),
 
-              // ================= CATEGORIES =================
-              const Text(
-                'Browse by Category',
-                style: TextStyle(
-                  color: AppColors.textPrimary,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+              // ================= RESULTS BODY =================
+              Expanded(
+                child: _isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                        ),
+                      )
+                    : !_hasSearched
+                    ? _buildInitialState()
+                    : _searchResults.isEmpty
+                    ? _buildEmptyState()
+                    : ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: _searchResults.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          final quote = _searchResults[index];
+                          return _QuoteCard(
+                            quote: quote.content,
+                            author: quote.author,
+                          );
+                        },
+                      ),
               ),
-
-              const SizedBox(height: 14),
-
-              Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: categories.map((category) {
-                  final isSelected = selectedCategory == category;
-
-                  return GestureDetector(
-                    onTap: () {
-                      _searchByCategory(category);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 11,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.primary
-                            : AppColors.surface,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: isSelected
-                              ? AppColors.primary
-                              : AppColors.border,
-                        ),
-                      ),
-                      child: Text(
-                        category,
-                        style: TextStyle(
-                          color: isSelected
-                              ? Colors.white
-                              : AppColors.textPrimary,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-
-              const SizedBox(height: 30),
-
-              // ================= RESULTS =================
-              if (_searchFuture == null)
-                _buildInitialMessage()
-              else
-                FutureBuilder<List<QuoteModel>>(
-                  future: _searchFuture,
-                  builder: (context, snapshot) {
-                    // LOADING
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(40),
-                          child: CircularProgressIndicator(
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      );
-                    }
-
-                    // ERROR
-                    if (snapshot.hasError) {
-                      return _buildError();
-                    }
-
-                    final quotes = snapshot.data ?? [];
-
-                    // EMPTY
-                    if (quotes.isEmpty) {
-                      return _buildEmpty();
-                    }
-
-                    // SUCCESS
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          selectedCategory != null
-                              ? '$selectedCategory Quotes'
-                              : 'Search Results',
-                          style: const TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        const SizedBox(height: 14),
-
-                        ...quotes.map(
-                          (quote) => Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _SearchQuoteCard(
-                              quote: quote.content,
-                              author: quote.author,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
             ],
           ),
         ),
@@ -276,129 +171,74 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildInitialMessage() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: const Column(
-        children: [
-          Icon(Icons.search_rounded, color: AppColors.primary, size: 50),
-
-          SizedBox(height: 15),
-
-          Text(
-            'Find Your Quote',
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+  // Search start na hone par dikhne wala widget
+  Widget _buildInitialState() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: const [
+        Icon(
+          Icons.manage_search_rounded,
+          size: 70,
+          color: AppColors.textSecondary,
+        ),
+        SizedBox(height: 16),
+        Text(
+          'Find Your Motivation',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
-
-          SizedBox(height: 8),
-
-          Text(
-            'Search for quotes or select a category '
-            'to discover inspiring words.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 13,
-              height: 1.4,
-            ),
-          ),
-        ],
-      ),
+        ),
+        SizedBox(height: 8),
+        Text(
+          'Type keywords like "faith", "life", or "wisdom" to search quotes.',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+        ),
+      ],
     );
   }
 
-  Widget _buildError() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(25),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: const Column(
-        children: [
-          Icon(Icons.cloud_off_rounded, color: AppColors.primary, size: 45),
-
-          SizedBox(height: 12),
-
-          Text(
-            'Something went wrong',
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
+  // Results na milne par dikhne wala widget
+  Widget _buildEmptyState() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(
+          Icons.search_off_rounded,
+          size: 60,
+          color: AppColors.primary,
+        ),
+        const SizedBox(height: 14),
+        const Text(
+          'No quotes found',
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
           ),
-
-          SizedBox(height: 7),
-
-          Text(
-            'Unable to load quotes. Please try again.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmpty() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: const Column(
-        children: [
-          Icon(Icons.format_quote_rounded, color: AppColors.primary, size: 45),
-
-          SizedBox(height: 12),
-
-          Text(
-            'No Quotes Found',
-            style: TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-
-          SizedBox(height: 7),
-
-          Text(
-            'Try another search or choose a different category.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
-          ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'We couldn\'t find anything for "${_searchController.text}".',
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
+        ),
+      ],
     );
   }
 }
 
 // =====================================================
-// QUOTE CARD
+// QUOTE CARD (Same as HomeScreen Style)
 // =====================================================
 
-class _SearchQuoteCard extends StatelessWidget {
+class _QuoteCard extends StatelessWidget {
   final String quote;
   final String author;
 
-  const _SearchQuoteCard({required this.quote, required this.author});
+  const _QuoteCard({required this.quote, required this.author});
 
   @override
   Widget build(BuildContext context) {
@@ -418,40 +258,30 @@ class _SearchQuoteCard extends StatelessWidget {
             color: AppColors.primary,
             size: 30,
           ),
-
           const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  quote,
+                  '"$quote"',
                   style: const TextStyle(
                     color: AppColors.textPrimary,
                     fontSize: 15,
-                    height: 1.45,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
                   ),
                 ),
-
-                const SizedBox(height: 8),
-
+                const SizedBox(height: 10),
                 Text(
-                  '— $author',
+                  '- $author',
                   style: const TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 12,
+                    fontStyle: FontStyle.italic,
                   ),
                 ),
               ],
-            ),
-          ),
-
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.favorite_border_rounded,
-              color: AppColors.primary,
             ),
           ),
         ],

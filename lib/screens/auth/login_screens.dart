@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/auth/signup_screen.dart';
 import 'package:soul_voice/screens/auth/forgot_password.dart';
-import 'package:soul_voice/screens/home_screen.dart';
+import 'package:soul_voice/screens/main_wrapper_screen.dart'; // 👈 Updated Import
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -41,10 +41,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (!mounted) return;
 
+      // 👈 Updated: Ab login ke baad Bottom Navigation Bar waali screen open hogi
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (_) => HomeScreen(),
+          builder: (_) => const MainWrapperScreen(),
         ),
       );
     } on FirebaseAuthException catch (e) {
