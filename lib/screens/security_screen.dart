@@ -62,7 +62,12 @@ class SecurityScreen extends StatelessWidget {
                 leading: const Icon(Icons.lock_outline),
                 title: const Text('Change Password'),
                 trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 15),
-                onTap: () {},
+                onTap: () {  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => changepassword(),
+                    ),
+                  );},
               ),
               const Divider(),
               ListTile(

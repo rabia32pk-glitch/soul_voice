@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart'; // 👈 Added Share Package
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
 import 'package:soul_voice/screens/favorite_bloc.dart';
@@ -45,6 +46,14 @@ class _QuoteScreenState extends State<QuoteScreen> {
     }
   }
 
+  // 🔴 Share Functionality
+  void shareQuote() {
+    if (currentQuote != null) {
+      final quoteText = '"${currentQuote!.content}"\n- ${currentQuote!.author}';
+      Share.share(quoteText, subject: 'Soul Voice Quote');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeMode>(
@@ -52,10 +61,12 @@ class _QuoteScreenState extends State<QuoteScreen> {
         final isDark = themeMode == ThemeMode.dark;
 
         final backgroundColor = isDark ? AppColors.background : Colors.white;
-        final primaryTextColor =
-            isDark ? AppColors.textPrimary : Colors.black87;
-        final secondaryTextColor =
-            isDark ? AppColors.textSecondary : Colors.black54;
+        final primaryTextColor = isDark
+            ? AppColors.textPrimary
+            : Colors.black87;
+        final secondaryTextColor = isDark
+            ? AppColors.textSecondary
+            : Colors.black54;
 
         return Scaffold(
           backgroundColor: backgroundColor,
@@ -76,9 +87,7 @@ class _QuoteScreenState extends State<QuoteScreen> {
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: isLoading
-                  ? const CircularProgressIndicator(
-                      color: AppColors.primary,
-                    )
+                  ? const CircularProgressIndicator(color: AppColors.primary)
                   : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -120,11 +129,12 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                     if (currentQuote == null) return;
 
                                     context.read<FavoriteBloc>().add(
-                                          ToggleFavoriteEvent(quoteMap),
-                                        );
+                                      ToggleFavoriteEvent(quoteMap),
+                                    );
 
-                                    ScaffoldMessenger.of(context)
-                                        .hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(
+                                      context,
+                                    ).hideCurrentSnackBar();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
@@ -139,8 +149,9 @@ class _QuoteScreenState extends State<QuoteScreen> {
                                           vertical: 20,
                                         ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                       ),
                                     );
@@ -158,8 +169,10 @@ class _QuoteScreenState extends State<QuoteScreen> {
                               },
                             ),
                             const SizedBox(width: 16),
+
+                            // 🔴 Share Button Working OnTap
                             IconButton(
-                              onPressed: () {},
+                              onPressed: shareQuote,
                               icon: const Icon(
                                 Icons.share_outlined,
                                 color: AppColors.textSecondary,
