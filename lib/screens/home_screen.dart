@@ -3,15 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
 import 'package:soul_voice/screens/categories_screen.dart';
+import 'package:soul_voice/screens/favorite_bloc.dart';
+import 'package:soul_voice/screens/favorite_event.dart';
+import 'package:soul_voice/screens/favorite_state.dart';
 import 'package:soul_voice/screens/notifications_screen.dart';
 import 'package:soul_voice/screens/search_screen.dart';
 import 'package:soul_voice/services/models/quote_model.dart';
-
-import '../services/quote_api_service.dart';
+import 'package:soul_voice/services/quote_api_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-   
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -20,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final QuoteApiService _quoteApiService = QuoteApiService();
 
   late Future<List<QuoteModel>> _quotesFuture;
-    bool isFavorite = false;
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +55,13 @@ class _HomeScreenState extends State<HomeScreen> {
       {'name': 'Love', 'icon': Icons.favorite_border_rounded, 'tag': 'love'},
       {'name': 'Peace', 'icon': Icons.spa_outlined, 'tag': 'peace'},
     ];
+
+    // Today's Inspiration Quote Data
+    const todayQuoteMap = {
+      'quote':
+          'Your journey may be difficult, but every step makes you stronger.',
+      'author': 'Daily Inspiration',
+    };
 
     return BlocBuilder<ThemeCubit, ThemeMode>(
       builder: (context, themeMode) {
@@ -239,79 +248,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 28),
 
                     // ================= DAILY QUOTE =================
-                    Text(
-                      'Daily Quote',
-                      const Text(
-                        '"Your journey may be difficult, '
-                        'but every step makes you stronger."',
-                        style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
-                          height: 1.4,
-                        ),
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      const Text(
-                        'Daily Inspiration',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 13,
-                        ),
-                      ),
-
-                      const SizedBox(height: 14),
-
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                        onPressed: () {
-  setState(() {
-    isFavorite = !isFavorite;
-  });
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        isFavorite
-            ? 'Your quote has been added to favorites ❤️'
-            : 'Your quote has been removed from favorites 💔',
-      ),
-      duration: Duration(seconds: 2),
-    ),
-  );
-},
-icon: Icon(
-  isFavorite ? Icons.favorite : Icons.favorite_border,
-  color: isFavorite ? Colors.red : AppColors.primary
-),
-),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: 28),
-
-                // ================= FEATURED QUOTES =================
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Featured Quotes',
-                      style: TextStyle(
-                        color: primaryTextColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(height: 14),
-
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(22),
@@ -341,12 +277,9 @@ icon: Icon(
                               ),
                             ],
                           ),
-
                           const SizedBox(height: 18),
-
                           Text(
-                            '"Your journey may be difficult, '
-                            'but every step makes you stronger."',
+                            '"${todayQuoteMap['quote']}"',
                             style: TextStyle(
                               color: primaryTextColor,
                               fontSize: 20,
@@ -354,35 +287,54 @@ icon: Icon(
                               height: 1.4,
                             ),
                           ),
-
                           const SizedBox(height: 14),
-
                           Text(
-                            'Daily Inspiration',
+                            todayQuoteMap['author']!,
                             style: TextStyle(
                               color: secondaryTextColor,
                               fontSize: 13,
                             ),
                           ),
-
                           const SizedBox(height: 14),
-
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              IconButton(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.share_outlined,
-                                  color: secondaryTextColor,
-                                ),
-                              ),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.favorite_border_rounded,
-                                  color: AppColors.primary,
-                                ),
+                              BlocBuilder<FavoriteBloc, FavoriteState>(
+                                builder: (context, favState) {
+                                  final isTodayFav =
+                                      favState.favoriteQuotes.any(
+                                    (q) => q['quote'] == todayQuoteMap['quote'],
+                                  );
+
+                                  return IconButton(
+                                    onPressed: () {
+                                      context.read<FavoriteBloc>().add(
+                                            ToggleFavoriteEvent(todayQuoteMap),
+                                          );
+                                      ScaffoldMessenger.of(context)
+                                          .clearSnackBars();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            isTodayFav
+                                                ? 'Quote removed from favorites 💔'
+                                                : 'Quote added to favorites ❤️',
+                                          ),
+                                          duration: const Duration(seconds: 2),
+                                        ),
+                                      );
+                                    },
+                                    icon: Icon(
+                                      isTodayFav
+                                          ? Icons.favorite
+                                          : Icons.favorite_border,
+                                      color: isTodayFav
+                                          ? Colors.red
+                                          : AppColors.primary,
+                                    ),
+                                  );
+                                },
                               ),
                             ],
                           ),
@@ -452,9 +404,7 @@ icon: Icon(
                                   color: AppColors.primary,
                                   size: 40,
                                 ),
-
                                 const SizedBox(height: 12),
-
                                 Text(
                                   'Unable to load quotes',
                                   style: TextStyle(
@@ -463,9 +413,7 @@ icon: Icon(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-
                                 const SizedBox(height: 6),
-
                                 Text(
                                   'Please check your internet '
                                   'connection and try again.',
@@ -475,9 +423,7 @@ icon: Icon(
                                     fontSize: 13,
                                   ),
                                 ),
-
                                 const SizedBox(height: 15),
-
                                 ElevatedButton(
                                   onPressed: () {
                                     setState(() {
@@ -534,7 +480,6 @@ icon: Icon(
       },
     );
   }
-
 }
 
 // =====================================================
@@ -604,6 +549,7 @@ class _QuoteCard extends StatelessWidget {
   final Color secondaryTextColor;
 
   const _QuoteCard({
+    super.key,
     required this.quote,
     required this.author,
     required this.surfaceColor,
@@ -614,6 +560,11 @@ class _QuoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final quoteMap = {
+      'quote': quote,
+      'author': author,
+    };
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
@@ -630,9 +581,7 @@ class _QuoteCard extends StatelessWidget {
             color: AppColors.primary,
             size: 30,
           ),
-
           const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -645,26 +594,41 @@ class _QuoteCard extends StatelessWidget {
                     height: 1.4,
                   ),
                 ),
-
                 const SizedBox(height: 8),
-
                 Text(
                   '— $author',
-                  style: TextStyle(
-                    color: secondaryTextColor,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: secondaryTextColor, fontSize: 12),
                 ),
               ],
             ),
           ),
+          BlocBuilder<FavoriteBloc, FavoriteState>(
+            builder: (context, favState) {
+              final isFav = favState.favoriteQuotes.any(
+                (q) => q['quote'] == quote,
+              );
 
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.favorite_border_rounded,
-              color: secondaryTextColor,
-            ),
+              return IconButton(
+                onPressed: () {
+                  context.read<FavoriteBloc>().add(ToggleFavoriteEvent(quoteMap));
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        isFav
+                            ? 'Removed from favorites 💔'
+                            : 'Quote added to favorites ❤️',
+                      ),
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                },
+                icon: Icon(
+                  isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                  color: isFav ? Colors.red : secondaryTextColor,
+                ),
+              );
+            },
           ),
         ],
       ),

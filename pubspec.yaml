@@ -41,13 +41,13 @@ dependencies:
   shared_preferences: ^2.5.5
   flutter_bloc: ^9.1.1
   firebase_core: ^4.13.0
-<<<<<<< HEAD
   firebase_auth: ^6.5.7
   image_picker: ^1.2.3
   path_provider: ^2.1.6
   cloud_firestore: ^6.8.0
-=======
->>>>>>> origin/qandeel
+  share_plus: ^13.3.0
+  url_launcher: ^6.3.2
+  mailer: ^7.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

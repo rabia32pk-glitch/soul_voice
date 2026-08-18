@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
-import 'package:soul_voice/screens/auth/signup_screen.dart';
 import 'package:soul_voice/screens/auth/forgot_password.dart';
-import 'package:soul_voice/screens/main_wrapper_screen.dart'; // 👈 Updated Import
+import 'package:soul_voice/screens/auth/signup_screen.dart';
+import 'package:soul_voice/screens/main_wrapper_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -25,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
-      _showMessage('Please enter email and password.');
+      _showMessage('Please enter both email and password.');
       return;
     }
 
@@ -41,12 +40,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (!mounted) return;
 
-      // 👈 Updated: Ab login ke baad Bottom Navigation Bar waali screen open hogi
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => const MainWrapperScreen(),
-        ),
+        MaterialPageRoute(builder: (_) => const MainWrapperScreen()),
       );
     } on FirebaseAuthException catch (e) {
       String message = 'Login failed.';
@@ -55,30 +51,28 @@ class _LoginScreenState extends State<LoginScreen> {
         case 'invalid-credential':
           message = 'Invalid email or password.';
           break;
-
         case 'user-not-found':
           message = 'No account found with this email.';
           break;
-
         case 'wrong-password':
           message = 'Incorrect password.';
           break;
-
         case 'invalid-email':
-          message = 'Please enter a valid email.';
+          message = 'Please enter a valid email address.';
           break;
-
         case 'too-many-requests':
-          message = 'Too many attempts. Please try again later.';
+          message = 'Too many failed attempts. Try again later.';
           break;
-
+        case 'network-request-failed':
+          message = 'Please check your internet connection.';
+          break;
         default:
-          message = e.message ?? 'Login failed.';
+          message = e.message ?? 'Login failed. Please try again.';
       }
 
       _showMessage(message);
     } catch (e) {
-      _showMessage('Something went wrong. Please try again.');
+      _showMessage('An unexpected error occurred. Please try again.');
     } finally {
       if (mounted) {
         setState(() {
@@ -89,9 +83,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _showMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
+        behavior: SnackBarBehavior.floating,
+        duration: const Duration(seconds: 3),
       ),
     );
   }
@@ -106,46 +104,31 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     final textColor = theme.colorScheme.onSurface;
-
-    final secondaryColor = theme.colorScheme.onSurface.withValues(
-      alpha: 0.65,
-    );
-
+    final secondaryColor = theme.colorScheme.onSurface.withValues(alpha: 0.65);
     final surfaceColor = theme.colorScheme.surface;
-
     final borderColor = theme.dividerColor;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 28),
-
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-
             children: [
               const SizedBox(height: 45),
 
               // ================= LOGO =================
-
               Center(
                 child: Container(
                   height: 76,
                   width: 76,
-
                   decoration: BoxDecoration(
                     color: surfaceColor,
                     borderRadius: BorderRadius.circular(22),
-                    border: Border.all(
-                      color: AppColors.primary,
-                      width: 1.5,
-                    ),
+                    border: Border.all(color: AppColors.primary, width: 1.5),
                   ),
-
                   child: const Icon(
                     Icons.graphic_eq_rounded,
                     color: AppColors.primary,
@@ -157,11 +140,9 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 32),
 
               // ================= TITLE =================
-
               Center(
                 child: Text(
                   'Welcome Back',
-
                   style: TextStyle(
                     color: textColor,
                     fontSize: 30,
@@ -175,21 +156,15 @@ class _LoginScreenState extends State<LoginScreen> {
               Center(
                 child: Text(
                   'Sign in to continue your journey',
-
-                  style: TextStyle(
-                    color: secondaryColor,
-                    fontSize: 15,
-                  ),
+                  style: TextStyle(color: secondaryColor, fontSize: 15),
                 ),
               ),
 
               const SizedBox(height: 42),
 
               // ================= EMAIL =================
-
               Text(
                 'Email',
-
                 style: TextStyle(
                   color: textColor,
                   fontSize: 14,
@@ -201,13 +176,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
               TextField(
                 controller: _emailController,
-
                 keyboardType: TextInputType.emailAddress,
-
-                style: TextStyle(
-                  color: textColor,
-                ),
-
+                style: TextStyle(color: textColor),
                 decoration: const InputDecoration(
                   hintText: 'Enter your email',
                   prefixIcon: Icon(Icons.email_outlined),
@@ -217,10 +187,8 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
 
               // ================= PASSWORD =================
-
               Text(
                 'Password',
-
                 style: TextStyle(
                   color: textColor,
                   fontSize: 14,
@@ -232,27 +200,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
               TextField(
                 controller: _passwordController,
-
                 obscureText: _obscurePassword,
-
-                style: TextStyle(
-                  color: textColor,
-                ),
-
+                style: TextStyle(color: textColor),
                 decoration: InputDecoration(
                   hintText: 'Enter your password',
-
-                  prefixIcon: const Icon(
-                    Icons.lock_outline,
-                  ),
-
+                  prefixIcon: const Icon(Icons.lock_outline),
                   suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
                         _obscurePassword = !_obscurePassword;
                       });
                     },
-
                     icon: Icon(
                       _obscurePassword
                           ? Icons.visibility_off_outlined
@@ -265,55 +223,43 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 10),
 
               // ================= FORGOT PASSWORD =================
-
               Align(
                 alignment: Alignment.centerRight,
-
                 child: TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-
                       MaterialPageRoute(
-                        builder: (_) =>
-                            const ForgotPasswordScreen(),
+                        builder: (_) => const ForgotPasswordScreen(),
                       ),
                     );
                   },
-
                   child: const Text(
                     'Forgot Password?',
-
-                    style: TextStyle(
-                      color: AppColors.primary,
-                    ),
+                    style: TextStyle(color: AppColors.primary),
                   ),
                 ),
               ),
 
               const SizedBox(height: 12),
 
-              // ================= LOGIN =================
-
+              // ================= LOGIN BUTTON =================
               SizedBox(
                 width: double.infinity,
                 height: 52,
-
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _login,
-
                   child: _isLoading
                       ? const SizedBox(
                           height: 22,
                           width: 22,
-
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
+                            color: Colors.white,
                           ),
                         )
                       : const Text(
                           'Login',
-
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -324,65 +270,34 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 24),
 
-              // ================= OR =================
-
+              // ================= OR DIVIDER =================
               Row(
                 children: [
-                  Expanded(
-                    child: Divider(
-                      color: borderColor,
-                    ),
-                  ),
-
+                  Expanded(child: Divider(color: borderColor)),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                    ),
-
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
                     child: Text(
                       'OR',
-
-                      style: TextStyle(
-                        color: secondaryColor,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: secondaryColor, fontSize: 12),
                     ),
                   ),
-
-                  Expanded(
-                    child: Divider(
-                      color: borderColor,
-                    ),
-                  ),
+                  Expanded(child: Divider(color: borderColor)),
                 ],
               ),
 
               const SizedBox(height: 24),
 
-              // ================= GOOGLE =================
-
+              // ================= GOOGLE BUTTON =================
               SizedBox(
                 width: double.infinity,
                 height: 52,
-
                 child: OutlinedButton.icon(
                   onPressed: () {},
-
-                  icon: const Icon(
-                    Icons.g_mobiledata_rounded,
-                  ),
-
-                  label: const Text(
-                    'Continue with Google',
-                  ),
-
+                  icon: const Icon(Icons.g_mobiledata_rounded, size: 28),
+                  label: const Text('Continue with Google'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: textColor,
-
-                    side: BorderSide(
-                      color: borderColor,
-                    ),
-
+                    side: BorderSide(color: borderColor),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -392,32 +307,22 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 30),
 
-              // ================= SIGN UP =================
-
+              // ================= SIGN UP NAVIGATION =================
               Center(
                 child: TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-
-                      MaterialPageRoute(
-                        builder: (_) => const SignupScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const SignupScreen()),
                     );
                   },
-
                   child: Text.rich(
                     TextSpan(
                       text: "Don't have an account? ",
-
-                      style: TextStyle(
-                        color: secondaryColor,
-                      ),
-
+                      style: TextStyle(color: secondaryColor),
                       children: const [
                         TextSpan(
                           text: 'Sign Up',
-
                           style: TextStyle(
                             color: AppColors.primary,
                             fontWeight: FontWeight.bold,

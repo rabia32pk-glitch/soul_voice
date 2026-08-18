@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
+import 'package:soul_voice/screens/favorite_bloc.dart';
+import 'package:soul_voice/screens/favorite_event.dart';
+import 'package:soul_voice/screens/favorite_state.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
@@ -40,26 +43,37 @@ class FavoritesScreen extends StatelessWidget {
             ),
             iconTheme: IconThemeData(color: primaryTextColor),
           ),
-          body: ListView(
-            padding: const EdgeInsets.all(20),
-            children: [
-              FavoriteQuoteCard(
-                quote: 'Believe in yourself and keep moving forward.',
-                author: 'Soul Voice',
-                surfaceColor: surfaceColor,
-                borderColor: borderColor,
-                primaryTextColor: primaryTextColor,
-                secondaryTextColor: secondaryTextColor,
-              ),
-              FavoriteQuoteCard(
-                quote: 'Peace begins with a calm mind and a hopeful heart.',
-                author: 'Soul Voice',
-                surfaceColor: surfaceColor,
-                borderColor: borderColor,
-                primaryTextColor: primaryTextColor,
-                secondaryTextColor: secondaryTextColor,
-              ),
-            ],
+          body: BlocBuilder<FavoriteBloc, FavoriteState>(
+            builder: (context, state) {
+              if (state.favoriteQuotes.isEmpty) {
+                return Center(
+                  child: Text(
+                    'No favorites added yet',
+                    style: TextStyle(
+                      color: secondaryTextColor,
+                      fontSize: 16,
+                    ),
+                  ),
+                );
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.all(20),
+                itemCount: state.favoriteQuotes.length,
+                itemBuilder: (context, index) {
+                  final item = state.favoriteQuotes[index];
+                  return FavoriteQuoteCard(
+                    quoteData: item,
+                    quote: item['quote'] ?? '',
+                    author: item['author'] ?? 'Soul Voice',
+                    surfaceColor: surfaceColor,
+                    borderColor: borderColor,
+                    primaryTextColor: primaryTextColor,
+                    secondaryTextColor: secondaryTextColor,
+                  );
+                },
+              );
+            },
           ),
         );
       },
@@ -72,6 +86,7 @@ class FavoritesScreen extends StatelessWidget {
 // =====================================================
 
 class FavoriteQuoteCard extends StatelessWidget {
+  final Map<String, dynamic> quoteData;
   final String quote;
   final String author;
   final Color surfaceColor;
@@ -81,6 +96,7 @@ class FavoriteQuoteCard extends StatelessWidget {
 
   const FavoriteQuoteCard({
     super.key,
+    required this.quoteData,
     required this.quote,
     required this.author,
     required this.surfaceColor,
@@ -102,12 +118,29 @@ class FavoriteQuoteCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
-            Icons.favorite_rounded,
-            color: AppColors.primary,
-            size: 28,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Icon(
+                Icons.favorite_rounded,
+                color: AppColors.primary,
+                size: 28,
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, color: Colors.red),
+                onPressed: () {
+                  context.read<FavoriteBloc>().add(ToggleFavoriteEvent(quoteData));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Removed from Favorites'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
           Text(
             quote,
             style: TextStyle(
