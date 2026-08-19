@@ -10,6 +10,8 @@ import 'package:soul_voice/screens/notifications_screen.dart';
 import 'package:soul_voice/screens/search_screen.dart';
 import 'package:soul_voice/services/models/quote_model.dart';
 import 'package:soul_voice/services/quote_api_service.dart';
+import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -296,48 +298,93 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           const SizedBox(height: 14),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              BlocBuilder<FavoriteBloc, FavoriteState>(
-                                builder: (context, favState) {
-                                  final isTodayFav =
-                                      favState.favoriteQuotes.any(
-                                    (q) => q['quote'] == todayQuoteMap['quote'],
-                                  );
+                         Row(
+  mainAxisAlignment: MainAxisAlignment.end,
+  children: [
+    BlocBuilder<FavoriteBloc, FavoriteState>(
+      builder: (context, favState) {
+        final isTodayFav = favState.favoriteQuotes.any(
+          (q) => q['quote'] == todayQuoteMap['quote'],
+        );
 
-                                  return IconButton(
-                                    onPressed: () {
-                                      context.read<FavoriteBloc>().add(
-                                            ToggleFavoriteEvent(todayQuoteMap),
-                                          );
-                                      ScaffoldMessenger.of(context)
-                                          .clearSnackBars();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            isTodayFav
-                                                ? 'Quote removed from favorites 💔'
-                                                : 'Quote added to favorites ❤️',
-                                          ),
-                                          duration: const Duration(seconds: 2),
-                                        ),
-                                      );
-                                    },
-                                    icon: Icon(
-                                      isTodayFav
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      color: isTodayFav
-                                          ? Colors.red
-                                          : AppColors.primary,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
+        return Row(
+          children: [
+            // ❤️ FAVORITE
+            IconButton(
+              onPressed: () {
+                context.read<FavoriteBloc>().add(
+                  ToggleFavoriteEvent(todayQuoteMap),
+                );
+
+                ScaffoldMessenger.of(context).clearSnackBars();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      isTodayFav
+                          ? 'Quote removed from favorites 💔'
+                          : 'Quote added to favorites ❤️',
+                    ),
+                    duration: const Duration(seconds: 1),
+                  ),
+                );
+              },
+              icon: Icon(
+                isTodayFav
+                    ? Icons.favorite
+                    : Icons.favorite_border,
+                color: isTodayFav
+                    ? Colors.red
+                    : AppColors.primary,
+              ),
+            ),
+
+            // 📋 COPY
+            IconButton(
+              onPressed: () async {
+                final text =
+                    '"${todayQuoteMap['quote']}"\n— ${todayQuoteMap['author']}';
+
+                await Clipboard.setData(
+                  ClipboardData(text: text),
+                );
+
+                ScaffoldMessenger.of(context).clearSnackBars();
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Quote copied successfully 📋',
+                    ),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
+              },
+              icon: Icon(
+                Icons.copy_rounded,
+                color: secondaryTextColor,
+              ),
+            ),
+
+            // ↗️ SHARE
+            IconButton(
+              onPressed: () {
+                final shareText =
+                    '"${todayQuoteMap['quote']}"\n— ${todayQuoteMap['author']}';
+
+                Share.share(shareText);
+              },
+              icon: Icon(
+                Icons.share_outlined,
+                color: secondaryTextColor,
+              ),
+            ),
+          ],
+        );
+      },
+    ),
+  ],
+),
                         ],
                       ),
                     ),
@@ -602,34 +649,83 @@ class _QuoteCard extends StatelessWidget {
               ],
             ),
           ),
-          BlocBuilder<FavoriteBloc, FavoriteState>(
-            builder: (context, favState) {
-              final isFav = favState.favoriteQuotes.any(
-                (q) => q['quote'] == quote,
-              );
+         BlocBuilder<FavoriteBloc, FavoriteState>(
+  builder: (context, favState) {
+    final isFav = favState.favoriteQuotes.any(
+      (q) => q['quote'] == quote,
+    );
 
-              return IconButton(
-                onPressed: () {
-                  context.read<FavoriteBloc>().add(ToggleFavoriteEvent(quoteMap));
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        isFav
-                            ? 'Removed from favorites 💔'
-                            : 'Quote added to favorites ❤️',
-                      ),
-                      duration: const Duration(seconds: 1),
-                    ),
-                  );
-                },
-                icon: Icon(
-                  isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                  color: isFav ? Colors.red : secondaryTextColor,
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // ❤️ FAVORITE
+        IconButton(
+          onPressed: () {
+            context.read<FavoriteBloc>().add(
+              ToggleFavoriteEvent(quoteMap),
+            );
+
+            ScaffoldMessenger.of(context).clearSnackBars();
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  isFav
+                      ? 'Removed from favorites 💔'
+                      : 'Quote added to favorites ❤️',
                 ),
-              );
-            },
+                duration: const Duration(seconds: 1),
+              ),
+            );
+          },
+          icon: Icon(
+            isFav
+                ? Icons.favorite_rounded
+                : Icons.favorite_border_rounded,
+            color: isFav ? Colors.red : secondaryTextColor,
           ),
+        ),
+
+        // 📋 COPY
+        IconButton(
+          onPressed: () async {
+            final text = '"$quote"\n— $author';
+
+            await Clipboard.setData(
+              ClipboardData(text: text),
+            );
+
+            ScaffoldMessenger.of(context).clearSnackBars();
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Quote copied successfully 📋'),
+                duration: Duration(seconds: 1),
+              ),
+            );
+          },
+          icon: Icon(
+            Icons.copy_rounded,
+            color: secondaryTextColor,
+          ),
+        ),
+
+        // ↗️ SHARE
+        IconButton(
+          onPressed: () {
+            final shareText = '"$quote"\n— $author';
+
+            Share.share(shareText);
+          },
+          icon: Icon(
+            Icons.share_outlined,
+            color: secondaryTextColor,
+          ),
+        ),
+      ],
+    );
+  },
+),
         ],
       ),
     );
