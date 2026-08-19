@@ -23,6 +23,66 @@ class _HomeScreenState extends State<HomeScreen> {
 
   late Future<List<QuoteModel>> _quotesFuture;
 
+  // ================= DAILY QUOTES LIST =================
+  final List<Map<String, String>> _dailyInspirationQuotes = [
+    {
+      'quote':
+          'Your journey may be difficult, but every step makes you stronger.',
+      'author': 'Daily Inspiration',
+    },
+    {
+      'quote':
+          'Patience is not the ability to wait, but how you behave while waiting.',
+      'author': 'Daily Inspiration',
+    },
+    {
+      'quote': 'Trust the process. Your time and success will definitely come.',
+      'author': 'Daily Inspiration',
+    },
+    {
+      'quote':
+          'Peace comes from within. Do not seek it outside without inner harmony.',
+      'author': 'Daily Inspiration',
+    },
+    {
+      'quote':
+          'Every day is a new beginning. Take a deep breath and start again.',
+      'author': 'Daily Inspiration',
+    },
+    {
+      'quote': 'Small daily improvements over time lead to stunning results.',
+      'author': 'Daily Inspiration',
+    },
+    {
+      'quote': 'Do not lose hope. You never know what tomorrow will bring.',
+      'author': 'Daily Inspiration',
+    },
+    {
+      'quote':
+          'Believe in yourself and all that you are. There is something greater inside you.',
+      'author': 'Daily Inspiration',
+    },
+    {
+      'quote':
+          'Kindness is a language which the deaf can hear and the blind can see.',
+      'author': 'Daily Inspiration',
+    },
+    {
+      'quote':
+          'Hardships often prepare ordinary people for an extraordinary destiny.',
+      'author': 'Daily Inspiration',
+    },
+  ];
+
+  // Aaj ki date ke mutabiq quote pick karne ka function
+  Map<String, String> _getTodayQuote() {
+    final now = DateTime.now();
+    // Days since epoch to get a unique number for each date
+    final dayIndex = now.difference(DateTime(2025, 1, 1)).inDays;
+    final index = dayIndex % _dailyInspirationQuotes.length;
+    return _dailyInspirationQuotes[index];
+  }
+
   @override
   void initState() {
     super.initState();
@@ -56,26 +116,24 @@ class _HomeScreenState extends State<HomeScreen> {
       {'name': 'Peace', 'icon': Icons.spa_outlined, 'tag': 'peace'},
     ];
 
-    // Today's Inspiration Quote Data
-    const todayQuoteMap = {
-      'quote':
-          'Your journey may be difficult, but every step makes you stronger.',
-      'author': 'Daily Inspiration',
-    };
+    // Today's Dynamic Quote Data
+    final todayQuoteMap = _getTodayQuote();
 
     return BlocBuilder<ThemeCubit, ThemeMode>(
       builder: (context, themeMode) {
         final isDark = themeMode == ThemeMode.dark;
 
         final backgroundColor = isDark ? AppColors.background : Colors.white;
-        final surfaceColor =
-            isDark ? AppColors.surface : const Color(0xFFF7F7F7);
-        final primaryTextColor =
-            isDark ? AppColors.textPrimary : Colors.black87;
-        final secondaryTextColor =
-            isDark ? AppColors.textSecondary : Colors.black54;
-        final borderColor =
-            isDark ? AppColors.border : const Color(0xFFE0E0E0);
+        final surfaceColor = isDark
+            ? AppColors.surface
+            : const Color(0xFFF7F7F7);
+        final primaryTextColor = isDark
+            ? AppColors.textPrimary
+            : Colors.black87;
+        final secondaryTextColor = isDark
+            ? AppColors.textSecondary
+            : Colors.black54;
+        final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
 
         return Scaffold(
           backgroundColor: backgroundColor,
@@ -301,20 +359,24 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               BlocBuilder<FavoriteBloc, FavoriteState>(
                                 builder: (context, favState) {
-                                  final isTodayFav =
-                                      favState.favoriteQuotes.any(
-                                    (q) => q['quote'] == todayQuoteMap['quote'],
-                                  );
+                                  final isTodayFav = favState.favoriteQuotes
+                                      .any(
+                                        (q) =>
+                                            q['quote'] ==
+                                            todayQuoteMap['quote'],
+                                      );
 
                                   return IconButton(
                                     onPressed: () {
                                       context.read<FavoriteBloc>().add(
-                                            ToggleFavoriteEvent(todayQuoteMap),
-                                          );
-                                      ScaffoldMessenger.of(context)
-                                          .clearSnackBars();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
+                                        ToggleFavoriteEvent(todayQuoteMap),
+                                      );
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).clearSnackBars();
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
                                         SnackBar(
                                           content: Text(
                                             isTodayFav
@@ -560,10 +622,7 @@ class _QuoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final quoteMap = {
-      'quote': quote,
-      'author': author,
-    };
+    final quoteMap = {'quote': quote, 'author': author};
 
     return Container(
       width: double.infinity,
@@ -610,7 +669,9 @@ class _QuoteCard extends StatelessWidget {
 
               return IconButton(
                 onPressed: () {
-                  context.read<FavoriteBloc>().add(ToggleFavoriteEvent(quoteMap));
+                  context.read<FavoriteBloc>().add(
+                    ToggleFavoriteEvent(quoteMap),
+                  );
                   ScaffoldMessenger.of(context).clearSnackBars();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -624,7 +685,9 @@ class _QuoteCard extends StatelessWidget {
                   );
                 },
                 icon: Icon(
-                  isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
+                  isFav
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
                   color: isFav ? Colors.red : secondaryTextColor,
                 ),
               );

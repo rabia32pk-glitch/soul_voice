@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
-import 'package:soul_voice/screens/home_screen.dart';
+import 'package:soul_voice/screens/categories_screen.dart'; // 👈 Categories screen import ki hai
 import 'package:soul_voice/screens/favourite_screens.dart';
-import 'package:soul_voice/screens/profile_screen.dart';
-import 'package:soul_voice/screens/quotes.dart';
+import 'package:soul_voice/screens/home_screen.dart';
+import 'package:soul_voice/screens/profile.dart';
 
 class MainWrapperScreen extends StatefulWidget {
   const MainWrapperScreen({super.key});
@@ -15,10 +15,10 @@ class MainWrapperScreen extends StatefulWidget {
 class _MainWrapperScreenState extends State<MainWrapperScreen> {
   int _currentIndex = 0;
 
-  // Bottom Navigation ki saari main screens
+  // Bottom Navigation ki saari main screens (QuoteScreen ki jagah CategoriesScreen lagai hai)
   final List<Widget> _screens = const [
     HomeScreen(),
-    QuoteScreen(),
+    CategoriesScreen(), // 👈 Yahan Categories Screen add ho gayi
     FavoritesScreen(),
     ProfileScreen(),
   ];
@@ -30,19 +30,16 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
 
     // Light aur Dark mode ke hisaab se colors define kiye hain
     final navBackgroundColor = isDark ? AppColors.surface : Colors.white;
-    final unselectedColor = isDark ? AppColors.textSecondary : Colors.grey.shade600;
+    final unselectedColor = isDark
+        ? AppColors.textSecondary
+        : Colors.grey.shade600;
     final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
 
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(
-              color: borderColor,
-              width: 0.5,
-            ),
-          ),
+          border: Border(top: BorderSide(color: borderColor, width: 0.5)),
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
@@ -62,8 +59,10 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.format_quote_rounded),
-              label: 'Quotes',
+              icon: Icon(
+                Icons.grid_view_rounded,
+              ), // 👈 Categories ke liye Grid Icon
+              label: 'Categories', // 👈 Label Change
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.favorite_border_rounded),
