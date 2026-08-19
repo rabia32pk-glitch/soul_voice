@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:soul_voice/screens/account_verification.dart'; // 👈 Sahi path
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
+import 'package:soul_voice/screens/auth/change_password.dart';
 
 class SecurityScreen extends StatelessWidget {
   const SecurityScreen({super.key});
@@ -8,29 +10,24 @@ class SecurityScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: const Text(
           'Security',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           Container(
             padding: const EdgeInsets.all(25),
             decoration: BoxDecoration(
-              color: Theme.of(context)
-                  .colorScheme
-                  .surface,
-              borderRadius:
-                  BorderRadius.circular(20),
-              border: Border.all(
-                color:
-                    Theme.of(context).dividerColor,
-              ),
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: Column(
               children: [
@@ -39,27 +36,19 @@ class SecurityScreen extends StatelessWidget {
                   size: 55,
                   color: AppColors.primary,
                 ),
-
                 const SizedBox(height: 15),
-
                 const Text(
                   'Account Security',
-                  style: TextStyle(
-                    fontSize: 21,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold),
                 ),
-
                 const SizedBox(height: 8),
-
                 Text(
                   'Keep your Soul Voice account secure.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.65),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.65),
                   ),
                 ),
               ],
@@ -68,32 +57,36 @@ class SecurityScreen extends StatelessWidget {
 
           const SizedBox(height: 20),
 
-          ListTile(
-            leading: const Icon(
-              Icons.lock_reset_rounded,
-            ),
-            title: const Text(
-              'Change Password',
-            ),
-            trailing: const Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 15,
-            ),
-            onTap: () {},
-          ),
-
-          ListTile(
-            leading: const Icon(
-              Icons.verified_user_outlined,
-            ),
-            title: const Text(
-              'Account Verification',
-            ),
-            trailing: const Icon(
-              Icons.arrow_forward_ios_rounded,
-              size: 15,
-            ),
-            onTap: () {},
+          Column(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.lock_outline),
+                title: const Text('Change Password'),
+                trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 15),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChangePasswordScreen(),
+                    ),
+                  );
+                },
+              ),
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.verified_user_outlined),
+                title: const Text('Account Verification'),
+                trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 15),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const Accountverification(),
+                    ),
+                  );
+                },
+              ),
+            ],
           ),
         ],
       ),

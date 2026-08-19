@@ -1,19 +1,18 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
 import 'package:soul_voice/screens/auth/login_screens.dart';
-
 import 'package:soul_voice/screens/edit_profile_screen.dart';
 import 'package:soul_voice/screens/favourite_screens.dart';
 import 'package:soul_voice/screens/notifications_screen.dart';
 import 'package:soul_voice/screens/privacy_screen.dart';
 import 'package:soul_voice/screens/security_screen.dart';
+import 'package:soul_voice/screens/settings_screen.dart';
 import 'package:soul_voice/screens/splash.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -59,181 +58,187 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context, themeMode) {
         final isDark = themeMode == ThemeMode.dark;
 
-        final backgroundColor = isDark ? AppColors.background : Colors.white;
-
-        final surfaceColor = isDark
-            ? AppColors.surface
-            : const Color(0xFFF7F7F7);
-
+        final backgroundColor = isDark
+            ? AppColors.background
+            : const Color(0xFFFAF7F2);
+        final cardColor = isDark ? AppColors.surface : Colors.white;
+        final iconBoxColor = isDark
+            ? AppColors.primary.withValues(alpha: 0.2)
+            : const Color(0xFFF3ECE4);
         final primaryTextColor = isDark
             ? AppColors.textPrimary
-            : Colors.black87;
-
+            : const Color(0xFF3B2824);
         final secondaryTextColor = isDark
             ? AppColors.textSecondary
             : Colors.black54;
 
-        final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
-
         return Scaffold(
           backgroundColor: backgroundColor,
-
           appBar: AppBar(
             backgroundColor: backgroundColor,
             elevation: 0,
             centerTitle: true,
-
             title: Text(
-              'Profile',
+              'My Profile',
               style: TextStyle(
                 color: primaryTextColor,
-                fontSize: 21,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-
             iconTheme: IconThemeData(color: primaryTextColor),
           ),
-
           body: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 30),
-
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // =====================================================
-                  // PROFILE
+                  // TOP COMPACT PROFILE CARD (Matching Sample)
                   // =====================================================
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(22),
-
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
-                      color: surfaceColor,
-                      borderRadius: BorderRadius.circular(22),
-                      border: Border.all(color: borderColor),
+                      color: cardColor,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-
-                    child: Column(
+                    child: Row(
                       children: [
-                        // ================= PROFILE IMAGE =================
-                        GestureDetector(
-                          onTap: _openEditProfile,
-
-                          child: Container(
-                            height: 92,
-                            width: 92,
-
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-
-                              color: AppColors.primary.withValues(alpha: 0.15),
-
-                              border: Border.all(
-                                color: AppColors.primary,
-                                width: 2,
+                        // Avatar with Camera/Edit Badge
+                        Stack(
+                          children: [
+                            GestureDetector(
+                              onTap: _openEditProfile,
+                              child: Container(
+                                height: 75,
+                                width: 75,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.15,
+                                  ),
+                                  border: Border.all(
+                                    color: AppColors.primary.withOpacity(0.5),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: ClipOval(
+                                  child:
+                                      _imagePath != null &&
+                                          File(_imagePath!).existsSync()
+                                      ? Image.file(
+                                          File(_imagePath!),
+                                          fit: BoxFit.cover,
+                                        )
+                                      : const Icon(
+                                          Icons.person_rounded,
+                                          color: AppColors.primary,
+                                          size: 42,
+                                        ),
+                                ),
                               ),
                             ),
-
-                            child: ClipOval(
-                              child:
-                                  _imagePath != null &&
-                                      File(_imagePath!).existsSync()
-                                  ? Image.file(
-                                      File(_imagePath!),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : const Icon(
-                                      Icons.person_rounded,
-                                      color: AppColors.primary,
-                                      size: 48,
-                                    ),
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(height: 14),
-
-                        Text(
-                          _name,
-
-                          style: TextStyle(
-                            color: primaryTextColor,
-                            fontSize: 21,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-
-                        const SizedBox(height: 5),
-
-                        Text(
-                          _email,
-
-                          style: TextStyle(
-                            color: secondaryTextColor,
-                            fontSize: 13,
-                          ),
-                        ),
-
-                        const SizedBox(height: 18),
-
-                        SizedBox(
-                          width: double.infinity,
-
-                          child: OutlinedButton.icon(
-                            onPressed: _openEditProfile,
-
-                            icon: const Icon(Icons.edit_outlined),
-
-                            label: const Text('Edit Profile'),
-
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: AppColors.primary,
-
-                              side: const BorderSide(color: AppColors.primary),
-
-                              padding: const EdgeInsets.symmetric(vertical: 13),
-
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
+                            Positioned(
+                              bottom: 0,
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: _openEditProfile,
+                                child: Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.primary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(
+                                    Icons.camera_alt_rounded,
+                                    color: Colors.white,
+                                    size: 14,
+                                  ),
+                                ),
                               ),
                             ),
+                          ],
+                        ),
+                        const SizedBox(width: 16),
+
+                        // Name & Email
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                _name,
+                                style: TextStyle(
+                                  color: primaryTextColor,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                _email,
+                                style: TextStyle(
+                                  color: secondaryTextColor,
+                                  fontSize: 12,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Edit Pencil Button
+                        IconButton(
+                          onPressed: _openEditProfile,
+                          icon: Icon(
+                            Icons.edit_outlined,
+                            color: primaryTextColor.withOpacity(0.7),
+                            size: 20,
                           ),
                         ),
                       ],
                     ),
                   ),
 
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 24),
 
                   // =====================================================
-                  // ACCOUNT
+                  // SECTION: ACCOUNT
                   // =====================================================
-                  _SectionTitle(title: 'Account', textColor: primaryTextColor),
-
+                  _SectionHeader(title: 'Account', color: primaryTextColor),
                   const SizedBox(height: 10),
 
-                  _ProfileOption(
+                  _SampleOptionItem(
                     icon: Icons.person_outline_rounded,
-                    title: 'Personal Information',
-                    subtitle: 'Manage your profile information',
-                    surfaceColor: surfaceColor,
-                    borderColor: borderColor,
-                    titleColor: primaryTextColor,
-                    subtitleColor: secondaryTextColor,
-
-                    onTap: _openEditProfile,
+                    title: 'Account Settings',
+                    cardColor: cardColor,
+                    iconBoxColor: iconBoxColor,
+                    textColor: primaryTextColor,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const SettingsScreen(),
+                        ),
+                      );
+                    },
                   ),
 
-                  _ProfileOption(
+                  _SampleOptionItem(
                     icon: Icons.favorite_border_rounded,
                     title: 'My Favorites',
-                    subtitle: 'View your saved quotes',
-                    surfaceColor: surfaceColor,
-                    borderColor: borderColor,
-                    titleColor: primaryTextColor,
-                    subtitleColor: secondaryTextColor,
-
+                    cardColor: cardColor,
+                    iconBoxColor: iconBoxColor,
+                    textColor: primaryTextColor,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -247,105 +252,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 20),
 
                   // =====================================================
-                  // SETTINGS
+                  // SECTION: APPEARANCE
                   // =====================================================
-                  _SectionTitle(title: 'Settings', textColor: primaryTextColor),
-
+                  _SectionHeader(title: 'Appearance', color: primaryTextColor),
                   const SizedBox(height: 10),
 
-                  _ProfileOption(
-                    icon: Icons.settings_outlined,
-                    title: 'Settings',
-                    subtitle: 'App preferences and options',
-                    surfaceColor: surfaceColor,
-                    borderColor: borderColor,
-                    titleColor: primaryTextColor,
-                    subtitleColor: secondaryTextColor,
-
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const SettingsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-
-                  _ProfileOption(
-                    icon: Icons.notifications_none_rounded,
-                    title: 'Notifications',
-                    subtitle: 'Manage notification preferences',
-                    surfaceColor: surfaceColor,
-                    borderColor: borderColor,
-                    titleColor: primaryTextColor,
-                    subtitleColor: secondaryTextColor,
-
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const NotificationsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-
-                  // =====================================================
-                  // DARK MODE
-                  // =====================================================
-                  _ProfileOption(
+                  _SampleOptionItem(
                     icon: isDark
-                        ? Icons.dark_mode_rounded
-                        : Icons.light_mode_rounded,
-
-                    title: 'Dark Theme',
-
-                    subtitle: isDark
-                        ? 'Dark mode is enabled'
-                        : 'Light mode is enabled',
-
-                    surfaceColor: surfaceColor,
-                    borderColor: borderColor,
-                    titleColor: primaryTextColor,
-                    subtitleColor: secondaryTextColor,
-
+                        ? Icons.dark_mode_outlined
+                        : Icons.light_mode_outlined,
+                    title: 'Dark Mode',
+                    cardColor: cardColor,
+                    iconBoxColor: iconBoxColor,
+                    textColor: primaryTextColor,
                     trailing: Switch(
                       value: isDark,
-
-                      onChanged: (value) {
-                        context.read<ThemeCubit>().setTheme(value);
+                      onChanged: (val) {
+                        context.read<ThemeCubit>().toggleTheme();
                       },
-
-                      activeThumbColor: AppColors.primary,
+                      activeColor: AppColors.primary,
                     ),
-
                     onTap: () {
-                      context.read<ThemeCubit>().setTheme(!isDark);
+                      context.read<ThemeCubit>().toggleTheme();
                     },
                   ),
 
                   const SizedBox(height: 20),
 
                   // =====================================================
-                  // PRIVACY & SECURITY
+                  // SECTION: INFORMATION
                   // =====================================================
-                  _SectionTitle(
-                    title: 'Privacy & Security',
-                    textColor: primaryTextColor,
-                  ),
-
+                  _SectionHeader(title: 'Information', color: primaryTextColor),
                   const SizedBox(height: 10),
 
-                  _ProfileOption(
-                    icon: Icons.lock_outline_rounded,
-                    title: 'Privacy',
-                    subtitle: 'Manage your privacy settings',
-                    surfaceColor: surfaceColor,
-                    borderColor: borderColor,
-                    titleColor: primaryTextColor,
-                    subtitleColor: secondaryTextColor,
-
+                  _SampleOptionItem(
+                    icon: Icons.shield_outlined,
+                    title: 'Privacy Policy',
+                    cardColor: cardColor,
+                    iconBoxColor: iconBoxColor,
+                    textColor: primaryTextColor,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -356,15 +301,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
 
-                  _ProfileOption(
-                    icon: Icons.security_outlined,
+                  _SampleOptionItem(
+                    icon: Icons.security,
                     title: 'Security',
-                    subtitle: 'Manage your account security',
-                    surfaceColor: surfaceColor,
-                    borderColor: borderColor,
-                    titleColor: primaryTextColor,
-                    subtitleColor: secondaryTextColor,
-
+                    cardColor: cardColor,
+                    iconBoxColor: iconBoxColor,
+                    textColor: primaryTextColor,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -375,51 +317,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
 
+                  _SampleOptionItem(
+                    icon: Icons.notifications,
+                    title: 'Notifcations',
+                    cardColor: cardColor,
+                    iconBoxColor: iconBoxColor,
+                    textColor: primaryTextColor,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const NotificationsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+
                   const SizedBox(height: 25),
 
                   // =====================================================
-                  // LOGOUT
+                  // LOGOUT BUTTON
                   // =====================================================
-                  SizedBox(
-                    width: double.infinity,
-
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        _showLogoutDialog(context);
-                      },
-
-                      icon: const Icon(Icons.logout_rounded),
-
-                      label: const Text('Logout'),
-
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: Colors.redAccent,
-
-                        side: const BorderSide(color: Colors.redAccent),
-
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                      ),
-                    ),
+                  _SampleOptionItem(
+                    icon: Icons.logout_rounded,
+                    title: 'Log Out',
+                    cardColor: cardColor,
+                    iconBoxColor: Colors.red.withOpacity(0.1),
+                    iconColor: Colors.redAccent,
+                    textColor: Colors.redAccent,
+                    showArrow: false,
+                    onTap: () => _showLogoutDialog(context),
                   ),
 
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 10),
 
-                  // =====================================================
                   // DELETE ACCOUNT
-                  // =====================================================
-                  TextButton(
-                    onPressed: () {
-                      _showDeleteAccountDialog(context);
-                    },
-
-                    child: const Text(
-                      'Delete Account',
-
-                      style: TextStyle(color: Colors.redAccent, fontSize: 13),
+                  Center(
+                    child: TextButton(
+                      onPressed: () => _showDeleteAccountDialog(context),
+                      child: const Text(
+                        'Delete Account',
+                        style: TextStyle(color: Colors.redAccent, fontSize: 13),
+                      ),
                     ),
                   ),
                 ],
@@ -431,128 +370,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // =====================================================
   // LOGOUT DIALOG
-  // =====================================================
-
   void _showLogoutDialog(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
       context: context,
-
       builder: (context) {
         return AlertDialog(
           backgroundColor: isDark ? AppColors.surface : Colors.white,
-
           title: Text(
             'Logout',
-
             style: TextStyle(
               color: isDark ? AppColors.textPrimary : Colors.black87,
             ),
           ),
-
           content: Text(
             'Are you sure you want to logout?',
-
             style: TextStyle(
               color: isDark ? AppColors.textSecondary : Colors.black54,
             ),
           ),
-
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-
+              onPressed: () => Navigator.pop(context),
               child: const Text('Cancel'),
             ),
-
             TextButton(
-  onPressed: () {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const LoginScreen(),
-      ),
-      (route) => false,
-    );
-  },
-  child: const Text(
-    'Logout',
-    style: TextStyle(color: Colors.redAccent),
-  ),
-),
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (route) => false,
+                );
+              },
+              child: const Text(
+                'Logout',
+                style: TextStyle(color: Colors.redAccent),
+              ),
+            ),
           ],
         );
       },
     );
   }
 
-  // =====================================================
   // DELETE ACCOUNT DIALOG
-  // =====================================================
-
   void _showDeleteAccountDialog(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
       context: context,
-
       builder: (context) {
         return AlertDialog(
           backgroundColor: isDark ? AppColors.surface : Colors.white,
-
           title: Text(
             'Delete Account',
-
             style: TextStyle(
               color: isDark ? AppColors.textPrimary : Colors.black87,
             ),
           ),
-
           content: Text(
             'This action cannot be undone. Are you sure?',
-
             style: TextStyle(
               color: isDark ? AppColors.textSecondary : Colors.black54,
             ),
           ),
-
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-
+              onPressed: () => Navigator.pop(context),
               child: const Text('Cancel'),
             ),
-
             TextButton(
-  onPressed: () async {
-    final prefs = await SharedPreferences.getInstance();
-
-    // Saved user data clear
-    await prefs.clear();
-
-    if (!context.mounted) return;
-
-    // Delete ke baad Splash Screen par
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const SplashScreen(),
-      ),
-      (route) => false,
-    );
-  },
-  child: const Text(
-    'Delete',
-    style: TextStyle(color: Colors.redAccent),
-  ),
-),
+              onPressed: () async {
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.clear();
+                if (!context.mounted) return;
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const SplashScreen()),
+                  (route) => false,
+                );
+              },
+              child: const Text(
+                'Delete',
+                style: TextStyle(color: Colors.redAccent),
+              ),
+            ),
           ],
         );
       },
@@ -560,115 +464,79 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-// =====================================================
-// SECTION TITLE
-// =====================================================
-
-class _SectionTitle extends StatelessWidget {
+// SECTION HEADER WIDGET
+class _SectionHeader extends StatelessWidget {
   final String title;
-  final Color textColor;
+  final Color color;
 
-  const _SectionTitle({required this.title, required this.textColor});
+  const _SectionHeader({required this.title, required this.color});
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.centerLeft,
-
-      child: Text(
-        title,
-
-        style: TextStyle(
-          color: textColor,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
+    return Text(
+      title,
+      style: TextStyle(color: color, fontSize: 15, fontWeight: FontWeight.bold),
     );
   }
 }
 
-// =====================================================
-// PROFILE OPTION
-// =====================================================
-
-class _ProfileOption extends StatelessWidget {
+// OPTION ITEM WIDGET (Matching Sample Style)
+class _SampleOptionItem extends StatelessWidget {
   final IconData icon;
   final String title;
-  final String subtitle;
-
-  final Color surfaceColor;
-  final Color borderColor;
-  final Color titleColor;
-  final Color subtitleColor;
-
+  final Color cardColor;
+  final Color iconBoxColor;
+  final Color? iconColor;
+  final Color textColor;
   final Widget? trailing;
+  final bool showArrow;
   final VoidCallback onTap;
 
-  const _ProfileOption({
+  const _SampleOptionItem({
     required this.icon,
     required this.title,
-    required this.subtitle,
-    required this.surfaceColor,
-    required this.borderColor,
-    required this.titleColor,
-    required this.subtitleColor,
+    required this.cardColor,
+    required this.iconBoxColor,
+    required this.textColor,
     required this.onTap,
+    this.iconColor,
     this.trailing,
+    this.showArrow = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-
+      margin: const EdgeInsets.only(bottom: 8),
       decoration: BoxDecoration(
-        color: surfaceColor,
-
+        color: cardColor,
         borderRadius: BorderRadius.circular(16),
-
-        border: Border.all(color: borderColor),
       ),
-
       child: ListTile(
         onTap: onTap,
-
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
         leading: Container(
-          height: 42,
-          width: 42,
-
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.12),
-
+            color: iconBoxColor,
             borderRadius: BorderRadius.circular(12),
           ),
-
-          child: Icon(icon, color: AppColors.primary),
+          child: Icon(icon, color: iconColor ?? AppColors.primary, size: 20),
         ),
-
         title: Text(
           title,
-
           style: TextStyle(
-            color: titleColor,
+            color: textColor,
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
         ),
-
-        subtitle: Text(
-          subtitle,
-
-          style: TextStyle(color: subtitleColor, fontSize: 11),
-        ),
-
         trailing:
             trailing ??
             Icon(
               Icons.arrow_forward_ios_rounded,
-              color: subtitleColor,
+              color: textColor.withOpacity(0.4),
               size: 16,
             ),
       ),
@@ -848,6 +716,7 @@ class _SettingsTile extends StatelessWidget {
           color: subtitleColor,
           size: 15,
         ),
+
       ),
     );
   }
