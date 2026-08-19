@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:soul_voice/screens/account_verification.dart'; // 👈 Sahi path
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
+import 'package:soul_voice/screens/auth/change_password.dart';
 
 class SecurityScreen extends StatelessWidget {
   const SecurityScreen({super.key});
@@ -62,12 +63,14 @@ class SecurityScreen extends StatelessWidget {
                 leading: const Icon(Icons.lock_outline),
                 title: const Text('Change Password'),
                 trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 15),
-                onTap: () {  Navigator.push(
+                onTap: () {
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => changepassword(),
+                      builder: (context) => ChangePasswordScreen(),
                     ),
-                  );},
+                  );
+                },
               ),
               const Divider(),
               ListTile(
