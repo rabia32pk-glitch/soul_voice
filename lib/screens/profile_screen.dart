@@ -1,13 +1,15 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
+import 'package:soul_voice/screens/notifications_screen.dart';
 import 'package:soul_voice/screens/auth/login_screens.dart';
 import 'package:soul_voice/screens/edit_profile_screen.dart';
 import 'package:soul_voice/screens/favourite_screens.dart';
-import 'package:soul_voice/screens/notifications_screen.dart';
 import 'package:soul_voice/screens/privacy_screen.dart';
 import 'package:soul_voice/screens/security_screen.dart';
 import 'package:soul_voice/screens/settings_screen.dart';
@@ -21,8 +23,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String _name = 'User Name';
-  String _email = 'user@example.com';
+  String _name = 'rabia';
+  String _email = 'abc@gmail.com';
   String? _imagePath;
 
   @override
@@ -32,15 +34,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadProfile() async {
+    final user = FirebaseAuth.instance.currentUser;
     final prefs = await SharedPreferences.getInstance();
 
-    if (!mounted) return;
+    if (user != null) {
+      _email = user.email ?? 'abc@gmail.com';
+      _name = user.displayName ?? 'rabia';
 
-    setState(() {
-      _name = prefs.getString('profile_name') ?? 'User Name';
-      _email = prefs.getString('profile_email') ?? 'user@example.com';
-      _imagePath = prefs.getString('profile_image');
-    });
+      try {
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+        if (userDoc.exists && userDoc.data() != null) {
+          final data = userDoc.data()!;
+          if (data['name'] != null && data['name'].toString().isNotEmpty) {
+            _name = data['name'];
+          }
+        }
+      } catch (e) {
+        debugPrint("Firestore Profile Fetch Error: $e");
+      }
+    }
+
+    _imagePath = prefs.getString('profile_image');
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<void> _openEditProfile() async {
@@ -48,7 +70,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       context,
       MaterialPageRoute(builder: (_) => const EditProfileScreen()),
     );
-
     await _loadProfile();
   }
 
@@ -58,19 +79,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context, themeMode) {
         final isDark = themeMode == ThemeMode.dark;
 
+        // Exact Screenshot Theme Palette
         final backgroundColor = isDark
             ? AppColors.background
-            : const Color(0xFFFAF7F2);
+            : const Color(0xFFFBF8F2);
         final cardColor = isDark ? AppColors.surface : Colors.white;
         final iconBoxColor = isDark
-            ? AppColors.primary.withValues(alpha: 0.2)
-            : const Color(0xFFF3ECE4);
+            ? AppColors.primary.withOpacity(0.2)
+            : const Color(0xFFF5EFE6);
+        final goldenIconColor = isDark
+            ? AppColors.primary
+            : const Color(0xFFC6A152);
         final primaryTextColor = isDark
             ? AppColors.textPrimary
-            : const Color(0xFF3B2824);
+            : const Color(0xFF4A3728);
         final secondaryTextColor = isDark
             ? AppColors.textSecondary
-            : Colors.black54;
+            : const Color(0xFF9E9185);
 
         return Scaffold(
           backgroundColor: backgroundColor,
@@ -78,42 +103,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
             backgroundColor: backgroundColor,
             elevation: 0,
             centerTitle: true,
+            automaticallyImplyLeading: false,
             title: Text(
               'My Profile',
               style: TextStyle(
                 color: primaryTextColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
               ),
             ),
-            iconTheme: IconThemeData(color: primaryTextColor),
           ),
           body: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // =====================================================
-                  // TOP COMPACT PROFILE CARD (Matching Sample)
+                  // TOP MAIN PROFILE CARD
                   // =====================================================
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: cardColor,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.03),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
+                      borderRadius: BorderRadius.circular(22),
                     ),
                     child: Row(
                       children: [
-                        // Avatar with Camera/Edit Badge
+                        // Avatar Circle
                         Stack(
                           children: [
                             GestureDetector(
@@ -123,13 +141,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 width: 75,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: AppColors.primary.withValues(
-                                    alpha: 0.15,
-                                  ),
-                                  border: Border.all(
-                                    color: AppColors.primary.withOpacity(0.5),
-                                    width: 1.5,
-                                  ),
+                                  color: isDark
+                                      ? AppColors.primary.withOpacity(0.2)
+                                      : const Color(0xFFF7F1E5),
                                 ),
                                 child: ClipOval(
                                   child:
@@ -139,29 +153,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           File(_imagePath!),
                                           fit: BoxFit.cover,
                                         )
-                                      : const Icon(
-                                          Icons.person_rounded,
-                                          color: AppColors.primary,
-                                          size: 42,
+                                      : Icon(
+                                          Icons.person,
+                                          color: goldenIconColor,
+                                          size: 52,
                                         ),
                                 ),
                               ),
                             ),
                             Positioned(
-                              bottom: 0,
-                              right: 0,
+                              bottom: 2,
+                              right: 2,
                               child: GestureDetector(
                                 onTap: _openEditProfile,
                                 child: Container(
                                   padding: const EdgeInsets.all(5),
-                                  decoration: const BoxDecoration(
-                                    color: AppColors.primary,
+                                  decoration: BoxDecoration(
+                                    color: goldenIconColor,
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
                                     Icons.camera_alt_rounded,
                                     color: Colors.white,
-                                    size: 14,
+                                    size: 13,
                                   ),
                                 ),
                               ),
@@ -170,7 +184,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                         const SizedBox(width: 16),
 
-                        // Name & Email
+                        // Name & Email Info
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,7 +193,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 _name,
                                 style: TextStyle(
                                   color: primaryTextColor,
-                                  fontSize: 18,
+                                  fontSize: 19,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -188,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 _email,
                                 style: TextStyle(
                                   color: secondaryTextColor,
-                                  fontSize: 12,
+                                  fontSize: 13,
                                 ),
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -196,20 +210,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
 
-                        // Edit Pencil Button
+                        // Edit Pencil Icon
                         IconButton(
                           onPressed: _openEditProfile,
                           icon: Icon(
                             Icons.edit_outlined,
-                            color: primaryTextColor.withOpacity(0.7),
-                            size: 20,
+                            color: secondaryTextColor,
+                            size: 22,
                           ),
                         ),
                       ],
                     ),
                   ),
 
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 22),
 
                   // =====================================================
                   // SECTION: ACCOUNT
@@ -222,6 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: 'Account Settings',
                     cardColor: cardColor,
                     iconBoxColor: iconBoxColor,
+                    iconColor: goldenIconColor,
                     textColor: primaryTextColor,
                     onTap: () {
                       Navigator.push(
@@ -238,6 +253,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: 'My Favorites',
                     cardColor: cardColor,
                     iconBoxColor: iconBoxColor,
+                    iconColor: goldenIconColor,
                     textColor: primaryTextColor,
                     onTap: () {
                       Navigator.push(
@@ -258,19 +274,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 10),
 
                   _SampleOptionItem(
-                    icon: isDark
-                        ? Icons.dark_mode_outlined
-                        : Icons.light_mode_outlined,
+                    icon: Icons.wb_sunny_outlined,
                     title: 'Dark Mode',
                     cardColor: cardColor,
                     iconBoxColor: iconBoxColor,
+                    iconColor: goldenIconColor,
                     textColor: primaryTextColor,
-                    trailing: Switch(
-                      value: isDark,
-                      onChanged: (val) {
-                        context.read<ThemeCubit>().toggleTheme();
-                      },
-                      activeColor: AppColors.primary,
+                    trailing: Transform.scale(
+                      scale: 0.85,
+                      child: Switch(
+                        value: isDark,
+                        onChanged: (val) {
+                          context.read<ThemeCubit>().toggleTheme();
+                        },
+                        activeColor: isDark
+                            ? AppColors.primary
+                            : const Color(0xFF333333),
+                        inactiveThumbColor: const Color(0xFF333333),
+                        inactiveTrackColor: const Color(0xFFE5DECE),
+                      ),
                     ),
                     onTap: () {
                       context.read<ThemeCubit>().toggleTheme();
@@ -290,6 +312,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     title: 'Privacy Policy',
                     cardColor: cardColor,
                     iconBoxColor: iconBoxColor,
+                    iconColor: goldenIconColor,
                     textColor: primaryTextColor,
                     onTap: () {
                       Navigator.push(
@@ -302,10 +325,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
 
                   _SampleOptionItem(
-                    icon: Icons.security,
+                    icon: Icons.security_rounded,
                     title: 'Security',
                     cardColor: cardColor,
                     iconBoxColor: iconBoxColor,
+                    iconColor: goldenIconColor,
                     textColor: primaryTextColor,
                     onTap: () {
                       Navigator.push(
@@ -318,10 +342,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
 
                   _SampleOptionItem(
-                    icon: Icons.notifications,
+                    icon: Icons.notifications_none_rounded,
                     title: 'Notifcations',
                     cardColor: cardColor,
                     iconBoxColor: iconBoxColor,
+                    iconColor: goldenIconColor,
                     textColor: primaryTextColor,
                     onTap: () {
                       Navigator.push(
@@ -333,7 +358,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
 
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 22),
 
                   // =====================================================
                   // LOGOUT BUTTON
@@ -342,14 +367,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     icon: Icons.logout_rounded,
                     title: 'Log Out',
                     cardColor: cardColor,
-                    iconBoxColor: Colors.red.withOpacity(0.1),
-                    iconColor: Colors.redAccent,
-                    textColor: Colors.redAccent,
+                    iconBoxColor: const Color(0xFFFDE8E8),
+                    iconColor: const Color(0xFFE57373),
+                    textColor: const Color(0xFFE57373),
                     showArrow: false,
                     onTap: () => _showLogoutDialog(context),
                   ),
 
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
                   // DELETE ACCOUNT
                   Center(
@@ -357,10 +382,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onPressed: () => _showDeleteAccountDialog(context),
                       child: const Text(
                         'Delete Account',
-                        style: TextStyle(color: Colors.redAccent, fontSize: 13),
+                        style: TextStyle(
+                          color: Colors.redAccent,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
+                  const SizedBox(height: 15),
                 ],
               ),
             ),
@@ -370,7 +400,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // LOGOUT DIALOG
   void _showLogoutDialog(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -397,7 +426,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                if (!context.mounted) return;
                 Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(builder: (_) => const LoginScreen()),
@@ -415,7 +446,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // DELETE ACCOUNT DIALOG
   void _showDeleteAccountDialog(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -443,14 +473,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             TextButton(
               onPressed: () async {
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.clear();
-                if (!context.mounted) return;
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => const SplashScreen()),
-                  (route) => false,
-                );
+                try {
+                  final user = FirebaseAuth.instance.currentUser;
+                  if (user != null) {
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(user.uid)
+                        .delete();
+                    await user.delete();
+                  }
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.clear();
+                  if (!context.mounted) return;
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (_) => const SplashScreen()),
+                    (route) => false,
+                  );
+                } catch (e) {
+                  if (!context.mounted) return;
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text('Delete failed: $e')));
+                }
               },
               child: const Text(
                 'Delete',
@@ -464,7 +510,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
-// SECTION HEADER WIDGET
 class _SectionHeader extends StatelessWidget {
   final String title;
   final Color color;
@@ -475,18 +520,17 @@ class _SectionHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: TextStyle(color: color, fontSize: 15, fontWeight: FontWeight.bold),
+      style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.bold),
     );
   }
 }
 
-// OPTION ITEM WIDGET (Matching Sample Style)
 class _SampleOptionItem extends StatelessWidget {
   final IconData icon;
   final String title;
   final Color cardColor;
   final Color iconBoxColor;
-  final Color? iconColor;
+  final Color iconColor;
   final Color textColor;
   final Widget? trailing;
   final bool showArrow;
@@ -497,9 +541,9 @@ class _SampleOptionItem extends StatelessWidget {
     required this.title,
     required this.cardColor,
     required this.iconBoxColor,
+    required this.iconColor,
     required this.textColor,
     required this.onTap,
-    this.iconColor,
     this.trailing,
     this.showArrow = true,
   });
@@ -507,28 +551,28 @@ class _SampleOptionItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
       ),
       child: ListTile(
         onTap: onTap,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
         leading: Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(9),
           decoration: BoxDecoration(
             color: iconBoxColor,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(icon, color: iconColor ?? AppColors.primary, size: 20),
+          child: Icon(icon, color: iconColor, size: 20),
         ),
         title: Text(
           title,
           style: TextStyle(
             color: textColor,
-            fontSize: 14,
+            fontSize: 15,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -537,7 +581,7 @@ class _SampleOptionItem extends StatelessWidget {
             (showArrow
                 ? Icon(
                     Icons.chevron_right_rounded,
-                    color: textColor.withOpacity(0.4),
+                    color: textColor.withOpacity(0.35),
                     size: 22,
                   )
                 : null),

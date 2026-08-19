@@ -3,7 +3,7 @@ import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/categories_screen.dart'; // 👈 Categories screen import ki hai
 import 'package:soul_voice/screens/favourite_screens.dart';
 import 'package:soul_voice/screens/home_screen.dart';
-import 'package:soul_voice/screens/profile.dart';
+import 'package:soul_voice/screens/profile_screen.dart';
 
 class MainWrapperScreen extends StatefulWidget {
   const MainWrapperScreen({super.key});
