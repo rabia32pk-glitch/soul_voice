@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/favorite_bloc.dart';
 import 'package:soul_voice/screens/favorite_event.dart';
@@ -17,41 +18,58 @@ class CategoriesScreen extends StatelessWidget {
         'name': 'Faith',
         'icon': Icons.auto_awesome_rounded,
         'description': 'Quotes about faith and hope',
+        // Nayi bright aur pyari image URL
+        'image':
+            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=600&auto=format&fit=crop',
       },
       {
         'name': 'Life',
         'icon': Icons.wb_sunny_outlined,
         'description': 'Quotes about life and journey',
+        'image':
+            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop',
       },
       {
         'name': 'Wisdom',
         'icon': Icons.lightbulb_outline_rounded,
         'description': 'Words of wisdom and knowledge',
+        'image':
+            'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=600&auto=format&fit=crop',
       },
       {
         'name': 'Success',
         'icon': Icons.trending_up_rounded,
         'description': 'Motivation for your goals',
+        'image':
+            'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop',
       },
       {
         'name': 'Love',
         'icon': Icons.favorite_border_rounded,
         'description': 'Quotes about love and care',
+        'image':
+            'https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop',
       },
       {
         'name': 'Peace',
         'icon': Icons.spa_outlined,
         'description': 'Calm and peaceful thoughts',
+        'image':
+            'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=600&auto=format&fit=crop',
       },
       {
         'name': 'Motivation',
         'icon': Icons.bolt_rounded,
         'description': 'Inspiration to keep going',
+        'image':
+            'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=600&auto=format&fit=crop',
       },
       {
         'name': 'Dua',
         'icon': Icons.volunteer_activism_outlined,
         'description': 'Quotes about prayer and hope',
+        'image':
+            'https://images.unsplash.com/photo-1564121211835-e88c852648ab?q=80&w=600&auto=format&fit=crop',
       },
     ];
 
@@ -98,7 +116,7 @@ class CategoriesScreen extends StatelessWidget {
                     crossAxisCount: 2,
                     crossAxisSpacing: 14,
                     mainAxisSpacing: 14,
-                    childAspectRatio: 1.05,
+                    childAspectRatio: 0.95,
                   ),
                   itemBuilder: (context, index) {
                     final category = categories[index];
@@ -107,6 +125,7 @@ class CategoriesScreen extends StatelessWidget {
                       name: category['name'] as String,
                       icon: category['icon'] as IconData,
                       description: category['description'] as String,
+                      imageUrl: category['image'] as String,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -130,19 +149,21 @@ class CategoriesScreen extends StatelessWidget {
 }
 
 // =====================================================
-// CATEGORY CARD
+// CATEGORY CARD WITH BACKGROUND IMAGE & GRADIENT
 // =====================================================
 
 class _CategoryCard extends StatelessWidget {
   final String name;
   final IconData icon;
   final String description;
+  final String imageUrl;
   final VoidCallback onTap;
 
   const _CategoryCard({
     required this.name,
     required this.icon,
     required this.description,
+    required this.imageUrl,
     required this.onTap,
   });
 
@@ -151,43 +172,84 @@ class _CategoryCard extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.border),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
           children: [
-            Container(
-              height: 45,
-              width: 45,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Icon(icon, color: AppColors.primary, size: 25),
-            ),
-            const Spacer(),
-            Text(
-              name,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
+            // Background Image with Fallback Color
+            Positioned.fill(
+              child: Container(
+                color: AppColors.surface,
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(color: AppColors.surface);
+                  },
+                ),
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              description,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 11,
-                height: 1.3,
+
+            // Gradient Overlay for readability
+            Positioned.fill(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.border),
+                  borderRadius: BorderRadius.circular(20),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.15),
+                      Colors.black.withValues(alpha: 0.75),
+                    ],
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.35),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.2),
+                        ),
+                      ),
+                      child: Icon(icon, color: AppColors.primary, size: 22),
+                    ),
+                    const Spacer(),
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black54,
+                            offset: Offset(0, 1),
+                            blurRadius: 3,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        fontSize: 11,
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -404,7 +466,6 @@ class _CategoryQuotesScreenState extends State<CategoryQuotesScreen> {
                           children: [
                             IconButton(
                               onPressed: () {
-                                // FavoriteBloc mein toggle event trigger kiya
                                 context.read<FavoriteBloc>().add(
                                   ToggleFavoriteEvent(quoteMap),
                                 );
@@ -429,7 +490,11 @@ class _CategoryQuotesScreenState extends State<CategoryQuotesScreen> {
                               ),
                             ),
                             IconButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                final shareText =
+                                    '"${quote.content}"\n— ${quote.author}';
+                                Share.share(shareText);
+                              },
                               icon: const Icon(
                                 Icons.share_outlined,
                                 color: AppColors.textSecondary,

@@ -84,56 +84,66 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               const SizedBox(height: 10),
 
-              // ================= SEARCH INPUT =================
-              Container(
-                height: 52,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.search_rounded,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        autofocus: true,
-                        style: const TextStyle(color: AppColors.textPrimary),
-                        decoration: const InputDecoration(
-                          hintText: 'Search by category or keyword...',
-                          hintStyle: TextStyle(
+              // ================= PERFECT SEARCH INPUT =================
+              TextField(
+                controller: _searchController,
+                autofocus: true,
+                style: const TextStyle(color: AppColors.textPrimary),
+                onSubmitted: (value) => _performSearch(value),
+                onChanged: (value) {
+                  setState(() {}); // Clear icon update karne ke liye
+                  if (value.isEmpty) {
+                    _performSearch('');
+                  }
+                },
+                decoration: InputDecoration(
+                  hintText: 'Search by category or keyword...',
+                  hintStyle: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 14,
+                  ),
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  contentPadding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                    horizontal: 16,
+                  ),
+
+                  // Search Icon inside TextField
+                  prefixIcon: const Icon(
+                    Icons.search_rounded,
+                    color: AppColors.textSecondary,
+                  ),
+
+                  // Clear Icon inside TextField
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: const Icon(
+                            Icons.close_rounded,
                             color: AppColors.textSecondary,
-                            fontSize: 14,
+                            size: 20,
                           ),
-                          border: InputBorder.none,
-                        ),
-                        onSubmitted: (value) => _performSearch(value),
-                        onChanged: (value) {
-                          if (value.isEmpty) {
+                          onPressed: () {
+                            _searchController.clear();
                             _performSearch('');
-                          }
-                        },
-                      ),
+                          },
+                        )
+                      : null,
+
+                  // Normal state border
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: const BorderSide(color: AppColors.border),
+                  ),
+
+                  // Active / Focused state border (Yellow Line Pure Box Par Aaye Gi)
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 1.5,
                     ),
-                    if (_searchController.text.isNotEmpty)
-                      GestureDetector(
-                        onTap: () {
-                          _searchController.clear();
-                          _performSearch('');
-                        },
-                        child: const Icon(
-                          Icons.close_rounded,
-                          color: AppColors.textSecondary,
-                          size: 20,
-                        ),
-                      ),
-                  ],
+                  ),
                 ),
               ),
 

@@ -10,20 +10,14 @@ import 'package:soul_voice/screens/splash.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
     // 👈 MultiBlocProvider lagaya hai taake dono Bloc/Cubit puri app mein milein
     MultiBlocProvider(
       providers: [
-        BlocProvider<ThemeCubit>(
-          create: (context) => ThemeCubit(),
-        ),
-        BlocProvider<FavoriteBloc>(
-          create: (context) => FavoriteBloc(),
-        ),
+        BlocProvider<ThemeCubit>(create: (context) => ThemeCubit()),
+        BlocProvider<FavoriteBloc>(create: (context) => FavoriteBloc()),
       ],
       child: const SoulVoiceApp(),
     ),

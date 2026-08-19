@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/auth/forgot_password.dart';
 import 'package:soul_voice/screens/auth/signup_screen.dart';
@@ -19,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   bool _isLoading = false;
 
+  // ================= EMAIL LOGIN =================
   Future<void> _login() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
@@ -73,6 +75,52 @@ class _LoginScreenState extends State<LoginScreen> {
       _showMessage(message);
     } catch (e) {
       _showMessage('An unexpected error occurred. Please try again.');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  // ================= GOOGLE SIGN-IN =================
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn.standard().signIn();
+
+      if (googleUser == null) {
+        // User ne sign-in process cancel kar diya
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MainWrapperScreen()),
+      );
+    } on FirebaseAuthException catch (e) {
+      _showMessage(e.message ?? 'Google Sign-In failed.');
+    } catch (e) {
+      _showMessage('Google Sign-In Error: $e');
     } finally {
       if (mounted) {
         setState(() {
@@ -292,7 +340,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: double.infinity,
                 height: 52,
                 child: OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: _isLoading ? null : _signInWithGoogle,
                   icon: const Icon(Icons.g_mobiledata_rounded, size: 28),
                   label: const Text('Continue with Google'),
                   style: OutlinedButton.styleFrom(
