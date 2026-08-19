@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -20,6 +21,19 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
   bool _isLoading = false;
 
+  // ================= INTERNET CHECK METHOD =================
+  Future<bool> _hasInternetConnection() async {
+    final List<ConnectivityResult> connectivityResult = await Connectivity()
+        .checkConnectivity();
+
+    // Agar wifi, mobile network ya koi active connection nahi mila
+    if (connectivityResult.contains(ConnectivityResult.none) ||
+        connectivityResult.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
   // ================= EMAIL LOGIN =================
   Future<void> _login() async {
     final email = _emailController.text.trim();
@@ -27,6 +41,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (email.isEmpty || password.isEmpty) {
       _showMessage('Please enter both email and password.');
+      return;
+    }
+
+    // --- INTERNET CHECK ---
+    final bool hasInternet = await _hasInternetConnection();
+    if (!hasInternet) {
+      _showMessage('No internet connection. Please check your network!');
       return;
     }
 
@@ -86,12 +107,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // ================= GOOGLE SIGN-IN =================
   Future<void> _signInWithGoogle() async {
+    // --- INTERNET CHECK ---
+    final bool hasInternet = await _hasInternetConnection();
+    if (!hasInternet) {
+      _showMessage('No internet connection. Please check your network!');
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn.standard().signIn();
+      final GoogleSignInAccount? googleUser = await GoogleSignIn.standard()
+          .signIn();
 
       if (googleUser == null) {
         // User ne sign-in process cancel kar diya

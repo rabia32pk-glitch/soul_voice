@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -34,6 +35,20 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _obscureConfirmPassword = true;
   bool _isLoading = false;
 
+  // ================= INTERNET CHECK METHOD =================
+
+  Future<bool> _hasInternetConnection() async {
+    final List<ConnectivityResult> connectivityResult =
+        await Connectivity().checkConnectivity();
+
+    // Agar wifi, mobile network ya koi active connection nahi mila
+    if (connectivityResult.contains(ConnectivityResult.none) ||
+        connectivityResult.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
   // ================= DISPOSE =================
 
   @override
@@ -58,6 +73,20 @@ class _SignupScreenState extends State<SignupScreen> {
 
     // Hide keyboard
     FocusScope.of(context).unfocus();
+
+    // --- INTERNET CHECK ---
+    final bool hasInternet = await _hasInternetConnection();
+    if (!hasInternet) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No internet connection. Please check your network!'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
 
     setState(() {
       _isLoading = true;
@@ -178,6 +207,20 @@ class _SignupScreenState extends State<SignupScreen> {
 
   Future<void> _signUpWithGoogle() async {
     FocusScope.of(context).unfocus();
+
+    // --- INTERNET CHECK ---
+    final bool hasInternet = await _hasInternetConnection();
+    if (!hasInternet) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('No internet connection. Please check your network!'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
 
     setState(() {
       _isLoading = true;
