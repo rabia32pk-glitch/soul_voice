@@ -18,7 +18,6 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
 
   String? _imagePath;
@@ -37,7 +36,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     if (user != null) {
       nameController.text = user.displayName ?? '';
-      emailController.text = user.email ?? '';
 
       try {
         final doc = await FirebaseFirestore.instance
@@ -49,9 +47,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           final data = doc.data()!;
           if (data['name'] != null && data['name'].toString().isNotEmpty) {
             nameController.text = data['name'];
-          }
-          if (data['email'] != null && data['email'].toString().isNotEmpty) {
-            emailController.text = data['email'];
           }
         }
       } catch (e) {
@@ -77,7 +72,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     final directory = await getApplicationDocumentsDirectory();
     final fileName = 'profile_${DateTime.now().millisecondsSinceEpoch}.jpg';
 
-    final savedFile = await File(image.path).copy('${directory.path}/$fileName');
+    final savedFile = await File(
+      image.path,
+    ).copy('${directory.path}/$fileName');
 
     if (!mounted) return;
 
@@ -89,12 +86,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   // Firebase Auth aur Firestore mein Profile Save karne ka Logic
   Future<void> _saveProfile() async {
     final name = nameController.text.trim();
-    final email = emailController.text.trim();
 
     if (name.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter your name')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please enter your name')));
       return;
     }
 
@@ -109,33 +105,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         // 1. Firebase Auth Profile (DisplayName) Update karna
         await user.updateDisplayName(name);
 
-        // 2. Email Update Logic (Agar Email Change kiya gaya ho)
-        if (email.isNotEmpty && email != user.email) {
-          await user.verifyBeforeUpdateEmail(email);
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  'Verification email sent to new address. Please verify to update email.',
-                ),
-              ),
-            );
-          }
-        }
-
-        // 3. Firestore Database collection ('users') mein save/update karna
+        // 2. Firestore Database collection ('users') mein save/update karna
         await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
           'uid': user.uid,
           'name': name,
-          'email': email.isNotEmpty ? email : user.email,
           'updatedAt': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true));
       }
 
-      // 4. Local Preferences Sync
+      // 3. Local Preferences Sync
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('profile_name', name);
-      await prefs.setString('profile_email', email);
       if (_imagePath != null) {
         await prefs.setString('profile_image', _imagePath!);
       }
@@ -149,9 +129,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       Navigator.pop(context, true);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update profile: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to update profile: $e')));
       }
     } finally {
       if (mounted) {
@@ -165,7 +145,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void dispose() {
     nameController.dispose();
-    emailController.dispose();
     super.dispose();
   }
 
@@ -195,7 +174,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       border: Border.all(color: AppColors.primary, width: 2),
                     ),
                     child: ClipOval(
-                      child: _imagePath != null && File(_imagePath!).existsSync()
+                      child:
+                          _imagePath != null && File(_imagePath!).existsSync()
                           ? Image.file(File(_imagePath!), fit: BoxFit.cover)
                           : const Icon(
                               Icons.person_rounded,
@@ -242,15 +222,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             decoration: const InputDecoration(
               labelText: 'Name',
               prefixIcon: Icon(Icons.person_outline),
-            ),
-          ),
-          const SizedBox(height: 15),
-          TextField(
-            controller: emailController,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              prefixIcon: Icon(Icons.email_outlined),
             ),
           ),
           const SizedBox(height: 25),
