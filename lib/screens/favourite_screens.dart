@@ -3,114 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
-
 import 'package:soul_voice/screens/favorite_bloc.dart';
 import 'package:soul_voice/screens/favorite_event.dart';
 import 'package:soul_voice/screens/favorite_state.dart';
 
-class FavoritesScreen extends StatefulWidget {
+class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({super.key});
-
-  @override
-  State<FavoritesScreen> createState() => _FavoritesScreenState();
-}
-
-class _FavoritesScreenState extends State<FavoritesScreen> {
-  // -----------------------------------------------------
-  // Quotes jo is screen par display honge
-  // -----------------------------------------------------
-
-  final List<Map<String, dynamic>> _displayedQuotes = [];
-
-  // -----------------------------------------------------
-  // SnackBar key
-  // -----------------------------------------------------
-
-  final GlobalKey<ScaffoldMessengerState> _snackBarKey =
-      GlobalKey<ScaffoldMessengerState>();
-
-  @override
-  void initState() {
-    super.initState();
-
-    final favorites =
-        context.read<FavoriteBloc>().state.favoriteQuotes;
-
-    _displayedQuotes.addAll(
-      favorites.map(
-        (quote) => Map<String, dynamic>.from(quote),
-      ),
-    );
-  }
-
-  // -----------------------------------------------------
-  // Check whether quote is currently favorite
-  // -----------------------------------------------------
-
-  bool _isFavorite(
-    Map<String, dynamic> quoteData,
-    FavoriteState state,
-  ) {
-    return state.favoriteQuotes.any(
-      (item) => item['quote'] == quoteData['quote'],
-    );
-  }
-
-  // -----------------------------------------------------
-  // Show SnackBar
-  // -----------------------------------------------------
-
-  void _showSnackBar(String message) {
-    _snackBarKey.currentState?.hideCurrentSnackBar();
-
-    _snackBarKey.currentState?.showSnackBar(
-      SnackBar(
-        content: Text(
-          message,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(
-          20,
-          0,
-          20,
-          20,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-      ),
-    );
-  }
-
-  // -----------------------------------------------------
-  // Toggle Favorite
-  // -----------------------------------------------------
-
-  void _toggleFavorite(
-    Map<String, dynamic> quoteData,
-    bool currentlyFavorite,
-  ) {
-    context.read<FavoriteBloc>().add(
-      ToggleFavoriteEvent(quoteData),
-    );
-
-    if (currentlyFavorite) {
-      _showSnackBar(
-        'Quote removed from favorites 💔',
-      );
-    } else {
-      _showSnackBar(
-        'Quote added to favorites ❤️',
-      );
-    }
-
-    setState(() {});
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,130 +16,103 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       builder: (context, themeMode) {
         final isDark = themeMode == ThemeMode.dark;
 
-        final backgroundColor = isDark
-            ? AppColors.background
-            : Colors.white;
+        final backgroundColor =
+            isDark ? AppColors.background : Colors.white;
 
-        final surfaceColor = isDark
-            ? AppColors.surface
-            : const Color(0xFFF7F7F7);
+        final surfaceColor =
+            isDark
+                ? AppColors.surface
+                : const Color(0xFFF7F7F7);
 
-        final primaryTextColor = isDark
-            ? AppColors.textPrimary
-            : Colors.black87;
+        final primaryTextColor =
+            isDark
+                ? AppColors.textPrimary
+                : Colors.black87;
 
-        final secondaryTextColor = isDark
-            ? AppColors.textSecondary
-            : Colors.black54;
+        final secondaryTextColor =
+            isDark
+                ? AppColors.textSecondary
+                : Colors.black54;
 
-        final borderColor = isDark
-            ? AppColors.border
-            : const Color(0xFFE0E0E0);
+        final borderColor =
+            isDark
+                ? AppColors.border
+                : const Color(0xFFE0E0E0);
 
-        return BlocBuilder<FavoriteBloc, FavoriteState>(
-          builder: (context, favoriteState) {
-            return ScaffoldMessenger(
-              key: _snackBarKey,
+        return Scaffold(
+          backgroundColor: backgroundColor,
 
-              child: Scaffold(
-                backgroundColor: backgroundColor,
+          appBar: AppBar(
+            backgroundColor: backgroundColor,
+            elevation: 0,
+            centerTitle: true,
 
-                // =================================================
-                // APP BAR
-                // =================================================
+            title: Text(
+              'Favorites',
+              style: TextStyle(
+                color: primaryTextColor,
+                fontSize: 21,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
 
-                appBar: AppBar(
-                  backgroundColor: backgroundColor,
-                  elevation: 0,
-                  centerTitle: true,
+            iconTheme: IconThemeData(
+              color: primaryTextColor,
+            ),
+          ),
 
-                  title: Text(
-                    'Favorites',
+          body: BlocBuilder<FavoriteBloc, FavoriteState>(
+            builder: (context, state) {
+              final favorites = state.favoriteQuotes;
+
+              // =========================
+              // NO FAVORITES
+              // =========================
+
+              if (favorites.isEmpty) {
+                return Center(
+                  child: Text(
+                    'No favorites added yet',
                     style: TextStyle(
-                      color: primaryTextColor,
-                      fontSize: 21,
-                      fontWeight: FontWeight.bold,
+                      color: secondaryTextColor,
+                      fontSize: 16,
                     ),
                   ),
+                );
+              }
 
-                  iconTheme: IconThemeData(
-                    color: primaryTextColor,
-                  ),
-                ),
+              // =========================
+              // FAVORITES LIST
+              // =========================
 
-                // =================================================
-                // BODY
-                // =================================================
+              return ListView.builder(
+                padding: const EdgeInsets.all(20),
+                itemCount: favorites.length,
 
-                body: _displayedQuotes.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No favorites added yet',
-                          style: TextStyle(
-                            color: secondaryTextColor,
-                            fontSize: 16,
-                          ),
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(
-                          20,
-                          20,
-                          20,
-                          100,
-                        ),
+                itemBuilder: (context, index) {
+                  final item = favorites[index];
 
-                        itemCount: _displayedQuotes.length,
+                  final quote =
+                      item['quote']?.toString() ?? '';
 
-                        itemBuilder: (context, index) {
-                          final quoteData =
-                              _displayedQuotes[index];
+                  final author =
+                      item['author']?.toString() ??
+                          'Soul Voice';
 
-                          final isFavorite = _isFavorite(
-                            quoteData,
-                            favoriteState,
-                          );
-
-                          return FavoriteQuoteCard(
-                            key: ValueKey(
-                              quoteData['quote'],
-                            ),
-
-                            quoteData: quoteData,
-
-                            quote:
-                                quoteData['quote'] ?? '',
-
-                            author:
-                                quoteData['author'] ??
-                                'Soul Voice',
-
-                            isFavorite: isFavorite,
-
-                            surfaceColor:
-                                surfaceColor,
-
-                            borderColor:
-                                borderColor,
-
-                            primaryTextColor:
-                                primaryTextColor,
-
-                            secondaryTextColor:
-                                secondaryTextColor,
-
-                            onFavoritePressed: () {
-                              _toggleFavorite(
-                                quoteData,
-                                isFavorite,
-                              );
-                            },
-                          );
-                        },
-                      ),
-              ),
-            );
-          },
+                  return _FavoriteQuoteCard(
+                    quoteData: item,
+                    quote: quote,
+                    author: author,
+                    surfaceColor: surfaceColor,
+                    borderColor: borderColor,
+                    primaryTextColor: primaryTextColor,
+                    secondaryTextColor:
+                        secondaryTextColor,
+                  );
+                },
+              );
+            },
+          ),
         );
       },
     );
@@ -252,57 +123,36 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 // FAVORITE QUOTE CARD
 // =====================================================
 
-class FavoriteQuoteCard extends StatelessWidget {
+class _FavoriteQuoteCard extends StatelessWidget {
   final Map<String, dynamic> quoteData;
-
   final String quote;
   final String author;
-
-  final bool isFavorite;
 
   final Color surfaceColor;
   final Color borderColor;
   final Color primaryTextColor;
   final Color secondaryTextColor;
 
-  final VoidCallback onFavoritePressed;
-
-  const FavoriteQuoteCard({
-    super.key,
-
+  const _FavoriteQuoteCard({
     required this.quoteData,
     required this.quote,
     required this.author,
-    required this.isFavorite,
-
     required this.surfaceColor,
     required this.borderColor,
     required this.primaryTextColor,
     required this.secondaryTextColor,
-
-    required this.onFavoritePressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 14),
 
-      margin: const EdgeInsets.only(
-        bottom: 14,
-      ),
-
-      padding: const EdgeInsets.all(
-        20,
-      ),
+      padding: const EdgeInsets.all(20),
 
       decoration: BoxDecoration(
         color: surfaceColor,
-
-        borderRadius: BorderRadius.circular(
-          20,
-        ),
-
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: borderColor,
         ),
@@ -313,64 +163,85 @@ class FavoriteQuoteCard extends StatelessWidget {
             CrossAxisAlignment.start,
 
         children: [
-          // =================================================
+          // =========================
           // QUOTE
-          // =================================================
+          // =========================
 
-          Text(
-            quote,
+          Row(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
 
-            style: TextStyle(
-              color: primaryTextColor,
-              fontSize: 16,
-              height: 1.5,
-            ),
+            children: [
+              const Icon(
+                Icons.format_quote_rounded,
+                color: AppColors.primary,
+                size: 28,
+              ),
+
+              const SizedBox(width: 10),
+
+              Expanded(
+                child: Text(
+                  quote,
+                  style: TextStyle(
+                    color: primaryTextColor,
+                    fontSize: 16,
+                    height: 1.5,
+                  ),
+                ),
+              ),
+            ],
           ),
 
-          const SizedBox(
-            height: 12,
-          ),
+          const SizedBox(height: 12),
 
-          // =================================================
+          // =========================
           // AUTHOR
-          // =================================================
+          // =========================
 
           Text(
             '— $author',
-
             style: TextStyle(
               color: secondaryTextColor,
               fontSize: 12,
             ),
           ),
 
-          const SizedBox(
-            height: 5,
-          ),
+          const SizedBox(height: 8),
 
-          // =================================================
-          // HEART - BOTTOM RIGHT
-          // =================================================
+          // =========================
+          // HEART BUTTON
+          // =========================
 
           Align(
             alignment: Alignment.centerRight,
 
             child: IconButton(
-              onPressed: onFavoritePressed,
+              onPressed: () {
+                context.read<FavoriteBloc>().add(
+                  ToggleFavoriteEvent(
+                    quoteData,
+                  ),
+                );
 
-              tooltip: isFavorite
-                  ? 'Remove from favorites'
-                  : 'Add to favorites',
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Quote removed from favorites 💔',
+                      ),
+                      duration:
+                          Duration(seconds: 1),
+                      behavior:
+                          SnackBarBehavior.floating,
+                    ),
+                  );
+              },
 
-              icon: Icon(
-                isFavorite
-                    ? Icons.favorite_rounded
-                    : Icons.favorite_border_rounded,
-
-                color: isFavorite
-                    ? AppColors.primary
-                    : secondaryTextColor,
-
+              icon: const Icon(
+                Icons.favorite_rounded,
+                color: Colors.red,
                 size: 28,
               ),
             ),

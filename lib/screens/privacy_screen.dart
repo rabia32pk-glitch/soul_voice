@@ -1,78 +1,138 @@
 import 'package:flutter/material.dart';
 
-class PrivacyScreen extends StatefulWidget {
+class PrivacyScreen extends StatelessWidget {
   const PrivacyScreen({super.key});
 
   @override
-  State<PrivacyScreen> createState() => _PrivacyScreenState();
-}
-
-class _PrivacyScreenState extends State<PrivacyScreen> {
-  String? _selectedOption;
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Privacy',
+          'Privacy & Data Policy',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Icon(Icons.lock_outline_rounded, size: 60, color: Colors.blue),
-
-          const SizedBox(height: 20),
-
+          const Icon(Icons.shield_outlined, size: 60, color: Colors.blue),
+          const SizedBox(height: 16),
           const Text(
-            'Privacy Settings',
+            'Your Privacy Matters',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
-
-          const SizedBox(height: 12),
-
+          const SizedBox(height: 8),
           Text(
-            'Manage how your information is used '
-            'and protected inside Soul Voice.',
+            'Learn how Soul Voice collects, uses, and protects your information.',
             textAlign: TextAlign.center,
             style: TextStyle(
               color: Theme.of(
                 context,
               ).colorScheme.onSurface.withValues(alpha: 0.65),
-              height: 1.5,
+              height: 1.4,
             ),
           ),
+          const SizedBox(height: 25),
 
-          const SizedBox(height: 30),
+          // 1. What Data We Collect
+          _buildPolicyCard(
+            context,
+            icon: Icons.assignment_outlined,
+            title: '1. What Data We Collect',
+            content:
+                '• Account Info: Your Name and Email Address provided during sign-up or Google Sign-In.\n'
+                '• Profile Media: Profile picture uploaded from your device.\n'
+                '• App Activity: Basic interaction and crash logs to maintain app stability.',
+          ),
+          const SizedBox(height: 15),
 
-          RadioListTile<String>(
-  value: 'public',
-  groupValue: _selectedOption,
-  onChanged: (value) {
-    setState(() {
-      _selectedOption = value;
-    });
-  },
-  secondary: const Icon(Icons.visibility_outlined),
-  title: const Text('Profile Visibility'),
-  subtitle: const Text('Control who can see your profile.'),
-),
+          // 2. Why We Collect Your Data
+          _buildPolicyCard(
+            context,
+            icon: Icons.psychology_outlined,
+            title: '2. Why We Collect Your Data',
+            content:
+                '• Authentication: To securely identify you and keep your account safe.\n'
+                '• Personalization: To display your name and profile picture in Soul Voice.\n'
+                '• App Operations: To ensure smooth profile updates and features functionality.',
+          ),
+          const SizedBox(height: 15),
 
-          RadioListTile<String>(
-  value: 'data_usage',
-  groupValue: _selectedOption,
-  onChanged: (value) {
-    setState(() {
-      _selectedOption = value;
-    });
-  },
-  secondary: const Icon(Icons.data_usage_outlined),
-  title: const Text('Data Usage'),
-  subtitle: const Text('Manage your application data.'),
-),
+          // 3. How Your Data Is Stored & Protected
+          _buildPolicyCard(
+            context,
+            icon: Icons.lock_clock_outlined,
+            title: '3. Data Storage & Protection',
+            content:
+                'Your data is securely stored in Google Firebase cloud infrastructure.\n'
+                'We DO NOT sell, rent, or share your personal data with third-party advertisers.',
+          ),
+          const SizedBox(height: 15),
+
+          // 4. Your Rights
+          _buildPolicyCard(
+            context,
+            icon: Icons.manage_accounts_outlined,
+            title: '4. Your Rights & Choices',
+            content:
+                'You can update your display name and profile picture at any time from the Edit Profile screen.',
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPolicyCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String content,
+  }) {
+    return Card(
+      elevation: 0,
+      color: Theme.of(
+        context,
+      ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.15),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: Colors.blue, size: 22),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Divider(height: 20),
+            Text(
+              content,
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.5,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.8),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
