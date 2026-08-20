@@ -26,6 +26,292 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _isLoading = false;
   bool _hasSearched = false;
 
+  // ================= SUGGESTIONS =================
+
+  final List<String> allSuggestions = [
+  
+  // A
+  'Apple',
+  'Amazing',
+  'Adventure',
+  'Achievement',
+  'Attitude',
+  'Angel',
+  'Art',
+  'Alone',
+
+  // B
+  'Beauty',
+  'Believe',
+  'Bravery',
+  'Business',
+  'Balance',
+  'Blessing',
+  'Brother',
+  'Better',
+
+  // C
+  'Camera',
+  'Car',
+  'Coffee',
+  'Computer',
+  'Confidence',
+  'Courage',
+  'Change',
+  'Career',
+
+  // D
+  'Dream',
+  'Dreams',
+  'Daily',
+  'Danger',
+  'Dance',
+  'Decision',
+  'Desire',
+  'Destiny',
+
+  // E
+  'Education',
+  'Energy',
+  'Emotion',
+  'Enjoy',
+  'Effort',
+  'Experience',
+  'Equality',
+  'Excitement',
+
+  // F
+  'Faith',
+  'Family',
+  'Friendship',
+  'Freedom',
+  'Future',
+  'Focus',
+  'Fear',
+  'Forgiveness',
+
+  // G
+  'Goal',
+  'Goals',
+  'Good',
+  'Growth',
+  'Gratitude',
+  'Greatness',
+  'Gift',
+  'Guidance',
+
+  // H
+  'Hope',
+  'Happiness',
+  'Health',
+  'Heart',
+  'Honesty',
+  'Home',
+  'Help',
+  'Hardwork',
+
+  // I
+  'Inspiration',
+  'Important',
+  'Ideas',
+  'Intelligence',
+  'Improvement',
+  'Independence',
+  'Innovation',
+  'Integrity',
+
+  // J
+  'Joy',
+  'Journey',
+  'Justice',
+  'Job',
+  'Joke',
+  'Judgement',
+  'Jump',
+  'Jubilation',
+
+  // K
+  'Knowledge',
+  'Kindness',
+  'King',
+  'Keep',
+  'Key',
+  'Kids',
+  'Knowledgeable',
+  'Karma',
+
+  // L
+  'Love',
+  'Life',
+  'Luck',
+  'Leadership',
+  'Learning',
+  'Laugh',
+  'Light',
+  'Loyalty',
+
+  // M
+  'Mobile',
+  'Makeup',
+  'Medicine',
+  'Mango',
+  'Manager',
+  'Motivation',
+  'Money',
+  'Mind',
+
+  // N
+  'Nature',
+  'Never',
+  'New',
+  'Night',
+  'Name',
+  'Nation',
+  'Nice',
+  'Nothing',
+
+  // O
+  'Opportunity',
+  'Optimism',
+  'Open',
+  'Original',
+  'Objective',
+  'Ocean',
+  'Overcome',
+  'Outstanding',
+
+  // P
+  'Peace',
+  'Power',
+  'Passion',
+  'Patience',
+  'Positive',
+  'Purpose',
+  'Progress',
+  'Promise',
+
+  // Q
+  'Quality',
+  'Quiet',
+  'Quick',
+  'Question',
+  'Queen',
+  'Quest',
+  'Quote',
+  'Quotable',
+
+  // R
+  'Respect',
+  'Relationship',
+  'Success',
+  'Rise',
+  'Reality',
+  'Reason',
+  'Resilience',
+  'Reward',
+
+  // S
+  'Success',
+  'Smile',
+  'Strength',
+  'Success',
+  'Study',
+  'Support',
+  'Self',
+  'Soul',
+
+  // T
+  'Trust',
+  'Time',
+  'Truth',
+  'Talent',
+  'Team',
+  'Together',
+  'Thought',
+  'Tomorrow',
+
+  // U
+  'Unity',
+  'Understanding',
+  'Unique',
+  'Useful',
+  'Ultimate',
+  'Universe',
+  'Upgrade',
+  'Urgent',
+
+  // V
+  'Victory',
+  'Value',
+  'Vision',
+  'Voice',
+  'Victory',
+  'Vitality',
+  'Virtue',
+  'Volunteer',
+
+  // W
+  'Wisdom',
+  'Work',
+  'World',
+  'Wonderful',
+  'Wealth',
+  'Welcome',
+  'Winning',
+  'Wish',
+
+  // X
+  'Xenon',
+  'Xylophone',
+  'Xenial',
+  'Xeric',
+  'Xylem',
+  'Xenophobia',
+  'Xerophyte',
+  'Xylograph',
+
+  // Y
+  'Youth',
+  'Young',
+  'Yes',
+  'Yesterday',
+  'Year',
+  'Yourself',
+  'Yoga',
+  'Yard',
+
+  // Z
+  'Zeal',
+  'Zero',
+  'Zone',
+  'Zest',
+  'Zen',
+  'Zoom',
+  'Zodiac',
+  'Zigzag',
+];
+  
+
+  List<String> _suggestions = [];
+
+  void _showSuggestions(String query) {
+    setState(() {
+      if (query.trim().isEmpty) {
+        _suggestions = [];
+      } else {
+        _suggestions = allSuggestions
+            .where(
+              (word) => word.toLowerCase().startsWith(
+                    query.toLowerCase(),
+                  ),
+            )
+            .toList();
+      }
+    });
+  }
+
+  // ================= SEARCH =================
+
   void _performSearch(String query) async {
     final trimmedQuery = query.trim();
 
@@ -41,6 +327,7 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       _isLoading = true;
       _hasSearched = true;
+      _suggestions = [];
     });
 
     try {
@@ -86,7 +373,13 @@ class _SearchScreenState extends State<SearchScreen> {
         isDark ? AppColors.border : const Color(0xFFE0E0E0);
 
     return Scaffold(
+<<<<<<< HEAD
       backgroundColor: backgroundColor,
+=======
+      backgroundColor: AppColors.background,
+
+      // ================= APP BAR =================
+>>>>>>> origin/qandeel
 
       appBar: AppBar(
         backgroundColor: backgroundColor,
@@ -116,6 +409,7 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               const SizedBox(height: 10),
 
+<<<<<<< HEAD
               // ================= SEARCH BAR =================
 
               TextField(
@@ -124,6 +418,19 @@ class _SearchScreenState extends State<SearchScreen> {
 
                 style: TextStyle(
                   color: primaryTextColor,
+=======
+              // ================= SEARCH INPUT =================
+
+              Container(
+                height: 52,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: AppColors.border,
+                  ),
+>>>>>>> origin/qandeel
                 ),
 
                 onSubmitted: (value) {
@@ -182,6 +489,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     borderSide: BorderSide(
                       color: borderColor,
                     ),
+<<<<<<< HEAD
                   ),
 
                   focusedBorder: OutlineInputBorder(
@@ -192,12 +500,121 @@ class _SearchScreenState extends State<SearchScreen> {
                       width: 1.5,
                     ),
                   ),
+=======
+
+                    const SizedBox(width: 12),
+
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        autofocus: true,
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                        ),
+                        decoration: const InputDecoration(
+                          hintText:
+                              'Search by category or keyword...',
+                          hintStyle: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 14,
+                          ),
+                          border: InputBorder.none,
+                        ),
+
+                        onSubmitted: (value) {
+                          _performSearch(value);
+                        },
+
+                        onChanged: (value) {
+                          _showSuggestions(value);
+
+                          if (value.isEmpty) {
+                            _performSearch('');
+                          }
+                        },
+                      ),
+                    ),
+
+                    // ================= CLEAR BUTTON =================
+
+                    if (_searchController.text.isNotEmpty)
+                      GestureDetector(
+                        onTap: () {
+                          _searchController.clear();
+
+                          setState(() {
+                            _suggestions = [];
+                            _searchResults = [];
+                            _hasSearched = false;
+                            _isLoading = false;
+                          });
+                        },
+                        child: const Icon(
+                          Icons.close_rounded,
+                          color: AppColors.textSecondary,
+                          size: 20,
+                        ),
+                      ),
+                  ],
+>>>>>>> origin/qandeel
                 ),
               ),
 
+              // ================= SUGGESTIONS =================
+
+              if (_suggestions.isNotEmpty)
+                Container(
+                  width: double.infinity,
+                  margin: const EdgeInsets.only(top: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.border,
+                    ),
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics:
+                        const NeverScrollableScrollPhysics(),
+                    itemCount: _suggestions.length,
+                    itemBuilder: (context, index) {
+                      final suggestion = _suggestions[index];
+
+                      return ListTile(
+                        dense: true,
+                        leading: const Icon(
+                          Icons.search_rounded,
+                          color: AppColors.textSecondary,
+                        ),
+                        title: Text(
+                          suggestion,
+                          style: const TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 14,
+                          ),
+                        ),
+                        onTap: () {
+                          _searchController.text = suggestion;
+
+                          setState(() {
+                            _suggestions = [];
+                          });
+
+                          _performSearch(suggestion);
+                        },
+                      );
+                    },
+                  ),
+                ),
+
               const SizedBox(height: 20),
 
+<<<<<<< HEAD
               // ================= RESULTS =================
+=======
+              // ================= RESULTS BODY =================
+>>>>>>> origin/qandeel
 
               Expanded(
                 child: _isLoading
@@ -207,6 +624,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       )
                     : !_hasSearched
+<<<<<<< HEAD
                         ? _buildInitialState(
                             primaryTextColor,
                             secondaryTextColor,
@@ -231,12 +649,26 @@ class _SearchScreenState extends State<SearchScreen> {
 
                                 itemBuilder:
                                     (context, index) {
+=======
+                        ? _buildInitialState()
+                        : _searchResults.isEmpty
+                            ? _buildEmptyState()
+                            : ListView.separated(
+                                physics:
+                                    const BouncingScrollPhysics(),
+                                itemCount:
+                                    _searchResults.length,
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(height: 12),
+                                itemBuilder: (context, index) {
+>>>>>>> origin/qandeel
                                   final quote =
                                       _searchResults[index];
 
                                   return _QuoteCard(
                                     quote: quote.content,
                                     author: quote.author,
+<<<<<<< HEAD
                                     surfaceColor:
                                         surfaceColor,
                                     borderColor:
@@ -245,6 +677,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                         primaryTextColor,
                                     secondaryTextColor:
                                         secondaryTextColor,
+=======
+>>>>>>> origin/qandeel
                                   );
                                 },
                               ),
@@ -256,6 +690,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+<<<<<<< HEAD
   // =====================================================
   // INITIAL STATE
   // =====================================================
@@ -264,6 +699,11 @@ class _SearchScreenState extends State<SearchScreen> {
     Color primaryTextColor,
     Color secondaryTextColor,
   ) {
+=======
+  // ================= INITIAL STATE =================
+
+  Widget _buildInitialState() {
+>>>>>>> origin/qandeel
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -291,7 +731,11 @@ class _SearchScreenState extends State<SearchScreen> {
           'to search quotes.',
           textAlign: TextAlign.center,
           style: TextStyle(
+<<<<<<< HEAD
             color: secondaryTextColor,
+=======
+            color: AppColors.textSecondary,
+>>>>>>> origin/qandeel
             fontSize: 13,
           ),
         ),
@@ -299,6 +743,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+<<<<<<< HEAD
   // =====================================================
   // EMPTY STATE
   // =====================================================
@@ -307,6 +752,11 @@ class _SearchScreenState extends State<SearchScreen> {
     Color primaryTextColor,
     Color secondaryTextColor,
   ) {
+=======
+  // ================= EMPTY STATE =================
+
+  Widget _buildEmptyState() {
+>>>>>>> origin/qandeel
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -333,8 +783,13 @@ class _SearchScreenState extends State<SearchScreen> {
           'We couldn\'t find anything for '
           '"${_searchController.text}".',
           textAlign: TextAlign.center,
+<<<<<<< HEAD
           style: TextStyle(
             color: secondaryTextColor,
+=======
+          style: const TextStyle(
+            color: AppColors.textSecondary,
+>>>>>>> origin/qandeel
             fontSize: 13,
           ),
         ),
@@ -344,13 +799,18 @@ class _SearchScreenState extends State<SearchScreen> {
 }
 
 // =====================================================
+<<<<<<< HEAD
 // SEARCH QUOTE CARD
+=======
+// QUOTE CARD
+>>>>>>> origin/qandeel
 // =====================================================
 
 class _QuoteCard extends StatelessWidget {
   final String quote;
   final String author;
 
+<<<<<<< HEAD
   final Color surfaceColor;
   final Color borderColor;
   final Color primaryTextColor;
@@ -363,6 +823,11 @@ class _QuoteCard extends StatelessWidget {
     required this.borderColor,
     required this.primaryTextColor,
     required this.secondaryTextColor,
+=======
+  const _QuoteCard({
+    required this.quote,
+    required this.author,
+>>>>>>> origin/qandeel
   });
 
   @override
@@ -381,7 +846,11 @@ class _QuoteCard extends StatelessWidget {
         color: surfaceColor,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
+<<<<<<< HEAD
           color: borderColor,
+=======
+          color: AppColors.border,
+>>>>>>> origin/qandeel
         ),
       ),
 
@@ -433,6 +902,7 @@ class _QuoteCard extends StatelessWidget {
             ],
           ),
 
+<<<<<<< HEAD
           const SizedBox(height: 12),
 
           // ================= BUTTONS =================
@@ -511,6 +981,33 @@ class _QuoteCard extends StatelessWidget {
                       Icons.copy_rounded,
                       color: secondaryTextColor,
                     ),
+=======
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '"$quote"',
+                  style: const TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    height: 1.4,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                Text(
+                  '- $author',
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+>>>>>>> origin/qandeel
                   ),
 
                   // ↗️ SHARE

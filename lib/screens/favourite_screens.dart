@@ -132,4 +132,86 @@ class FavoritesScreen extends StatelessWidget {
       },
     );
   }
+<<<<<<< HEAD
+=======
+}  
+
+// =====================================================
+// FAVORITE QUOTE CARD
+// =====================================================
+
+class FavoriteQuoteCard extends StatelessWidget {
+  final Map<String, dynamic> quoteData;
+  final String quote;
+  final String author;
+  final Color surfaceColor;
+  final Color borderColor;
+  final Color primaryTextColor;
+  final Color secondaryTextColor;
+
+  const FavoriteQuoteCard({
+    super.key,
+    required this.quoteData,
+    required this.quote,
+    required this.author,
+    required this.surfaceColor,
+    required this.borderColor,
+    required this.primaryTextColor,
+    required this.secondaryTextColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: surfaceColor,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: borderColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Icon(
+                Icons.favorite_rounded,
+                color: AppColors.primary,
+                size: 28,
+              ),
+              IconButton(
+                icon: const Icon(Icons.delete_outline, color: Colors.red),
+                onPressed: () {
+                  context.read<FavoriteBloc>().add(ToggleFavoriteEvent(quoteData));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Removed from Favorites'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            quote,
+            style: TextStyle(
+              color: primaryTextColor,
+              fontSize: 16,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            '— $author',
+            style: TextStyle(color: secondaryTextColor, fontSize: 12),
+          ),
+        ],
+      ),
+    );
+  }
+>>>>>>> origin/qandeel
 }

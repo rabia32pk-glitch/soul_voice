@@ -184,12 +184,55 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final todayQuoteMap = _getTodayQuote();
+=======
+    final categories = [
+      {
+        'name': 'Faith',
+        'icon': Icons.auto_awesome_rounded,
+        'tag': 'faith'
+      },
+      {
+        'name': 'Life',
+        'icon': Icons.wb_sunny_outlined,
+        'tag': 'life'
+      },
+      {
+        'name': 'Wisdom',
+        'icon': Icons.lightbulb_outline_rounded,
+        'tag': 'wisdom',
+      },
+      {
+        'name': 'Success',
+        'icon': Icons.trending_up_rounded,
+        'tag': 'success'
+      },
+      {
+        'name': 'Love',
+        'icon': Icons.favorite_border_rounded,
+        'tag': 'love'
+      },
+      {
+        'name': 'Peace',
+        'icon': Icons.spa_outlined,
+        'tag': 'peace'
+      },
+    ];
+
+    // Today's Inspiration Quote Data
+    const todayQuoteMap = {
+      'quote':
+          'Your journey may be difficult, but every step makes you stronger.',
+      'author': 'Daily Inspiration',
+    };
+>>>>>>> origin/qandeel
 
     return BlocBuilder<ThemeCubit, ThemeMode>(
       builder: (context, themeMode) {
         final isDark = themeMode == ThemeMode.dark;
 
+<<<<<<< HEAD
         final backgroundColor = isDark ? AppColors.background : Colors.white;
 
         final surfaceColor = isDark
@@ -205,6 +248,18 @@ class _HomeScreenState extends State<HomeScreen> {
             : Colors.black54;
 
         final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
+=======
+        final backgroundColor =
+            isDark ? AppColors.background : Colors.white;
+        final surfaceColor =
+            isDark ? AppColors.surface : const Color(0xFFF7F7F7);
+        final primaryTextColor =
+            isDark ? AppColors.textPrimary : Colors.black87;
+        final secondaryTextColor =
+            isDark ? AppColors.textSecondary : Colors.black54;
+        final borderColor =
+            isDark ? AppColors.border : const Color(0xFFE0E0E0);
+>>>>>>> origin/qandeel
 
         return Scaffold(
           backgroundColor: backgroundColor,
@@ -223,14 +278,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
 
                   children: [
+<<<<<<< HEAD
                     // =====================================================
                     // HEADER
                     // =====================================================
+=======
+
+                    // ================= HEADER =================
+
+>>>>>>> origin/qandeel
                     Row(
                       children: [
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Assalam-o-Alaikum 👋',
@@ -260,8 +322,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           decoration: BoxDecoration(
                             color: surfaceColor,
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: borderColor),
+                            borderRadius:
+                                BorderRadius.circular(14),
+                            border: Border.all(
+                              color: borderColor,
+                            ),
                           ),
 
                           child: IconButton(
@@ -269,7 +334,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => const NotificationsScreen(),
+                                  builder: (_) =>
+                                      const NotificationsScreen(),
                                 ),
                               );
                             },
@@ -285,28 +351,43 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 22),
 
+<<<<<<< HEAD
                     // =====================================================
                     // SEARCH
                     // =====================================================
+=======
+                    // ================= SEARCH =================
+
+>>>>>>> origin/qandeel
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const SearchScreen(),
+                            builder: (_) =>
+                                const SearchScreen(),
                           ),
                         );
                       },
 
                       child: Container(
                         height: 52,
+<<<<<<< HEAD
 
                         padding: const EdgeInsets.symmetric(horizontal: 16),
 
+=======
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
+>>>>>>> origin/qandeel
                         decoration: BoxDecoration(
                           color: surfaceColor,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: borderColor),
+                          borderRadius:
+                              BorderRadius.circular(16),
+                          border: Border.all(
+                            color: borderColor,
+                          ),
                         ),
 
                         child: Row(
@@ -332,12 +413,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 28),
 
+<<<<<<< HEAD
                     // =====================================================
                     // CATEGORIES
                     // =====================================================
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
+=======
+                    // ================= CATEGORIES =================
+
+                    Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+>>>>>>> origin/qandeel
                       children: [
                         Text(
                           'Categories',
@@ -353,14 +442,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const CategoriesScreen(),
+                                builder: (_) =>
+                                    const CategoriesScreen(),
                               ),
                             );
                           },
 
                           child: const Text(
                             'See All',
-                            style: TextStyle(color: AppColors.primary),
+                            style: TextStyle(
+                              color: AppColors.primary,
+                            ),
                           ),
                         ),
                       ],
@@ -373,6 +465,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
+<<<<<<< HEAD
 
                         itemCount: _categories.length,
 
@@ -392,12 +485,35 @@ class _HomeScreenState extends State<HomeScreen> {
 
                             textColor: primaryTextColor,
 
+=======
+                        itemCount: categories.length,
+                        separatorBuilder: (_, _) =>
+                            const SizedBox(width: 12),
+                        itemBuilder: (context, index) {
+                          final category =
+                              categories[index];
+
+                          return _CategoryCard(
+                            name:
+                                category['name'] as String,
+                            icon:
+                                category['icon'] as IconData,
+                            surfaceColor:
+                                surfaceColor,
+                            borderColor:
+                                borderColor,
+                            textColor:
+                                primaryTextColor,
+>>>>>>> origin/qandeel
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => CategoryQuotesScreen(
-                                    category: category['tag'] as String,
+                                  builder: (_) =>
+                                      CategoryQuotesScreen(
+                                    category:
+                                        category['tag']
+                                            as String,
                                   ),
                                 ),
                               );
@@ -409,9 +525,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 28),
 
+<<<<<<< HEAD
                     // =====================================================
                     // TODAY'S INSPIRATION
                     // =====================================================
+=======
+                    // ================= DAILY QUOTE =================
+
+>>>>>>> origin/qandeel
                     Container(
                       width: double.infinity,
 
@@ -419,13 +540,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       decoration: BoxDecoration(
                         color: surfaceColor,
-                        borderRadius: BorderRadius.circular(22),
-                        border: Border.all(color: borderColor),
+                        borderRadius:
+                            BorderRadius.circular(22),
+                        border: Border.all(
+                          color: borderColor,
+                        ),
                       ),
 
                       child: Column(
+<<<<<<< HEAD
                         crossAxisAlignment: CrossAxisAlignment.start,
 
+=======
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
+>>>>>>> origin/qandeel
                         children: [
                           const Row(
                             children: [
@@ -469,6 +598,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               fontSize: 13,
                             ),
                           ),
+<<<<<<< HEAD
 
                           const SizedBox(height: 8),
 
@@ -480,6 +610,71 @@ class _HomeScreenState extends State<HomeScreen> {
                               author: todayQuoteMap['author']!,
                               secondaryTextColor: secondaryTextColor,
                             ),
+=======
+
+                          const SizedBox(height: 14),
+
+                          Row(
+                            mainAxisAlignment:
+                                MainAxisAlignment.end,
+                            children: [
+                              BlocBuilder<FavoriteBloc,
+                                  FavoriteState>(
+                                builder:
+                                    (context, favState) {
+                                  final isTodayFav =
+                                      favState.favoriteQuotes
+                                          .any(
+                                    (q) =>
+                                        q['quote'] ==
+                                        todayQuoteMap[
+                                            'quote'],
+                                  );
+
+                                  return IconButton(
+                                    onPressed: () {
+                                      context
+                                          .read<FavoriteBloc>()
+                                          .add(
+                                            ToggleFavoriteEvent(
+                                              todayQuoteMap,
+                                            ),
+                                          );
+
+                                      ScaffoldMessenger.of(
+                                              context)
+                                          .clearSnackBars();
+
+                                      ScaffoldMessenger.of(
+                                              context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            isTodayFav
+                                                ? 'Quote removed from favorites 💔'
+                                                : 'Quote added to favorites ❤️',
+                                          ),
+                                          duration:
+                                              const Duration(
+                                            seconds: 2,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                    icon: Icon(
+                                      isTodayFav
+                                          ? Icons.favorite
+                                          : Icons
+                                              .favorite_border,
+                                      color: isTodayFav
+                                          ? Colors.red
+                                          : AppColors.primary,
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+>>>>>>> origin/qandeel
                           ),
                         ],
                       ),
@@ -487,12 +682,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 28),
 
+<<<<<<< HEAD
                     // =====================================================
                     // FEATURED QUOTES TITLE
                     // =====================================================
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
+=======
+                    // ================= FEATURED QUOTES =================
+
+                    Row(
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+>>>>>>> origin/qandeel
                       children: [
                         Text(
                           'Featured Quotes',
@@ -520,9 +723,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 8),
 
+<<<<<<< HEAD
                     // =====================================================
                     // API QUOTES
                     // =====================================================
+=======
+                    // ================= API QUOTES =================
+
+>>>>>>> origin/qandeel
                     FutureBuilder<List<QuoteModel>>(
                       future: _quotesFuture,
 
@@ -532,7 +740,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.all(35),
-                              child: CircularProgressIndicator(
+                              child:
+                                  CircularProgressIndicator(
                                 color: AppColors.primary,
                               ),
                             ),
@@ -542,13 +751,21 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (snapshot.hasError) {
                           return Container(
                             width: double.infinity,
+<<<<<<< HEAD
 
                             padding: const EdgeInsets.all(22),
 
+=======
+                            padding:
+                                const EdgeInsets.all(22),
+>>>>>>> origin/qandeel
                             decoration: BoxDecoration(
                               color: surfaceColor,
-                              borderRadius: BorderRadius.circular(18),
-                              border: Border.all(color: borderColor),
+                              borderRadius:
+                                  BorderRadius.circular(18),
+                              border: Border.all(
+                                color: borderColor,
+                              ),
                             ),
 
                             child: Column(
@@ -564,9 +781,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Text(
                                   'Unable to load quotes',
                                   style: TextStyle(
-                                    color: primaryTextColor,
+                                    color:
+                                        primaryTextColor,
                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight:
+                                        FontWeight.bold,
                                   ),
                                 ),
 
@@ -574,9 +793,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                 Text(
                                   'Please check your internet connection and try again.',
+<<<<<<< HEAD
                                   textAlign: TextAlign.center,
+=======
+                                  textAlign:
+                                      TextAlign.center,
+>>>>>>> origin/qandeel
                                   style: TextStyle(
-                                    color: secondaryTextColor,
+                                    color:
+                                        secondaryTextColor,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -589,31 +814,49 @@ class _HomeScreenState extends State<HomeScreen> {
                                       _loadQuotes();
                                     });
                                   },
+<<<<<<< HEAD
 
                                   child: const Text('Try Again'),
+=======
+                                  child:
+                                      const Text('Try Again'),
+>>>>>>> origin/qandeel
                                 ),
                               ],
                             ),
                           );
                         }
 
-                        final quotes = snapshot.data ?? [];
+                        final quotes =
+                            snapshot.data ?? [];
 
                         if (quotes.isEmpty) {
                           return Container(
                             width: double.infinity,
+<<<<<<< HEAD
 
                             padding: const EdgeInsets.all(25),
 
+=======
+                            padding:
+                                const EdgeInsets.all(25),
+>>>>>>> origin/qandeel
                             child: Text(
                               'No quotes found.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: secondaryTextColor),
+                              textAlign:
+                                  TextAlign.center,
+                              style: TextStyle(
+                                color:
+                                    secondaryTextColor,
+                              ),
                             ),
                           );
                         }
 
+                        // ================= UNLIMITED FEATURED QUOTES =================
+
                         return Column(
+<<<<<<< HEAD
                           children: quotes.map((quote) {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
@@ -628,6 +871,30 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                           }).toList(),
+=======
+                          children: quotes
+                              .map(
+                                (quote) => Padding(
+                                  padding:
+                                      const EdgeInsets.only(
+                                    bottom: 12,
+                                  ),
+                                  child: _QuoteCard(
+                                    quote: quote.content,
+                                    author: quote.author,
+                                    surfaceColor:
+                                        surfaceColor,
+                                    borderColor:
+                                        borderColor,
+                                    primaryTextColor:
+                                        primaryTextColor,
+                                    secondaryTextColor:
+                                        secondaryTextColor,
+                                  ),
+                                ),
+                              )
+                              .toList(),
+>>>>>>> origin/qandeel
                         );
                       },
                     ),
@@ -676,15 +943,28 @@ class _CategoryCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: surfaceColor,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: borderColor),
+          border: Border.all(
+            color: borderColor,
+          ),
         ),
 
         child: Column(
+<<<<<<< HEAD
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
             Icon(icon, color: AppColors.primary, size: 28),
 
+=======
+          mainAxisAlignment:
+              MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: AppColors.primary,
+              size: 28,
+            ),
+>>>>>>> origin/qandeel
             const SizedBox(height: 10),
 
             Text(
@@ -736,8 +1016,11 @@ class _QuoteCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: borderColor),
+        border: Border.all(
+          color: borderColor,
+        ),
       ),
+<<<<<<< HEAD
 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -778,6 +1061,82 @@ class _QuoteCard extends StatelessWidget {
                       style: TextStyle(color: secondaryTextColor, fontSize: 12),
                     ),
                   ],
+=======
+      child: Row(
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.format_quote_rounded,
+            color: AppColors.primary,
+            size: 30,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+              children: [
+                Text(
+                  quote,
+                  style: TextStyle(
+                    color: primaryTextColor,
+                    fontSize: 15,
+                    height: 1.4,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  '— $author',
+                  style: TextStyle(
+                    color: secondaryTextColor,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          BlocBuilder<FavoriteBloc, FavoriteState>(
+            builder: (context, favState) {
+              final isFav =
+                  favState.favoriteQuotes.any(
+                (q) => q['quote'] == quote,
+              );
+
+              return IconButton(
+                onPressed: () {
+                  context
+                      .read<FavoriteBloc>()
+                      .add(
+                        ToggleFavoriteEvent(
+                          quoteMap,               
+                        ),
+                      );
+                      
+                  ScaffoldMessenger.of(context)
+                      .clearSnackBars();
+
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        isFav
+                            ? 'Removed from favorites 💔'
+                            : 'Quote added to favorites ❤️',
+                      ),
+                      duration:
+                          const Duration(seconds: 1),
+                    ),
+                  );
+                },
+                icon: Icon(
+                  isFav
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
+                  color: isFav
+                      ? Colors.red
+                      : secondaryTextColor,
+>>>>>>> origin/qandeel
                 ),
               ),
             ],
