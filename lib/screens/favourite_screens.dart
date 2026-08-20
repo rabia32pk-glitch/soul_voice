@@ -79,7 +79,7 @@ class FavoritesScreen extends StatelessWidget {
       },
     );
   }
-}
+}  
 
 // =====================================================
 // FAVORITE QUOTE CARD
