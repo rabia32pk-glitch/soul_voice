@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
-
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
-
 import 'package:soul_voice/screens/categories_screen.dart';
 import 'package:soul_voice/screens/favorite_bloc.dart';
 import 'package:soul_voice/screens/favorite_event.dart';
@@ -14,7 +12,6 @@ import 'package:soul_voice/screens/notifications_screen.dart';
 import 'package:soul_voice/screens/search_screen.dart';
 import 'package:soul_voice/services/models/quote_model.dart';
 import 'package:soul_voice/services/quote_api_service.dart';
-
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -25,7 +22,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final QuoteApiService _quoteApiService = QuoteApiService();
-
   late Future<List<QuoteModel>> _quotesFuture;
 
   // =====================================================
@@ -70,11 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'icon': Icons.people_outline_rounded,
       'tag': 'friendship',
     },
-    {
-      'name': 'Knowledge',
-      'icon': Icons.menu_book_rounded,
-      'tag': 'knowledge',
-    },
+    {'name': 'Knowledge', 'icon': Icons.menu_book_rounded, 'tag': 'knowledge'},
     {'name': 'Kindness', 'icon': Icons.handshake_outlined, 'tag': 'kindness'},
     {'name': 'Time', 'icon': Icons.access_time_rounded, 'tag': 'time'},
     {
@@ -89,7 +81,6 @@ class _HomeScreenState extends State<HomeScreen> {
   // =====================================================
   // DAILY INSPIRATION QUOTES
   // =====================================================
-
   final List<Map<String, String>> _dailyInspirationQuotes = [
     {
       'quote':
@@ -140,28 +131,17 @@ class _HomeScreenState extends State<HomeScreen> {
     },
   ];
 
-  // =====================================================
-  // TODAY'S QUOTE
-  // =====================================================
-
   Map<String, String> _getTodayQuote() {
     final now = DateTime.now();
-
     final dayIndex = now.difference(DateTime(2025, 1, 1)).inDays;
-
     final index = dayIndex % _dailyInspirationQuotes.length;
-
     return _dailyInspirationQuotes[index];
   }
-
-  // =====================================================
-  // LOAD QUOTES
-  // =====================================================
 
   @override
   void initState() {
     super.initState();
-    _categories.shuffle(); // 👈 جب پیج اوپن ہوگا تو کیٹیگریز شفل ہو جائیں گی
+    _categories.shuffle();
     _loadQuotes();
   }
 
@@ -171,128 +151,49 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _refreshQuotes() async {
     setState(() {
-      _categories.shuffle(); // 👈 جب صارف اوپر سوائپ کر کے ریفریش کرے گا
+      _categories.shuffle();
       _loadQuotes();
     });
-
     await _quotesFuture;
   }
 
-  // =====================================================
-  // BUILD
-  // =====================================================
-
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     final todayQuoteMap = _getTodayQuote();
-=======
-    final categories = [
-      {
-        'name': 'Faith',
-        'icon': Icons.auto_awesome_rounded,
-        'tag': 'faith'
-      },
-      {
-        'name': 'Life',
-        'icon': Icons.wb_sunny_outlined,
-        'tag': 'life'
-      },
-      {
-        'name': 'Wisdom',
-        'icon': Icons.lightbulb_outline_rounded,
-        'tag': 'wisdom',
-      },
-      {
-        'name': 'Success',
-        'icon': Icons.trending_up_rounded,
-        'tag': 'success'
-      },
-      {
-        'name': 'Love',
-        'icon': Icons.favorite_border_rounded,
-        'tag': 'love'
-      },
-      {
-        'name': 'Peace',
-        'icon': Icons.spa_outlined,
-        'tag': 'peace'
-      },
-    ];
-
-    // Today's Inspiration Quote Data
-    const todayQuoteMap = {
-      'quote':
-          'Your journey may be difficult, but every step makes you stronger.',
-      'author': 'Daily Inspiration',
-    };
->>>>>>> origin/qandeel
 
     return BlocBuilder<ThemeCubit, ThemeMode>(
       builder: (context, themeMode) {
         final isDark = themeMode == ThemeMode.dark;
-
-<<<<<<< HEAD
         final backgroundColor = isDark ? AppColors.background : Colors.white;
-
         final surfaceColor = isDark
             ? AppColors.surface
             : const Color(0xFFF7F7F7);
-
         final primaryTextColor = isDark
             ? AppColors.textPrimary
             : Colors.black87;
-
         final secondaryTextColor = isDark
             ? AppColors.textSecondary
             : Colors.black54;
-
         final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
-=======
-        final backgroundColor =
-            isDark ? AppColors.background : Colors.white;
-        final surfaceColor =
-            isDark ? AppColors.surface : const Color(0xFFF7F7F7);
-        final primaryTextColor =
-            isDark ? AppColors.textPrimary : Colors.black87;
-        final secondaryTextColor =
-            isDark ? AppColors.textSecondary : Colors.black54;
-        final borderColor =
-            isDark ? AppColors.border : const Color(0xFFE0E0E0);
->>>>>>> origin/qandeel
 
         return Scaffold(
           backgroundColor: backgroundColor,
-
           body: SafeArea(
             child: RefreshIndicator(
               color: AppColors.primary,
               onRefresh: _refreshQuotes,
-
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
-
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-
                   children: [
-<<<<<<< HEAD
-                    // =====================================================
-                    // HEADER
-                    // =====================================================
-=======
-
                     // ================= HEADER =================
-
->>>>>>> origin/qandeel
                     Row(
                       children: [
                         Expanded(
                           child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Assalam-o-Alaikum 👋',
@@ -301,9 +202,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   fontSize: 14,
                                 ),
                               ),
-
                               const SizedBox(height: 5),
-
                               Text(
                                 'Welcome to Soul Voice',
                                 style: TextStyle(
@@ -315,31 +214,23 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         ),
-
                         Container(
                           height: 45,
                           width: 45,
-
                           decoration: BoxDecoration(
                             color: surfaceColor,
-                            borderRadius:
-                                BorderRadius.circular(14),
-                            border: Border.all(
-                              color: borderColor,
-                            ),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(color: borderColor),
                           ),
-
                           child: IconButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) =>
-                                      const NotificationsScreen(),
+                                  builder: (_) => const NotificationsScreen(),
                                 ),
                               );
                             },
-
                             icon: Icon(
                               Icons.notifications_none_rounded,
                               color: primaryTextColor,
@@ -351,54 +242,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 22),
 
-<<<<<<< HEAD
-                    // =====================================================
-                    // SEARCH
-                    // =====================================================
-=======
                     // ================= SEARCH =================
-
->>>>>>> origin/qandeel
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                const SearchScreen(),
+                            builder: (_) => const SearchScreen(),
                           ),
                         );
                       },
-
                       child: Container(
                         height: 52,
-<<<<<<< HEAD
-
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-
-=======
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                        ),
->>>>>>> origin/qandeel
                         decoration: BoxDecoration(
                           color: surfaceColor,
-                          borderRadius:
-                              BorderRadius.circular(16),
-                          border: Border.all(
-                            color: borderColor,
-                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: borderColor),
                         ),
-
                         child: Row(
                           children: [
                             Icon(
                               Icons.search_rounded,
                               color: secondaryTextColor,
                             ),
-
                             const SizedBox(width: 12),
-
                             Text(
                               'Search quotes...',
                               style: TextStyle(
@@ -413,20 +281,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 28),
 
-<<<<<<< HEAD
-                    // =====================================================
-                    // CATEGORIES
-                    // =====================================================
+                    // ================= CATEGORIES =================
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-=======
-                    // ================= CATEGORIES =================
-
-                    Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
->>>>>>> origin/qandeel
                       children: [
                         Text(
                           'Categories',
@@ -436,23 +293,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-
                         TextButton(
                           onPressed: () {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) =>
-                                    const CategoriesScreen(),
+                                builder: (_) => const CategoriesScreen(),
                               ),
                             );
                           },
-
                           child: const Text(
                             'See All',
-                            style: TextStyle(
-                              color: AppColors.primary,
-                            ),
+                            style: TextStyle(color: AppColors.primary),
                           ),
                         ),
                       ],
@@ -462,58 +314,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     SizedBox(
                       height: 105,
-
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
-<<<<<<< HEAD
-
                         itemCount: _categories.length,
-
-                        separatorBuilder: (_, _) => const SizedBox(width: 12),
-
+                        separatorBuilder: (_, __) => const SizedBox(width: 12),
                         itemBuilder: (context, index) {
                           final category = _categories[index];
-
                           return _CategoryCard(
                             name: category['name'] as String,
-
                             icon: category['icon'] as IconData,
-
                             surfaceColor: surfaceColor,
-
                             borderColor: borderColor,
-
                             textColor: primaryTextColor,
-
-=======
-                        itemCount: categories.length,
-                        separatorBuilder: (_, _) =>
-                            const SizedBox(width: 12),
-                        itemBuilder: (context, index) {
-                          final category =
-                              categories[index];
-
-                          return _CategoryCard(
-                            name:
-                                category['name'] as String,
-                            icon:
-                                category['icon'] as IconData,
-                            surfaceColor:
-                                surfaceColor,
-                            borderColor:
-                                borderColor,
-                            textColor:
-                                primaryTextColor,
->>>>>>> origin/qandeel
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) =>
-                                      CategoryQuotesScreen(
-                                    category:
-                                        category['tag']
-                                            as String,
+                                  builder: (_) => CategoryQuotesScreen(
+                                    category: category['tag'] as String,
                                   ),
                                 ),
                               );
@@ -525,36 +343,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 28),
 
-<<<<<<< HEAD
-                    // =====================================================
-                    // TODAY'S INSPIRATION
-                    // =====================================================
-=======
                     // ================= DAILY QUOTE =================
-
->>>>>>> origin/qandeel
                     Container(
                       width: double.infinity,
-
                       padding: const EdgeInsets.all(22),
-
                       decoration: BoxDecoration(
                         color: surfaceColor,
-                        borderRadius:
-                            BorderRadius.circular(22),
-                        border: Border.all(
-                          color: borderColor,
-                        ),
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(color: borderColor),
                       ),
-
                       child: Column(
-<<<<<<< HEAD
                         crossAxisAlignment: CrossAxisAlignment.start,
-
-=======
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
->>>>>>> origin/qandeel
                         children: [
                           const Row(
                             children: [
@@ -563,9 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: AppColors.primary,
                                 size: 20,
                               ),
-
                               SizedBox(width: 8),
-
                               Text(
                                 "Today's Inspiration",
                                 style: TextStyle(
@@ -576,9 +373,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
-
                           const SizedBox(height: 18),
-
                           Text(
                             '"${todayQuoteMap['quote']}"',
                             style: TextStyle(
@@ -588,9 +383,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 1.4,
                             ),
                           ),
-
                           const SizedBox(height: 14),
-
                           Text(
                             todayQuoteMap['author']!,
                             style: TextStyle(
@@ -598,83 +391,14 @@ class _HomeScreenState extends State<HomeScreen> {
                               fontSize: 13,
                             ),
                           ),
-<<<<<<< HEAD
-
                           const SizedBox(height: 8),
-
                           Align(
                             alignment: Alignment.centerRight,
-
                             child: _QuoteActions(
                               quote: todayQuoteMap['quote']!,
                               author: todayQuoteMap['author']!,
                               secondaryTextColor: secondaryTextColor,
                             ),
-=======
-
-                          const SizedBox(height: 14),
-
-                          Row(
-                            mainAxisAlignment:
-                                MainAxisAlignment.end,
-                            children: [
-                              BlocBuilder<FavoriteBloc,
-                                  FavoriteState>(
-                                builder:
-                                    (context, favState) {
-                                  final isTodayFav =
-                                      favState.favoriteQuotes
-                                          .any(
-                                    (q) =>
-                                        q['quote'] ==
-                                        todayQuoteMap[
-                                            'quote'],
-                                  );
-
-                                  return IconButton(
-                                    onPressed: () {
-                                      context
-                                          .read<FavoriteBloc>()
-                                          .add(
-                                            ToggleFavoriteEvent(
-                                              todayQuoteMap,
-                                            ),
-                                          );
-
-                                      ScaffoldMessenger.of(
-                                              context)
-                                          .clearSnackBars();
-
-                                      ScaffoldMessenger.of(
-                                              context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            isTodayFav
-                                                ? 'Quote removed from favorites 💔'
-                                                : 'Quote added to favorites ❤️',
-                                          ),
-                                          duration:
-                                              const Duration(
-                                            seconds: 2,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    icon: Icon(
-                                      isTodayFav
-                                          ? Icons.favorite
-                                          : Icons
-                                              .favorite_border,
-                                      color: isTodayFav
-                                          ? Colors.red
-                                          : AppColors.primary,
-                                    ),
-                                  );
-                                },
-                              ),
-                            ],
->>>>>>> origin/qandeel
                           ),
                         ],
                       ),
@@ -682,20 +406,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 28),
 
-<<<<<<< HEAD
-                    // =====================================================
-                    // FEATURED QUOTES TITLE
-                    // =====================================================
+                    // ================= FEATURED QUOTES TITLE =================
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-=======
-                    // ================= FEATURED QUOTES =================
-
-                    Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
->>>>>>> origin/qandeel
                       children: [
                         Text(
                           'Featured Quotes',
@@ -705,14 +418,12 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-
                         IconButton(
                           onPressed: () {
                             setState(() {
                               _loadQuotes();
                             });
                           },
-
                           icon: const Icon(
                             Icons.refresh_rounded,
                             color: AppColors.primary,
@@ -723,25 +434,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 8),
 
-<<<<<<< HEAD
-                    // =====================================================
-                    // API QUOTES
-                    // =====================================================
-=======
                     // ================= API QUOTES =================
-
->>>>>>> origin/qandeel
                     FutureBuilder<List<QuoteModel>>(
                       future: _quotesFuture,
-
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.all(35),
-                              child:
-                                  CircularProgressIndicator(
+                              child: CircularProgressIndicator(
                                 color: AppColors.primary,
                               ),
                             ),
@@ -751,23 +453,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (snapshot.hasError) {
                           return Container(
                             width: double.infinity,
-<<<<<<< HEAD
-
                             padding: const EdgeInsets.all(22),
-
-=======
-                            padding:
-                                const EdgeInsets.all(22),
->>>>>>> origin/qandeel
                             decoration: BoxDecoration(
                               color: surfaceColor,
-                              borderRadius:
-                                  BorderRadius.circular(18),
-                              border: Border.all(
-                                color: borderColor,
-                              ),
+                              borderRadius: BorderRadius.circular(18),
+                              border: Border.all(color: borderColor),
                             ),
-
                             child: Column(
                               children: [
                                 const Icon(
@@ -775,92 +466,56 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: AppColors.primary,
                                   size: 40,
                                 ),
-
                                 const SizedBox(height: 12),
-
                                 Text(
                                   'Unable to load quotes',
                                   style: TextStyle(
-                                    color:
-                                        primaryTextColor,
+                                    color: primaryTextColor,
                                     fontSize: 16,
-                                    fontWeight:
-                                        FontWeight.bold,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-
                                 const SizedBox(height: 6),
-
                                 Text(
                                   'Please check your internet connection and try again.',
-<<<<<<< HEAD
                                   textAlign: TextAlign.center,
-=======
-                                  textAlign:
-                                      TextAlign.center,
->>>>>>> origin/qandeel
                                   style: TextStyle(
-                                    color:
-                                        secondaryTextColor,
+                                    color: secondaryTextColor,
                                     fontSize: 13,
                                   ),
                                 ),
-
                                 const SizedBox(height: 15),
-
                                 ElevatedButton(
                                   onPressed: () {
                                     setState(() {
                                       _loadQuotes();
                                     });
                                   },
-<<<<<<< HEAD
-
                                   child: const Text('Try Again'),
-=======
-                                  child:
-                                      const Text('Try Again'),
->>>>>>> origin/qandeel
                                 ),
                               ],
                             ),
                           );
                         }
 
-                        final quotes =
-                            snapshot.data ?? [];
+                        final quotes = snapshot.data ?? [];
 
                         if (quotes.isEmpty) {
                           return Container(
                             width: double.infinity,
-<<<<<<< HEAD
-
                             padding: const EdgeInsets.all(25),
-
-=======
-                            padding:
-                                const EdgeInsets.all(25),
->>>>>>> origin/qandeel
                             child: Text(
                               'No quotes found.',
-                              textAlign:
-                                  TextAlign.center,
-                              style: TextStyle(
-                                color:
-                                    secondaryTextColor,
-                              ),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: secondaryTextColor),
                             ),
                           );
                         }
 
-                        // ================= UNLIMITED FEATURED QUOTES =================
-
                         return Column(
-<<<<<<< HEAD
                           children: quotes.map((quote) {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
-
                               child: _QuoteCard(
                                 quote: quote.content,
                                 author: quote.author,
@@ -871,30 +526,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                           }).toList(),
-=======
-                          children: quotes
-                              .map(
-                                (quote) => Padding(
-                                  padding:
-                                      const EdgeInsets.only(
-                                    bottom: 12,
-                                  ),
-                                  child: _QuoteCard(
-                                    quote: quote.content,
-                                    author: quote.author,
-                                    surfaceColor:
-                                        surfaceColor,
-                                    borderColor:
-                                        borderColor,
-                                    primaryTextColor:
-                                        primaryTextColor,
-                                    secondaryTextColor:
-                                        secondaryTextColor,
-                                  ),
-                                ),
-                              )
-                              .toList(),
->>>>>>> origin/qandeel
                         );
                       },
                     ),
@@ -912,7 +543,6 @@ class _HomeScreenState extends State<HomeScreen> {
 // =====================================================
 // CATEGORY CARD
 // =====================================================
-
 class _CategoryCard extends StatelessWidget {
   final String name;
   final IconData icon;
@@ -934,43 +564,22 @@ class _CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-
       child: Container(
         width: 105,
-
         padding: const EdgeInsets.all(14),
-
         decoration: BoxDecoration(
           color: surfaceColor,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: borderColor,
-          ),
+          border: Border.all(color: borderColor),
         ),
-
         child: Column(
-<<<<<<< HEAD
           mainAxisAlignment: MainAxisAlignment.center,
-
           children: [
             Icon(icon, color: AppColors.primary, size: 28),
-
-=======
-          mainAxisAlignment:
-              MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: AppColors.primary,
-              size: 28,
-            ),
->>>>>>> origin/qandeel
             const SizedBox(height: 10),
-
             Text(
               name,
               textAlign: TextAlign.center,
-
               style: TextStyle(
                 color: textColor,
                 fontSize: 13,
@@ -987,7 +596,6 @@ class _CategoryCard extends StatelessWidget {
 // =====================================================
 // QUOTE CARD
 // =====================================================
-
 class _QuoteCard extends StatelessWidget {
   final String quote;
   final String author;
@@ -997,7 +605,6 @@ class _QuoteCard extends StatelessWidget {
   final Color secondaryTextColor;
 
   const _QuoteCard({
-    super.key,
     required this.quote,
     required this.author,
     required this.surfaceColor,
@@ -1010,143 +617,49 @@ class _QuoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-
       padding: const EdgeInsets.all(18),
-
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: borderColor,
-        ),
+        border: Border.all(color: borderColor),
       ),
-<<<<<<< HEAD
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-
         children: [
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-
             children: [
               const Icon(
                 Icons.format_quote_rounded,
                 color: AppColors.primary,
                 size: 30,
               ),
-
               const SizedBox(width: 12),
-
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-
                   children: [
                     Text(
                       quote,
-
                       style: TextStyle(
                         color: primaryTextColor,
                         fontSize: 15,
                         height: 1.4,
                       ),
                     ),
-
                     const SizedBox(height: 8),
-
                     Text(
                       '— $author',
-
                       style: TextStyle(color: secondaryTextColor, fontSize: 12),
                     ),
                   ],
-=======
-      child: Row(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-        children: [
-          const Icon(
-            Icons.format_quote_rounded,
-            color: AppColors.primary,
-            size: 30,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-              children: [
-                Text(
-                  quote,
-                  style: TextStyle(
-                    color: primaryTextColor,
-                    fontSize: 15,
-                    height: 1.4,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  '— $author',
-                  style: TextStyle(
-                    color: secondaryTextColor,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          BlocBuilder<FavoriteBloc, FavoriteState>(
-            builder: (context, favState) {
-              final isFav =
-                  favState.favoriteQuotes.any(
-                (q) => q['quote'] == quote,
-              );
-
-              return IconButton(
-                onPressed: () {
-                  context
-                      .read<FavoriteBloc>()
-                      .add(
-                        ToggleFavoriteEvent(
-                          quoteMap,               
-                        ),
-                      );
-                      
-                  ScaffoldMessenger.of(context)
-                      .clearSnackBars();
-
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        isFav
-                            ? 'Removed from favorites 💔'
-                            : 'Quote added to favorites ❤️',
-                      ),
-                      duration:
-                          const Duration(seconds: 1),
-                    ),
-                  );
-                },
-                icon: Icon(
-                  isFav
-                      ? Icons.favorite_rounded
-                      : Icons.favorite_border_rounded,
-                  color: isFav
-                      ? Colors.red
-                      : secondaryTextColor,
->>>>>>> origin/qandeel
                 ),
               ),
             ],
           ),
-
           const SizedBox(height: 8),
-
           Align(
             alignment: Alignment.centerRight,
-
             child: _QuoteActions(
               quote: quote,
               author: author,
@@ -1162,7 +675,6 @@ class _QuoteCard extends StatelessWidget {
 // =====================================================
 // QUOTE ACTIONS
 // =====================================================
-
 class _QuoteActions extends StatelessWidget {
   final String quote;
   final String author;
@@ -1186,7 +698,6 @@ class _QuoteActions extends StatelessWidget {
 
         return Row(
           mainAxisSize: MainAxisSize.min,
-
           children: [
             IconButton(
               onPressed: () {
@@ -1201,56 +712,47 @@ class _QuoteActions extends StatelessWidget {
                             ? 'Quote removed from favorites 💔'
                             : 'Quote added to favorites ❤️',
                       ),
-
                       duration: const Duration(seconds: 1),
-
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
               },
-
               icon: Icon(
                 isFavorite
                     ? Icons.favorite_rounded
                     : Icons.favorite_border_rounded,
-
                 color: isFavorite ? Colors.red : secondaryTextColor,
-
                 size: 25,
               ),
             ),
-
             IconButton(
               onPressed: () async {
                 final text = '"$quote"\n— $author';
-
                 await Clipboard.setData(ClipboardData(text: text));
 
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    const SnackBar(
-                      content: Text('Quote copied successfully 📋'),
-                      duration: Duration(seconds: 1),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      const SnackBar(
+                        content: Text('Quote copied successfully 📋'),
+                        duration: Duration(seconds: 1),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                }
               },
-
               icon: Icon(
                 Icons.copy_rounded,
                 color: secondaryTextColor,
                 size: 23,
               ),
             ),
-
             IconButton(
               onPressed: () {
                 final shareText = '"$quote"\n— $author';
-
                 Share.share(shareText);
               },
-
               icon: Icon(
                 Icons.share_outlined,
                 color: secondaryTextColor,
