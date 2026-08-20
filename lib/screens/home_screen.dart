@@ -12,9 +12,9 @@ import 'package:soul_voice/screens/favorite_event.dart';
 import 'package:soul_voice/screens/favorite_state.dart';
 import 'package:soul_voice/screens/notifications_screen.dart';
 import 'package:soul_voice/screens/search_screen.dart';
-
 import 'package:soul_voice/services/models/quote_model.dart';
 import 'package:soul_voice/services/quote_api_service.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,6 +27,64 @@ class _HomeScreenState extends State<HomeScreen> {
   final QuoteApiService _quoteApiService = QuoteApiService();
 
   late Future<List<QuoteModel>> _quotesFuture;
+
+  // =====================================================
+  // CATEGORIES LIST
+  // =====================================================
+  final List<Map<String, dynamic>> _categories = [
+    {'name': 'Faith', 'icon': Icons.auto_awesome_rounded, 'tag': 'faith'},
+    {'name': 'Life', 'icon': Icons.wb_sunny_outlined, 'tag': 'life'},
+    {
+      'name': 'Wisdom',
+      'icon': Icons.lightbulb_outline_rounded,
+      'tag': 'wisdom',
+    },
+    {'name': 'Success', 'icon': Icons.trending_up_rounded, 'tag': 'success'},
+    {'name': 'Love', 'icon': Icons.favorite_border_rounded, 'tag': 'love'},
+    {'name': 'Peace', 'icon': Icons.spa_outlined, 'tag': 'peace'},
+    {'name': 'Courage', 'icon': Icons.shield_outlined, 'tag': 'courage'},
+    {'name': 'Hope', 'icon': Icons.wb_incandescent_outlined, 'tag': 'hope'},
+    {
+      'name': 'Patience',
+      'icon': Icons.hourglass_empty_rounded,
+      'tag': 'patience',
+    },
+    {
+      'name': 'Gratitude',
+      'icon': Icons.volunteer_activism_outlined,
+      'tag': 'gratitude',
+    },
+    {
+      'name': 'Strength',
+      'icon': Icons.fitness_center_rounded,
+      'tag': 'strength',
+    },
+    {
+      'name': 'Happiness',
+      'icon': Icons.sentiment_very_satisfied_rounded,
+      'tag': 'happiness',
+    },
+    {'name': 'Motivation', 'icon': Icons.bolt_rounded, 'tag': 'motivation'},
+    {
+      'name': 'Friendship',
+      'icon': Icons.people_outline_rounded,
+      'tag': 'friendship',
+    },
+    {
+      'name': 'Knowledge',
+      'icon': Icons.menu_book_rounded,
+      'tag': 'knowledge',
+    },
+    {'name': 'Kindness', 'icon': Icons.handshake_outlined, 'tag': 'kindness'},
+    {'name': 'Time', 'icon': Icons.access_time_rounded, 'tag': 'time'},
+    {
+      'name': 'Forgiveness',
+      'icon': Icons.self_improvement_rounded,
+      'tag': 'forgiveness',
+    },
+    {'name': 'Truth', 'icon': Icons.verified_outlined, 'tag': 'truth'},
+    {'name': 'Future', 'icon': Icons.explore_outlined, 'tag': 'future'},
+  ];
 
   // =====================================================
   // DAILY INSPIRATION QUOTES
@@ -103,6 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    _categories.shuffle(); // 👈 جب پیج اوپن ہوگا تو کیٹیگریز شفل ہو جائیں گی
     _loadQuotes();
   }
 
@@ -112,6 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _refreshQuotes() async {
     setState(() {
+      _categories.shuffle(); // 👈 جب صارف اوپر سوائپ کر کے ریفریش کرے گا
       _loadQuotes();
     });
 
@@ -124,62 +184,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // UPDATED: All 20 Categories
-    final categories = [
-      {'name': 'Faith', 'icon': Icons.auto_awesome_rounded, 'tag': 'faith'},
-      {'name': 'Life', 'icon': Icons.wb_sunny_outlined, 'tag': 'life'},
-      {
-        'name': 'Wisdom',
-        'icon': Icons.lightbulb_outline_rounded,
-        'tag': 'wisdom',
-      },
-      {'name': 'Success', 'icon': Icons.trending_up_rounded, 'tag': 'success'},
-      {'name': 'Love', 'icon': Icons.favorite_border_rounded, 'tag': 'love'},
-      {'name': 'Peace', 'icon': Icons.spa_outlined, 'tag': 'peace'},
-      {'name': 'Courage', 'icon': Icons.shield_outlined, 'tag': 'courage'},
-      {'name': 'Hope', 'icon': Icons.wb_incandescent_outlined, 'tag': 'hope'},
-      {
-        'name': 'Patience',
-        'icon': Icons.hourglass_empty_rounded,
-        'tag': 'patience',
-      },
-      {
-        'name': 'Gratitude',
-        'icon': Icons.volunteer_activism_outlined,
-        'tag': 'gratitude',
-      },
-      {
-        'name': 'Strength',
-        'icon': Icons.fitness_center_rounded,
-        'tag': 'strength',
-      },
-      {
-        'name': 'Happiness',
-        'icon': Icons.sentiment_very_satisfied_rounded,
-        'tag': 'happiness',
-      },
-      {'name': 'Motivation', 'icon': Icons.bolt_rounded, 'tag': 'motivation'},
-      {
-        'name': 'Friendship',
-        'icon': Icons.people_outline_rounded,
-        'tag': 'friendship',
-      },
-      {
-        'name': 'Knowledge',
-        'icon': Icons.menu_book_rounded,
-        'tag': 'knowledge',
-      },
-      {'name': 'Kindness', 'icon': Icons.handshake_outlined, 'tag': 'kindness'},
-      {'name': 'Time', 'icon': Icons.access_time_rounded, 'tag': 'time'},
-      {
-        'name': 'Forgiveness',
-        'icon': Icons.self_improvement_rounded,
-        'tag': 'forgiveness',
-      },
-      {'name': 'Truth', 'icon': Icons.verified_outlined, 'tag': 'truth'},
-      {'name': 'Future', 'icon': Icons.explore_outlined, 'tag': 'future'},
-    ];
-
     final todayQuoteMap = _getTodayQuote();
 
     return BlocBuilder<ThemeCubit, ThemeMode>(
@@ -370,12 +374,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
 
-                        itemCount: categories.length,
+                        itemCount: _categories.length,
 
                         separatorBuilder: (_, _) => const SizedBox(width: 12),
 
                         itemBuilder: (context, index) {
-                          final category = categories[index];
+                          final category = _categories[index];
 
                           return _CategoryCard(
                             name: category['name'] as String,
