@@ -76,10 +76,8 @@ class _HomeScreenState extends State<HomeScreen> {
     },
   ];
 
-  // Aaj ki date ke mutabiq quote pick karne ka function
   Map<String, String> _getTodayQuote() {
     final now = DateTime.now();
-    // Days since epoch to get a unique number for each date
     final dayIndex = now.difference(DateTime(2025, 1, 1)).inDays;
     final index = dayIndex % _dailyInspirationQuotes.length;
     return _dailyInspirationQuotes[index];
@@ -105,6 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ================= 20 CATEGORIES =================
     final categories = [
       {'name': 'Faith', 'icon': Icons.auto_awesome_rounded, 'tag': 'faith'},
       {'name': 'Life', 'icon': Icons.wb_sunny_outlined, 'tag': 'life'},
@@ -116,9 +115,50 @@ class _HomeScreenState extends State<HomeScreen> {
       {'name': 'Success', 'icon': Icons.trending_up_rounded, 'tag': 'success'},
       {'name': 'Love', 'icon': Icons.favorite_border_rounded, 'tag': 'love'},
       {'name': 'Peace', 'icon': Icons.spa_outlined, 'tag': 'peace'},
+      {'name': 'Hope', 'icon': Icons.wb_twilight_rounded, 'tag': 'hope'},
+      {
+        'name': 'Gratitude',
+        'icon': Icons.volunteer_activism_outlined,
+        'tag': 'gratitude',
+      },
+      {'name': 'Motivation', 'icon': Icons.bolt_rounded, 'tag': 'motivation'},
+      {
+        'name': 'Hard Work',
+        'icon': Icons.fitness_center_rounded,
+        'tag': 'hard_work',
+      },
+      {
+        'name': 'Self-Care',
+        'icon': Icons.self_improvement_rounded,
+        'tag': 'self_care',
+      },
+      {
+        'name': 'Patience',
+        'icon': Icons.hourglass_empty_rounded,
+        'tag': 'patience',
+      },
+      {
+        'name': 'Friendship',
+        'icon': Icons.people_outline_rounded,
+        'tag': 'friendship',
+      },
+      {
+        'name': 'Family',
+        'icon': Icons.family_restroom_rounded,
+        'tag': 'family',
+      },
+      {
+        'name': 'Heartbreak',
+        'icon': Icons.heart_broken_outlined,
+        'tag': 'heartbreak',
+      },
+      {'name': 'Trust', 'icon': Icons.verified_user_outlined, 'tag': 'trust'},
+      {'name': 'Time', 'icon': Icons.access_time_rounded, 'tag': 'time'},
+      {'name': 'Morning', 'icon': Icons.wb_cloudy_outlined, 'tag': 'morning'},
+      {'name': 'Night', 'icon': Icons.nights_stay_outlined, 'tag': 'night'},
+      {'name': 'Mindset', 'icon': Icons.psychology_outlined, 'tag': 'mindset'},
     ];
 
-    // Today's Dynamic Quote Data
     final todayQuoteMap = _getTodayQuote();
 
     return BlocBuilder<ThemeCubit, ThemeMode>(
@@ -175,8 +215,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                         ),
-
-                        // Notification
                         Container(
                           height: 45,
                           width: 45,
@@ -357,94 +395,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                           const SizedBox(height: 14),
 
-                         Row(
-  mainAxisAlignment: MainAxisAlignment.end,
-  children: [
-    BlocBuilder<FavoriteBloc, FavoriteState>(
-      builder: (context, favState) {
-        final isTodayFav = favState.favoriteQuotes.any(
-          (q) => q['quote'] == todayQuoteMap['quote'],
-        );
-
-        return Row(
-          children: [
-            // ❤️ FAVORITE
-            IconButton(
-              onPressed: () {
-                context.read<FavoriteBloc>().add(
-                  ToggleFavoriteEvent(todayQuoteMap),
-                );
-
-                ScaffoldMessenger.of(context).clearSnackBars();
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                      isTodayFav
-                          ? 'Quote removed from favorites 💔'
-                          : 'Quote added to favorites ❤️',
-                    ),
-                    duration: const Duration(seconds: 1),
-                  ),
-                );
-              },
-              icon: Icon(
-                isTodayFav
-                    ? Icons.favorite
-                    : Icons.favorite_border,
-                color: isTodayFav
-                    ? Colors.red
-                    : AppColors.primary,
-              ),
-            ),
-
-            // 📋 COPY
-            IconButton(
-              onPressed: () async {
-                final text =
-                    '"${todayQuoteMap['quote']}"\n— ${todayQuoteMap['author']}';
-
-                await Clipboard.setData(
-                  ClipboardData(text: text),
-                );
-
-                ScaffoldMessenger.of(context).clearSnackBars();
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Quote copied successfully 📋',
-                    ),
-                    duration: Duration(seconds: 1),
-                  ),
-                );
-              },
-              icon: Icon(
-                Icons.copy_rounded,
-                color: secondaryTextColor,
-              ),
-            ),
-
-            // ↗️ SHARE
-            IconButton(
-              onPressed: () {
-                final shareText =
-                    '"${todayQuoteMap['quote']}"\n— ${todayQuoteMap['author']}';
-
-                Share.share(shareText);
-              },
-              icon: Icon(
-                Icons.share_outlined,
-                color: secondaryTextColor,
-              ),
-            ),
-          ],
-        );
-      },
-    ),
-  ],
-),
-
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
@@ -457,35 +407,84 @@ class _HomeScreenState extends State<HomeScreen> {
                                             todayQuoteMap['quote'],
                                       );
 
-                                  return IconButton(
-                                    onPressed: () {
-                                      context.read<FavoriteBloc>().add(
-                                        ToggleFavoriteEvent(todayQuoteMap),
-                                      );
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).clearSnackBars();
-                                      ScaffoldMessenger.of(
-                                        context,
-                                      ).showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            isTodayFav
-                                                ? 'Quote removed from favorites 💔'
-                                                : 'Quote added to favorites ❤️',
-                                          ),
-                                          duration: const Duration(seconds: 2),
+                                  return Row(
+                                    children: [
+                                      IconButton(
+                                        onPressed: () {
+                                          context.read<FavoriteBloc>().add(
+                                            ToggleFavoriteEvent(todayQuoteMap),
+                                          );
+
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).clearSnackBars();
+
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                isTodayFav
+                                                    ? 'Quote removed from favorites 💔'
+                                                    : 'Quote added to favorites ❤️',
+                                              ),
+                                              duration: const Duration(
+                                                seconds: 1,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                        icon: Icon(
+                                          isTodayFav
+                                              ? Icons.favorite
+                                              : Icons.favorite_border,
+                                          color: isTodayFav
+                                              ? Colors.red
+                                              : AppColors.primary,
                                         ),
-                                      );
-                                    },
-                                    icon: Icon(
-                                      isTodayFav
-                                          ? Icons.favorite
-                                          : Icons.favorite_border,
-                                      color: isTodayFav
-                                          ? Colors.red
-                                          : AppColors.primary,
-                                    ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () async {
+                                          final text =
+                                              '"${todayQuoteMap['quote']}"\n— ${todayQuoteMap['author']}';
+
+                                          await Clipboard.setData(
+                                            ClipboardData(text: text),
+                                          );
+
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).clearSnackBars();
+
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Quote copied successfully 📋',
+                                              ),
+                                              duration: Duration(seconds: 1),
+                                            ),
+                                          );
+                                        },
+                                        icon: Icon(
+                                          Icons.copy_rounded,
+                                          color: secondaryTextColor,
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          final shareText =
+                                              '"${todayQuoteMap['quote']}"\n— ${todayQuoteMap['author']}';
+
+                                          Share.share(shareText);
+                                        },
+                                        icon: Icon(
+                                          Icons.share_outlined,
+                                          color: secondaryTextColor,
+                                        ),
+                                      ),
+                                    ],
                                   );
                                 },
                               ),
@@ -676,6 +675,8 @@ class _CategoryCard extends StatelessWidget {
             Text(
               name,
               textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 color: textColor,
                 fontSize: 13,
@@ -752,81 +753,68 @@ class _QuoteCard extends StatelessWidget {
               ],
             ),
           ),
-        BlocBuilder<FavoriteBloc, FavoriteState>(
-  builder: (context, favState) {
-    final isFav = favState.favoriteQuotes.any(
-      (q) => q['quote'] == quote,
-    );
+          BlocBuilder<FavoriteBloc, FavoriteState>(
+            builder: (context, favState) {
+              final isFav = favState.favoriteQuotes.any(
+                (q) => q['quote'] == quote,
+              );
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // ❤️ FAVORITE
-        IconButton(
-          onPressed: () {
-            context.read<FavoriteBloc>().add(
-              ToggleFavoriteEvent(quoteMap),
-            );
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      context.read<FavoriteBloc>().add(
+                        ToggleFavoriteEvent(quoteMap),
+                      );
 
-            ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).clearSnackBars();
 
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  isFav
-                      ? 'Removed from favorites 💔'
-                      : 'Quote added to favorites ❤️',
-                ),
-                duration: const Duration(seconds: 1),
-              ),
-            );
-          },
-          icon: Icon(
-            isFav
-                ? Icons.favorite_rounded
-                : Icons.favorite_border_rounded,
-            color: isFav ? Colors.red : secondaryTextColor,
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            isFav
+                                ? 'Removed from favorites 💔'
+                                : 'Quote added to favorites ❤️',
+                          ),
+                          duration: const Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                    icon: Icon(
+                      isFav
+                          ? Icons.favorite_rounded
+                          : Icons.favorite_border_rounded,
+                      color: isFav ? Colors.red : secondaryTextColor,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () async {
+                      final text = '"$quote"\n— $author';
+
+                      await Clipboard.setData(ClipboardData(text: text));
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Quote copied successfully 📋'),
+                          duration: Duration(seconds: 1),
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.copy_rounded, color: secondaryTextColor),
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      final shareText = '"$quote"\n— $author';
+
+                      Share.share(shareText);
+                    },
+                    icon: Icon(Icons.share_outlined, color: secondaryTextColor),
+                  ),
+                ],
+              );
+            },
           ),
-        ),
-
-        // 📋 COPY
-        IconButton(
-          onPressed: () async {
-            final text = '"$quote"\n— $author';
-
-            await Clipboard.setData(
-              ClipboardData(text: text),
-            );
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Quote copied successfully 📋'),
-                duration: Duration(seconds: 1),
-              ),
-            );
-          },
-          icon: Icon(
-            Icons.copy_rounded,
-            color: secondaryTextColor,
-          ),
-        ),
-
-        // ↗️ SHARE
-        IconButton(
-          onPressed: () {
-            final shareText = '"$quote"\n— $author';
-
-            Share.share(shareText);
-          },
-          icon: Icon(
-            Icons.share_outlined,
-            color: secondaryTextColor,
-          ),
-        ),
-      ],
-    );
-  },
-),
         ],
       ),
     );
