@@ -735,10 +735,10 @@ class _QuoteCard extends StatelessWidget {
                       .read<FavoriteBloc>()
                       .add(
                         ToggleFavoriteEvent(
-                          quoteMap,
+                          quoteMap,               
                         ),
                       );
-
+                      
                   ScaffoldMessenger.of(context)
                       .clearSnackBars();
 
