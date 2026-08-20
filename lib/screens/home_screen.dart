@@ -44,16 +44,36 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final categories = [
-      {'name': 'Faith', 'icon': Icons.auto_awesome_rounded, 'tag': 'faith'},
-      {'name': 'Life', 'icon': Icons.wb_sunny_outlined, 'tag': 'life'},
+      {
+        'name': 'Faith',
+        'icon': Icons.auto_awesome_rounded,
+        'tag': 'faith'
+      },
+      {
+        'name': 'Life',
+        'icon': Icons.wb_sunny_outlined,
+        'tag': 'life'
+      },
       {
         'name': 'Wisdom',
         'icon': Icons.lightbulb_outline_rounded,
         'tag': 'wisdom',
       },
-      {'name': 'Success', 'icon': Icons.trending_up_rounded, 'tag': 'success'},
-      {'name': 'Love', 'icon': Icons.favorite_border_rounded, 'tag': 'love'},
-      {'name': 'Peace', 'icon': Icons.spa_outlined, 'tag': 'peace'},
+      {
+        'name': 'Success',
+        'icon': Icons.trending_up_rounded,
+        'tag': 'success'
+      },
+      {
+        'name': 'Love',
+        'icon': Icons.favorite_border_rounded,
+        'tag': 'love'
+      },
+      {
+        'name': 'Peace',
+        'icon': Icons.spa_outlined,
+        'tag': 'peace'
+      },
     ];
 
     // Today's Inspiration Quote Data
@@ -67,7 +87,8 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, themeMode) {
         final isDark = themeMode == ThemeMode.dark;
 
-        final backgroundColor = isDark ? AppColors.background : Colors.white;
+        final backgroundColor =
+            isDark ? AppColors.background : Colors.white;
         final surfaceColor =
             isDark ? AppColors.surface : const Color(0xFFF7F7F7);
         final primaryTextColor =
@@ -89,12 +110,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
                     // ================= HEADER =================
+
                     Row(
                       children: [
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Assalam-o-Alaikum 👋',
@@ -122,15 +146,19 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: 45,
                           decoration: BoxDecoration(
                             color: surfaceColor,
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: borderColor),
+                            borderRadius:
+                                BorderRadius.circular(14),
+                            border: Border.all(
+                              color: borderColor,
+                            ),
                           ),
                           child: IconButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => const NotificationsScreen(),
+                                  builder: (_) =>
+                                      const NotificationsScreen(),
                                 ),
                               );
                             },
@@ -146,22 +174,29 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 22),
 
                     // ================= SEARCH =================
+
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const SearchScreen(),
+                            builder: (_) =>
+                                const SearchScreen(),
                           ),
                         );
                       },
                       child: Container(
                         height: 52,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                        ),
                         decoration: BoxDecoration(
                           color: surfaceColor,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: borderColor),
+                          borderRadius:
+                              BorderRadius.circular(16),
+                          border: Border.all(
+                            color: borderColor,
+                          ),
                         ),
                         child: Row(
                           children: [
@@ -185,8 +220,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 28),
 
                     // ================= CATEGORIES =================
+
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           'Categories',
@@ -201,13 +238,16 @@ class _HomeScreenState extends State<HomeScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const CategoriesScreen(),
+                                builder: (_) =>
+                                    const CategoriesScreen(),
                               ),
                             );
                           },
                           child: const Text(
                             'See All',
-                            style: TextStyle(color: AppColors.primary),
+                            style: TextStyle(
+                              color: AppColors.primary,
+                            ),
                           ),
                         ),
                       ],
@@ -220,22 +260,32 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ListView.separated(
                         scrollDirection: Axis.horizontal,
                         itemCount: categories.length,
-                        separatorBuilder: (_, _) => const SizedBox(width: 12),
+                        separatorBuilder: (_, _) =>
+                            const SizedBox(width: 12),
                         itemBuilder: (context, index) {
-                          final category = categories[index];
+                          final category =
+                              categories[index];
 
                           return _CategoryCard(
-                            name: category['name'] as String,
-                            icon: category['icon'] as IconData,
-                            surfaceColor: surfaceColor,
-                            borderColor: borderColor,
-                            textColor: primaryTextColor,
+                            name:
+                                category['name'] as String,
+                            icon:
+                                category['icon'] as IconData,
+                            surfaceColor:
+                                surfaceColor,
+                            borderColor:
+                                borderColor,
+                            textColor:
+                                primaryTextColor,
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => CategoryQuotesScreen(
-                                    category: category['tag'] as String,
+                                  builder: (_) =>
+                                      CategoryQuotesScreen(
+                                    category:
+                                        category['tag']
+                                            as String,
                                   ),
                                 ),
                               );
@@ -248,16 +298,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 28),
 
                     // ================= DAILY QUOTE =================
+
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(22),
                       decoration: BoxDecoration(
                         color: surfaceColor,
-                        borderRadius: BorderRadius.circular(22),
-                        border: Border.all(color: borderColor),
+                        borderRadius:
+                            BorderRadius.circular(22),
+                        border: Border.all(
+                          color: borderColor,
+                        ),
                       ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
                         children: [
                           const Row(
                             children: [
@@ -277,7 +332,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ],
                           ),
+
                           const SizedBox(height: 18),
+
                           Text(
                             '"${todayQuoteMap['quote']}"',
                             style: TextStyle(
@@ -287,7 +344,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 1.4,
                             ),
                           ),
+
                           const SizedBox(height: 14),
+
                           Text(
                             todayQuoteMap['author']!,
                             style: TextStyle(
@@ -295,25 +354,42 @@ class _HomeScreenState extends State<HomeScreen> {
                               fontSize: 13,
                             ),
                           ),
+
                           const SizedBox(height: 14),
+
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment:
+                                MainAxisAlignment.end,
                             children: [
-                              BlocBuilder<FavoriteBloc, FavoriteState>(
-                                builder: (context, favState) {
+                              BlocBuilder<FavoriteBloc,
+                                  FavoriteState>(
+                                builder:
+                                    (context, favState) {
                                   final isTodayFav =
-                                      favState.favoriteQuotes.any(
-                                    (q) => q['quote'] == todayQuoteMap['quote'],
+                                      favState.favoriteQuotes
+                                          .any(
+                                    (q) =>
+                                        q['quote'] ==
+                                        todayQuoteMap[
+                                            'quote'],
                                   );
 
                                   return IconButton(
                                     onPressed: () {
-                                      context.read<FavoriteBloc>().add(
-                                            ToggleFavoriteEvent(todayQuoteMap),
+                                      context
+                                          .read<FavoriteBloc>()
+                                          .add(
+                                            ToggleFavoriteEvent(
+                                              todayQuoteMap,
+                                            ),
                                           );
-                                      ScaffoldMessenger.of(context)
+
+                                      ScaffoldMessenger.of(
+                                              context)
                                           .clearSnackBars();
-                                      ScaffoldMessenger.of(context)
+
+                                      ScaffoldMessenger.of(
+                                              context)
                                           .showSnackBar(
                                         SnackBar(
                                           content: Text(
@@ -321,14 +397,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ? 'Quote removed from favorites 💔'
                                                 : 'Quote added to favorites ❤️',
                                           ),
-                                          duration: const Duration(seconds: 2),
+                                          duration:
+                                              const Duration(
+                                            seconds: 2,
+                                          ),
                                         ),
                                       );
                                     },
                                     icon: Icon(
                                       isTodayFav
                                           ? Icons.favorite
-                                          : Icons.favorite_border,
+                                          : Icons
+                                              .favorite_border,
                                       color: isTodayFav
                                           ? Colors.red
                                           : AppColors.primary,
@@ -345,8 +425,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 28),
 
                     // ================= FEATURED QUOTES =================
+
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           'Featured Quotes',
@@ -373,6 +455,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 8),
 
                     // ================= API QUOTES =================
+
                     FutureBuilder<List<QuoteModel>>(
                       future: _quotesFuture,
                       builder: (context, snapshot) {
@@ -381,7 +464,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           return const Center(
                             child: Padding(
                               padding: EdgeInsets.all(35),
-                              child: CircularProgressIndicator(
+                              child:
+                                  CircularProgressIndicator(
                                 color: AppColors.primary,
                               ),
                             ),
@@ -391,11 +475,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         if (snapshot.hasError) {
                           return Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.all(22),
+                            padding:
+                                const EdgeInsets.all(22),
                             decoration: BoxDecoration(
                               color: surfaceColor,
-                              borderRadius: BorderRadius.circular(18),
-                              border: Border.all(color: borderColor),
+                              borderRadius:
+                                  BorderRadius.circular(18),
+                              border: Border.all(
+                                color: borderColor,
+                              ),
                             ),
                             child: Column(
                               children: [
@@ -408,18 +496,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                 Text(
                                   'Unable to load quotes',
                                   style: TextStyle(
-                                    color: primaryTextColor,
+                                    color:
+                                        primaryTextColor,
                                     fontSize: 16,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight:
+                                        FontWeight.bold,
                                   ),
                                 ),
                                 const SizedBox(height: 6),
                                 Text(
-                                  'Please check your internet '
-                                  'connection and try again.',
-                                  textAlign: TextAlign.center,
+                                  'Please check your internet connection and try again.',
+                                  textAlign:
+                                      TextAlign.center,
                                   style: TextStyle(
-                                    color: secondaryTextColor,
+                                    color:
+                                        secondaryTextColor,
                                     fontSize: 13,
                                   ),
                                 ),
@@ -430,40 +521,55 @@ class _HomeScreenState extends State<HomeScreen> {
                                       _loadQuotes();
                                     });
                                   },
-                                  child: const Text('Try Again'),
+                                  child:
+                                      const Text('Try Again'),
                                 ),
                               ],
                             ),
                           );
                         }
 
-                        final quotes = snapshot.data ?? [];
+                        final quotes =
+                            snapshot.data ?? [];
 
                         if (quotes.isEmpty) {
                           return Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.all(25),
+                            padding:
+                                const EdgeInsets.all(25),
                             child: Text(
                               'No quotes found.',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: secondaryTextColor),
+                              textAlign:
+                                  TextAlign.center,
+                              style: TextStyle(
+                                color:
+                                    secondaryTextColor,
+                              ),
                             ),
                           );
                         }
 
+                        // ================= UNLIMITED FEATURED QUOTES =================
+
                         return Column(
                           children: quotes
-                              .take(5)
                               .map(
                                 (quote) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 12),
+                                  padding:
+                                      const EdgeInsets.only(
+                                    bottom: 12,
+                                  ),
                                   child: _QuoteCard(
                                     quote: quote.content,
                                     author: quote.author,
-                                    surfaceColor: surfaceColor,
-                                    borderColor: borderColor,
-                                    primaryTextColor: primaryTextColor,
-                                    secondaryTextColor: secondaryTextColor,
+                                    surfaceColor:
+                                        surfaceColor,
+                                    borderColor:
+                                        borderColor,
+                                    primaryTextColor:
+                                        primaryTextColor,
+                                    secondaryTextColor:
+                                        secondaryTextColor,
                                   ),
                                 ),
                               )
@@ -513,12 +619,19 @@ class _CategoryCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: surfaceColor,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: borderColor),
+          border: Border.all(
+            color: borderColor,
+          ),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment:
+              MainAxisAlignment.center,
           children: [
-            Icon(icon, color: AppColors.primary, size: 28),
+            Icon(
+              icon,
+              color: AppColors.primary,
+              size: 28,
+            ),
             const SizedBox(height: 10),
             Text(
               name,
@@ -571,10 +684,13 @@ class _QuoteCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: borderColor),
+        border: Border.all(
+          color: borderColor,
+        ),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
         children: [
           const Icon(
             Icons.format_quote_rounded,
@@ -584,7 +700,8 @@ class _QuoteCard extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
               children: [
                 Text(
                   quote,
@@ -597,35 +714,54 @@ class _QuoteCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text(
                   '— $author',
-                  style: TextStyle(color: secondaryTextColor, fontSize: 12),
+                  style: TextStyle(
+                    color: secondaryTextColor,
+                    fontSize: 12,
+                  ),
                 ),
               ],
             ),
           ),
           BlocBuilder<FavoriteBloc, FavoriteState>(
             builder: (context, favState) {
-              final isFav = favState.favoriteQuotes.any(
+              final isFav =
+                  favState.favoriteQuotes.any(
                 (q) => q['quote'] == quote,
               );
 
               return IconButton(
                 onPressed: () {
-                  context.read<FavoriteBloc>().add(ToggleFavoriteEvent(quoteMap));
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  context
+                      .read<FavoriteBloc>()
+                      .add(
+                        ToggleFavoriteEvent(
+                          quoteMap,
+                        ),
+                      );
+
+                  ScaffoldMessenger.of(context)
+                      .clearSnackBars();
+
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(
                     SnackBar(
                       content: Text(
                         isFav
                             ? 'Removed from favorites 💔'
                             : 'Quote added to favorites ❤️',
                       ),
-                      duration: const Duration(seconds: 1),
+                      duration:
+                          const Duration(seconds: 1),
                     ),
                   );
                 },
                 icon: Icon(
-                  isFav ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                  color: isFav ? Colors.red : secondaryTextColor,
+                  isFav
+                      ? Icons.favorite_rounded
+                      : Icons.favorite_border_rounded,
+                  color: isFav
+                      ? Colors.red
+                      : secondaryTextColor,
                 ),
               );
             },
