@@ -248,22 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
 
-                  _SampleOptionItem(
-                    icon: Icons.favorite_border_rounded,
-                    title: 'My Favorites',
-                    cardColor: cardColor,
-                    iconBoxColor: iconBoxColor,
-                    iconColor: goldenIconColor,
-                    textColor: primaryTextColor,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const FavoritesScreen(),
-                        ),
-                      );
-                    },
-                  ),
+                  
 
                   const SizedBox(height: 20),
 
