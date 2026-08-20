@@ -7,13 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
 import 'package:soul_voice/screens/notifications_screen.dart';
-import 'package:soul_voice/screens/auth/login_screens.dart';
 import 'package:soul_voice/screens/edit_profile_screen.dart';
-import 'package:soul_voice/screens/favourite_screens.dart';
 import 'package:soul_voice/screens/privacy_screen.dart';
 import 'package:soul_voice/screens/security_screen.dart';
 import 'package:soul_voice/screens/settings_screen.dart';
-import 'package:soul_voice/screens/splash.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -248,8 +245,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
 
-                  
-
                   const SizedBox(height: 20),
 
                   // =====================================================
@@ -361,7 +356,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                   const SizedBox(height: 12),
 
-                  // DELETE ACCOUNT
+                  // =====================================================
+                  // DELETE ACCOUNT BUTTON
+                  // =====================================================
                   Center(
                     child: TextButton(
                       onPressed: () => _showDeleteAccountDialog(context),
@@ -385,12 +382,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // ===========================================================================
+  // LOGOUT DIALOG & FUNCTION
+  // ===========================================================================
   void _showLogoutDialog(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (ctx) {
         return AlertDialog(
           backgroundColor: isDark ? AppColors.surface : Colors.white,
           title: Text(
@@ -407,18 +407,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(ctx),
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                if (!context.mounted) return;
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                  (route) => false,
-                );
+                Navigator.pop(ctx); // Close Dialog
+                try {
+                  await FirebaseAuth.instance.signOut();
+                  // main.dart کا StreamBuilder خود ہی SplashScreen یا LoginScreen پر لے جائے گا
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Logout failed: $e')),
+                    );
+                  }
+                }
               },
               child: const Text(
                 'Logout',
@@ -431,12 +435,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  // ===========================================================================
+  // DELETE ACCOUNT DIALOG & FUNCTION
+  // ===========================================================================
   void _showDeleteAccountDialog(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (ctx) {
         return AlertDialog(
           backgroundColor: isDark ? AppColors.surface : Colors.white,
           title: Text(
@@ -446,41 +453,63 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
           content: Text(
-            'This action cannot be undone. Are you sure?',
+            'This action cannot be undone and all your data will be deleted permanently. Are you sure?',
             style: TextStyle(
               color: isDark ? AppColors.textSecondary : Colors.black54,
             ),
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(ctx),
               child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () async {
+                Navigator.pop(ctx); // Close Dialog
                 try {
                   final user = FirebaseAuth.instance.currentUser;
                   if (user != null) {
+                    // 1. Firestore Document Delete
                     await FirebaseFirestore.instance
                         .collection('users')
                         .doc(user.uid)
                         .delete();
+
+                    // 2. Clear Local Preferences
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.clear();
+
+                    // 3. Delete User from Firebase Auth
                     await user.delete();
+
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Account deleted successfully'),
+                        ),
+                      );
+                    }
                   }
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.clear();
-                  if (!context.mounted) return;
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => const SplashScreen()),
-                    (route) => false,
-                  );
+                } on FirebaseAuthException catch (e) {
+                  if (e.code == 'requires-recent-login' && context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'For security reasons, please login again before deleting your account.',
+                        ),
+                      ),
+                    );
+                  } else if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Delete failed: ${e.message}')),
+                    );
+                  }
                 } catch (e) {
-                  if (!context.mounted) return;
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(
-                    context,
-                  ).showSnackBar(SnackBar(content: Text('Delete failed: $e')));
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Delete failed: $e')),
+                    );
+                  }
                 }
               },
               child: const Text(
