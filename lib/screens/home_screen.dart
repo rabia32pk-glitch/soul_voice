@@ -22,7 +22,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final QuoteApiService _quoteApiService = QuoteApiService();
-  late Future<List<QuoteModel>> _quotesFuture;
+  final ScrollController _scrollController = ScrollController();
+
+  final List<QuoteModel> _quotes = [];
+  bool _isLoadingInitial = true;
+  bool _isLoadingMore = false;
+  bool _hasError = false;
 
   // =====================================================
   // CATEGORIES LIST
@@ -142,19 +147,71 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     _categories.shuffle();
-    _loadQuotes();
+    _fetchInitialQuotes();
+
+    // Infinite Scroll Listener
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+          _scrollController.position.maxScrollExtent - 300) {
+        _fetchMoreQuotes();
+      }
+    });
   }
 
-  void _loadQuotes() {
-    _quotesFuture = _quoteApiService.getQuotes();
+  // Initial Fetching
+  Future<void> _fetchInitialQuotes() async {
+    setState(() {
+      _isLoadingInitial = true;
+      _hasError = false;
+    });
+
+    try {
+      final newQuotes = await _quoteApiService.getQuotes();
+      setState(() {
+        _quotes.clear();
+        _quotes.addAll(newQuotes);
+        _isLoadingInitial = false;
+      });
+    } catch (e) {
+      setState(() {
+        _hasError = true;
+        _isLoadingInitial = false;
+      });
+    }
+  }
+
+  // Unlimited Loading on Scroll
+  Future<void> _fetchMoreQuotes() async {
+    if (_isLoadingMore) return;
+
+    setState(() {
+      _isLoadingMore = true;
+    });
+
+    try {
+      final newQuotes = await _quoteApiService.getQuotes();
+      setState(() {
+        _quotes.addAll(newQuotes);
+        _isLoadingMore = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingMore = false;
+      });
+    }
   }
 
   Future<void> _refreshQuotes() async {
     setState(() {
       _categories.shuffle();
-      _loadQuotes();
     });
-    await _quotesFuture;
+    await _fetchInitialQuotes();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -183,6 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
               color: AppColors.primary,
               onRefresh: _refreshQuotes,
               child: SingleChildScrollView(
+                controller: _scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
                 child: Column(
@@ -419,11 +477,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _loadQuotes();
-                            });
-                          },
+                          onPressed: _refreshQuotes,
                           icon: const Icon(
                             Icons.refresh_rounded,
                             color: AppColors.primary,
@@ -434,86 +488,72 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 8),
 
-                    // ================= API QUOTES =================
-                    FutureBuilder<List<QuoteModel>>(
-                      future: _quotesFuture,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(35),
-                              child: CircularProgressIndicator(
-                                color: AppColors.primary,
+                    // ================= UNLIMITED API QUOTES =================
+                    if (_isLoadingInitial)
+                      const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(35),
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      )
+                    else if (_hasError && _quotes.isEmpty)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(22),
+                        decoration: BoxDecoration(
+                          color: surfaceColor,
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: borderColor),
+                        ),
+                        child: Column(
+                          children: [
+                            const Icon(
+                              Icons.cloud_off_rounded,
+                              color: AppColors.primary,
+                              size: 40,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'Unable to load quotes',
+                              style: TextStyle(
+                                color: primaryTextColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          );
-                        }
-
-                        if (snapshot.hasError) {
-                          return Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(22),
-                            decoration: BoxDecoration(
-                              color: surfaceColor,
-                              borderRadius: BorderRadius.circular(18),
-                              border: Border.all(color: borderColor),
-                            ),
-                            child: Column(
-                              children: [
-                                const Icon(
-                                  Icons.cloud_off_rounded,
-                                  color: AppColors.primary,
-                                  size: 40,
-                                ),
-                                const SizedBox(height: 12),
-                                Text(
-                                  'Unable to load quotes',
-                                  style: TextStyle(
-                                    color: primaryTextColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  'Please check your internet connection and try again.',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: secondaryTextColor,
-                                    fontSize: 13,
-                                  ),
-                                ),
-                                const SizedBox(height: 15),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      _loadQuotes();
-                                    });
-                                  },
-                                  child: const Text('Try Again'),
-                                ),
-                              ],
-                            ),
-                          );
-                        }
-
-                        final quotes = snapshot.data ?? [];
-
-                        if (quotes.isEmpty) {
-                          return Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.all(25),
-                            child: Text(
-                              'No quotes found.',
+                            const SizedBox(height: 6),
+                            Text(
+                              'Please check your internet connection and try again.',
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: secondaryTextColor),
+                              style: TextStyle(
+                                color: secondaryTextColor,
+                                fontSize: 13,
+                              ),
                             ),
-                          );
-                        }
-
-                        return Column(
-                          children: quotes.map((quote) {
+                            const SizedBox(height: 15),
+                            ElevatedButton(
+                              onPressed: _fetchInitialQuotes,
+                              child: const Text('Try Again'),
+                            ),
+                          ],
+                        ),
+                      )
+                    else if (_quotes.isEmpty)
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(25),
+                        child: Text(
+                          'No quotes found.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: secondaryTextColor),
+                        ),
+                      )
+                    else
+                      Column(
+                        children: [
+                          ..._quotes.map((quote) {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: _QuoteCard(
@@ -525,10 +565,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                 secondaryTextColor: secondaryTextColor,
                               ),
                             );
-                          }).toList(),
-                        );
-                      },
-                    ),
+                          }),
+                          if (_isLoadingMore)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                   ],
                 ),
               ),

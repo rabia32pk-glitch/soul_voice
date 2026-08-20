@@ -4,10 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
-import 'package:soul_voice/screens/notifications_screen.dart';
+import 'package:soul_voice/screens/about_soul_voice_screen.dart';
 import 'package:soul_voice/screens/edit_profile_screen.dart';
+import 'package:soul_voice/screens/heplsupportscreen.dart';
 import 'package:soul_voice/screens/privacy_screen.dart';
 import 'package:soul_voice/screens/security_screen.dart';
 
@@ -75,7 +79,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context, themeMode) {
         final isDark = themeMode == ThemeMode.dark;
 
-        // Exact Screenshot Theme Palette
         final backgroundColor = isDark
             ? AppColors.background
             : const Color(0xFFFBF8F2);
@@ -320,23 +323,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
 
-                  _SampleOptionItem(
-                    icon: Icons.notifications_none_rounded,
-                    title: 'Notifcations',
-                    cardColor: cardColor,
-                    iconBoxColor: iconBoxColor,
-                    iconColor: goldenIconColor,
-                    textColor: primaryTextColor,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const NotificationsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-
                   const SizedBox(height: 22),
 
                   // =====================================================
@@ -381,9 +367,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ===========================================================================
-  // LOGOUT DIALOG & FUNCTION
-  // ===========================================================================
   void _showLogoutDialog(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -433,9 +416,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  // ===========================================================================
-  // DELETE ACCOUNT DIALOG & FUNCTION
-  // ===========================================================================
   void _showDeleteAccountDialog(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -600,11 +580,38 @@ class _SampleOptionItem extends StatelessWidget {
 }
 
 // =====================================================
-// SETTINGS SCREEN
+// SETTINGS SCREEN (UPDATED WITH THE 4 SPECIFIC ITEMS)
 // =====================================================
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
+
+  Future<void> _openStoreRating(BuildContext context) async {
+    const packageName = 'com.example.soul_voice';
+
+    final Uri appStoreUrl = Uri.parse('market://details?id=$packageName');
+    final Uri webStoreUrl = Uri.parse(
+      'https://play.google.com/store/apps/details?id=$packageName',
+    );
+
+    try {
+      if (await canLaunchUrl(appStoreUrl)) {
+        await launchUrl(appStoreUrl, mode: LaunchMode.externalApplication);
+      } else if (await canLaunchUrl(webStoreUrl)) {
+        await launchUrl(webStoreUrl, mode: LaunchMode.externalApplication);
+      } else {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not launch Play Store')),
+        );
+      }
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Could not open store link: $e')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -623,7 +630,7 @@ class SettingsScreen extends StatelessWidget {
         backgroundColor: backgroundColor,
         elevation: 0,
         title: Text(
-          'Settings',
+          'Account Settings',
           style: TextStyle(
             color: primaryTextColor,
             fontWeight: FontWeight.bold,
@@ -643,10 +650,12 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
+
+          // 1. Help & Support
           _SettingsTile(
-            icon: Icons.notifications_none_rounded,
-            title: 'Notifications',
-            subtitle: 'Control your notifications',
+            icon: Icons.help_outline_rounded,
+            title: 'Help & Support',
+            subtitle: 'Get in touch with us',
             surfaceColor: surfaceColor,
             borderColor: borderColor,
             titleColor: primaryTextColor,
@@ -654,34 +663,77 @@ class SettingsScreen extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+                MaterialPageRoute(builder: (_) => const HelpSupportScreen()),
               );
             },
           ),
+
+          // 2. Share
           _SettingsTile(
-            icon: Icons.lock_outline_rounded,
-            title: 'Privacy',
-            subtitle: 'Manage privacy settings',
+            icon: Icons.share_rounded,
+            title: 'Share Soul Voice',
+            subtitle: 'Share with your friends',
             surfaceColor: surfaceColor,
             borderColor: borderColor,
             titleColor: primaryTextColor,
             subtitleColor: secondaryTextColor,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const PrivacyScreen()),
-              );
+            onTap: () async {
+              const appLink =
+                  'https://play.google.com/store/apps/details?id=com.example.soul_voice';
+
+              try {
+                final result = await Share.share(
+                  'Check out Soul Voice app for daily quotes and inspiration!\nDownload now: $appLink',
+                );
+
+                if (result.status == ShareResultStatus.unavailable &&
+                    context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'Sharing is not supported on this platform/device.',
+                      ),
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Sharing is not available on this device.'),
+                  ),
+                );
+              }
             },
           ),
+
+          // 3. Rate Us
+          _SettingsTile(
+            icon: Icons.star_border_rounded,
+            title: 'Rate Us',
+            subtitle: 'Give us your feedback',
+            surfaceColor: surfaceColor,
+            borderColor: borderColor,
+            titleColor: primaryTextColor,
+            subtitleColor: secondaryTextColor,
+            onTap: () => _openStoreRating(context),
+          ),
+
+          // 4. About Service
           _SettingsTile(
             icon: Icons.info_outline_rounded,
-            title: 'About Soul Voice',
-            subtitle: 'App information',
+            title: 'About Service',
+            subtitle: 'App information and details',
             surfaceColor: surfaceColor,
             borderColor: borderColor,
             titleColor: primaryTextColor,
             subtitleColor: secondaryTextColor,
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AboutSoulVoiceScreen()),
+              );
+            },
           ),
         ],
       ),
