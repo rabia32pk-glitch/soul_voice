@@ -7,10 +7,13 @@ class QuoteApiService {
   static const String _baseUrl = 'https://dummyjson.com/quotes';
   final Random _random = Random();
 
+  // Total quotes available on DummyJSON API is 1453
+  static const int _totalApiQuotes = 1453;
+
   // 1. Dynamic Random Quote
   Future<QuoteModel> fetchRandomQuote() async {
     try {
-      final randomId = _random.nextInt(100) + 1;
+      final randomId = _random.nextInt(_totalApiQuotes) + 1;
       final response = await http
           .get(Uri.parse('$_baseUrl/$randomId'))
           .timeout(const Duration(seconds: 7));
@@ -27,9 +30,33 @@ class QuoteApiService {
     return fallbackList[_random.nextInt(fallbackList.length)];
   }
 
-  // 2. Featured Quotes with Pagination Support (Home Screen Unlimited Loading)
+  // 2. Fetch All 1400+ Quotes at Once (Unlimited Mode)
+  Future<List<QuoteModel>> fetchAllQuotes() async {
+    try {
+      final response = await http
+          .get(Uri.parse('$_baseUrl?limit=0'))
+          .timeout(const Duration(seconds: 10));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = jsonDecode(response.body);
+        final List<dynamic> quotesJson = data['quotes'] ?? [];
+        if (quotesJson.isNotEmpty) {
+          return quotesJson.map((json) => QuoteModel.fromJson(json)).toList();
+        }
+      }
+    } catch (e) {
+      // Fallback on failure
+    }
+
+    return _getAllFallbackQuotes();
+  }
+
+  // 3. Featured Quotes with True Unlimited Scroll Support
   Future<List<QuoteModel>> getQuotes({int limit = 10, int page = 1}) async {
-    final skip = (page - 1) * limit;
+    // True infinite page rotation
+    final totalPages = (_totalApiQuotes / limit).ceil();
+    final effectivePage = ((page - 1) % totalPages) + 1;
+    final skip = (effectivePage - 1) * limit;
 
     try {
       final response = await http
@@ -43,16 +70,30 @@ class QuoteApiService {
           final list = quotesJson
               .map((json) => QuoteModel.fromJson(json))
               .toList();
+          
+          // Inject dynamic fallback items when looping back to keep content fresh
+          if (page > totalPages) {
+            list.shuffle(_random);
+          }
           return list;
         }
       }
     } catch (e) {
-      // Fallback
+      // Fallback on Network Error
     }
-    return _getCategoryFallback('faith');
+
+    // Unlimited Local Fallback Rotation on API Failure
+    final allFallback = _getAllFallbackQuotes();
+    allFallback.shuffle(_random);
+    final startIndex = ((page - 1) * limit) % allFallback.length;
+    final endIndex = (startIndex + limit) > allFallback.length
+        ? allFallback.length
+        : (startIndex + limit);
+
+    return allFallback.sublist(startIndex, endIndex);
   }
 
-  // 3. Category Specific Quotes List
+  // 4. Category Specific Quotes List
   Future<List<QuoteModel>> getQuotesByCategory(String category) async {
     final cleanCategory = category.toLowerCase().trim().replaceAll(' ', '_');
 
@@ -75,6 +116,22 @@ class QuoteApiService {
     }
 
     return _getCategoryFallback(cleanCategory);
+  }
+
+  // Helper method to combine all fallback lists
+  List<QuoteModel> _getAllFallbackQuotes() {
+    final List<QuoteModel> allQuotes = [];
+    final categories = [
+      'faith', 'life', 'wisdom', 'success', 'love', 'peace', 'hope',
+      'gratitude', 'motivation', 'hard_work', 'self_care', 'patience',
+      'friendship', 'family', 'heartbreak', 'trust', 'time', 'morning',
+      'night', 'mindset'
+    ];
+
+    for (var cat in categories) {
+      allQuotes.addAll(_getCategoryFallback(cat));
+    }
+    return allQuotes;
   }
 
   // Complete 20 Categories Local Dataset (5 Quotes Each)

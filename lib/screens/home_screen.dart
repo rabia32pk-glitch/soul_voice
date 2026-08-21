@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,10 +29,11 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _isLoadingInitial = true;
   bool _isLoadingMore = false;
   bool _hasError = false;
+  bool _hasMoreError = false; // Pagination error state
 
-  // =====================================================
-  // CATEGORIES LIST
-  // =====================================================
+  int _currentPage = 1;
+  static const int _pageSize = 20;
+
   final List<Map<String, dynamic>> _categories = [
     {'name': 'Faith', 'icon': Icons.auto_awesome_rounded, 'tag': 'faith'},
     {'name': 'Life', 'icon': Icons.wb_sunny_outlined, 'tag': 'life'},
@@ -83,9 +85,6 @@ class _HomeScreenState extends State<HomeScreen> {
     {'name': 'Future', 'icon': Icons.explore_outlined, 'tag': 'future'},
   ];
 
-  // =====================================================
-  // DAILY INSPIRATION QUOTES
-  // =====================================================
   final List<Map<String, String>> _dailyInspirationQuotes = [
     {
       'quote':
@@ -138,7 +137,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Map<String, String> _getTodayQuote() {
     final now = DateTime.now();
-    final dayIndex = now.difference(DateTime(2025, 1, 1)).inDays;
+    final dayIndex = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).difference(DateTime(2025, 1, 1)).inDays;
     final index = dayIndex % _dailyInspirationQuotes.length;
     return _dailyInspirationQuotes[index];
   }
@@ -148,31 +151,38 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _categories.shuffle();
     _fetchInitialQuotes();
-
-    // Infinite Scroll Listener
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 300) {
-        _fetchMoreQuotes();
-      }
-    });
+    _scrollController.addListener(_onScroll);
   }
 
-  // Initial Fetching
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 300) {
+      _fetchMoreQuotes();
+    }
+  }
+
   Future<void> _fetchInitialQuotes() async {
     setState(() {
       _isLoadingInitial = true;
       _hasError = false;
+      _currentPage = 1;
     });
 
     try {
-      final newQuotes = await _quoteApiService.getQuotes();
+      final newQuotes = await _quoteApiService.getQuotes(
+        page: _currentPage,
+        limit: _pageSize,
+      );
+      newQuotes.shuffle(Random());
+
+      if (!mounted) return;
       setState(() {
         _quotes.clear();
         _quotes.addAll(newQuotes);
         _isLoadingInitial = false;
       });
-    } catch (e) {
+    } catch (_) {
+      if (!mounted) return;
       setState(() {
         _hasError = true;
         _isLoadingInitial = false;
@@ -180,23 +190,40 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // Unlimited Loading on Scroll
   Future<void> _fetchMoreQuotes() async {
-    if (_isLoadingMore) return;
+    if (_isLoadingMore || _isLoadingInitial || _hasError || _hasMoreError)
+      return;
 
     setState(() {
       _isLoadingMore = true;
+      _hasMoreError = false;
     });
 
     try {
-      final newQuotes = await _quoteApiService.getQuotes();
+      final nextPage = _currentPage + 1;
+      final newQuotes = await _quoteApiService.getQuotes(
+        page: nextPage,
+        limit: _pageSize,
+      );
+
+      final existingQuotesText = _quotes.map((q) => q.content).toSet();
+      final filteredNewQuotes = newQuotes
+          .where((q) => !existingQuotesText.contains(q.content))
+          .toList();
+
+      filteredNewQuotes.shuffle(Random());
+
+      if (!mounted) return;
       setState(() {
-        _quotes.addAll(newQuotes);
+        _currentPage = nextPage;
+        _quotes.addAll(filteredNewQuotes);
         _isLoadingMore = false;
       });
-    } catch (e) {
+    } catch (_) {
+      if (!mounted) return;
       setState(() {
         _isLoadingMore = false;
+        _hasMoreError = true;
       });
     }
   }
@@ -204,12 +231,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _refreshQuotes() async {
     setState(() {
       _categories.shuffle();
+      _quotes.clear();
+      _hasMoreError = false;
     });
     await _fetchInitialQuotes();
   }
 
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
     super.dispose();
   }
@@ -246,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // ================= HEADER =================
+                    // Header
                     Row(
                       children: [
                         Expanded(
@@ -300,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 22),
 
-                    // ================= SEARCH =================
+                    // Search Bar
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -339,7 +369,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 28),
 
-                    // ================= CATEGORIES =================
+                    // Categories Header
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -370,6 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 8),
 
+                    // Categories Horizontal List
                     SizedBox(
                       height: 105,
                       child: ListView.separated(
@@ -379,6 +410,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           final category = _categories[index];
                           return _CategoryCard(
+                            key: ValueKey(category['tag']),
                             name: category['name'] as String,
                             icon: category['icon'] as IconData,
                             surfaceColor: surfaceColor,
@@ -401,7 +433,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 28),
 
-                    // ================= DAILY QUOTE =================
+                    // Daily Inspiration Card
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(22),
@@ -464,7 +496,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 28),
 
-                    // ================= FEATURED QUOTES TITLE =================
+                    // Featured Quotes Title
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -488,7 +520,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 8),
 
-                    // ================= UNLIMITED API QUOTES =================
+                    // Quotes Infinite Feed
                     if (_isLoadingInitial)
                       const Center(
                         child: Padding(
@@ -553,8 +585,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     else
                       Column(
                         children: [
-                          ..._quotes.map((quote) {
-                            return Padding(
+                          ..._quotes.map(
+                            (quote) => Padding(
+                              key: ValueKey(quote.content),
                               padding: const EdgeInsets.only(bottom: 12),
                               child: _QuoteCard(
                                 quote: quote.content,
@@ -564,14 +597,31 @@ class _HomeScreenState extends State<HomeScreen> {
                                 primaryTextColor: primaryTextColor,
                                 secondaryTextColor: secondaryTextColor,
                               ),
-                            );
-                          }),
+                            ),
+                          ),
                           if (_isLoadingMore)
                             const Padding(
                               padding: EdgeInsets.symmetric(vertical: 20),
                               child: Center(
                                 child: CircularProgressIndicator(
                                   color: AppColors.primary,
+                                ),
+                              ),
+                            )
+                          else if (_hasMoreError)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              child: Center(
+                                child: TextButton.icon(
+                                  onPressed: _fetchMoreQuotes,
+                                  icon: const Icon(
+                                    Icons.refresh_rounded,
+                                    color: AppColors.primary,
+                                  ),
+                                  label: const Text(
+                                    'Failed to load more. Tap to retry',
+                                    style: TextStyle(color: AppColors.primary),
+                                  ),
                                 ),
                               ),
                             ),
@@ -588,9 +638,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// =====================================================
-// CATEGORY CARD
-// =====================================================
 class _CategoryCard extends StatelessWidget {
   final String name;
   final IconData icon;
@@ -600,6 +647,7 @@ class _CategoryCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const _CategoryCard({
+    super.key,
     required this.name,
     required this.icon,
     required this.surfaceColor,
@@ -641,9 +689,6 @@ class _CategoryCard extends StatelessWidget {
   }
 }
 
-// =====================================================
-// QUOTE CARD
-// =====================================================
 class _QuoteCard extends StatelessWidget {
   final String quote;
   final String author;
@@ -653,6 +698,7 @@ class _QuoteCard extends StatelessWidget {
   final Color secondaryTextColor;
 
   const _QuoteCard({
+    super.key,
     required this.quote,
     required this.author,
     required this.surfaceColor,
@@ -720,9 +766,6 @@ class _QuoteCard extends StatelessWidget {
   }
 }
 
-// =====================================================
-// QUOTE ACTIONS
-// =====================================================
 class _QuoteActions extends StatelessWidget {
   final String quote;
   final String author;

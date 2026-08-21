@@ -293,6 +293,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: backgroundColor,
       appBar: AppBar(
         backgroundColor: backgroundColor,
@@ -317,7 +318,7 @@ class _SearchScreenState extends State<SearchScreen> {
             children: [
               const SizedBox(height: 10),
 
-              // ================= SEARCH INPUT (FIXED) =================
+              // ================= SEARCH INPUT =================
               TextField(
                 controller: _searchController,
                 autofocus: true,
@@ -360,12 +361,10 @@ class _SearchScreenState extends State<SearchScreen> {
                           },
                         )
                       : null,
-                  // Normal state border
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(color: borderColor, width: 1),
                   ),
-                  // Focus state border (poori screen par yellow border sahi se dikhayega)
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(16),
                     borderSide: BorderSide(color: borderColor, width: 1.5),
@@ -377,6 +376,7 @@ class _SearchScreenState extends State<SearchScreen> {
               if (_suggestions.isNotEmpty)
                 Container(
                   width: double.infinity,
+                  constraints: const BoxConstraints(maxHeight: 220),
                   margin: const EdgeInsets.only(top: 6),
                   decoration: BoxDecoration(
                     color: surfaceColor,
@@ -385,7 +385,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   child: ListView.builder(
                     shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: _suggestions.length,
                     itemBuilder: (context, index) {
                       final suggestion = _suggestions[index];
@@ -454,55 +453,67 @@ class _SearchScreenState extends State<SearchScreen> {
 
   // ================= INITIAL STATE =================
   Widget _buildInitialState(Color primaryTextColor, Color secondaryTextColor) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(Icons.manage_search_rounded, size: 70, color: secondaryTextColor),
-        const SizedBox(height: 16),
-        Text(
-          'Find Your Motivation',
-          style: TextStyle(
-            color: primaryTextColor,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.manage_search_rounded,
+              size: 70,
+              color: secondaryTextColor,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Find Your Motivation',
+              style: TextStyle(
+                color: primaryTextColor,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Type keywords like "faith", "life", or "wisdom" to search quotes.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: secondaryTextColor, fontSize: 13),
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
-        Text(
-          'Type keywords like "faith", "life", or "wisdom" to search quotes.',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: secondaryTextColor, fontSize: 13),
-        ),
-      ],
+      ),
     );
   }
 
   // ================= EMPTY STATE =================
   Widget _buildEmptyState(Color primaryTextColor, Color secondaryTextColor) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(
-          Icons.search_off_rounded,
-          size: 60,
-          color: AppColors.primary,
+    return Center(
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.search_off_rounded,
+              size: 60,
+              color: AppColors.primary,
+            ),
+            const SizedBox(height: 14),
+            Text(
+              'No quotes found',
+              style: TextStyle(
+                color: primaryTextColor,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'We couldn\'t find anything for "${_searchController.text}".',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: secondaryTextColor, fontSize: 13),
+            ),
+          ],
         ),
-        const SizedBox(height: 14),
-        Text(
-          'No quotes found',
-          style: TextStyle(
-            color: primaryTextColor,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          'We couldn\'t find anything for "${_searchController.text}".',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: secondaryTextColor, fontSize: 13),
-        ),
-      ],
+      ),
     );
   }
 }

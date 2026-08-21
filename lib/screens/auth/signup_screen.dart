@@ -1,9 +1,8 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart'; // kIsWeb کے لیے
+import 'package:flutter/foundation.dart'; // kIsWeb ke liye
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/home_screen.dart';
 
@@ -176,7 +175,6 @@ class _SignupScreenState extends State<SignupScreen> {
     });
 
     try {
-      // ⚠️ Firebase Console والی Web Client ID یہاں درج کریں:
       const String webClientId =
           '33449994871-4pfst0aj5bi0p9fdm7qookmrn1o2i208.apps.googleusercontent.com';
 
@@ -314,6 +312,15 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 24),
 
                 // ================= FULL NAME =================
+                Text(
+                  'Full Name',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _nameController,
                   textInputAction: TextInputAction.next,
@@ -355,6 +362,15 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 14),
 
                 // ================= EMAIL =================
+                Text(
+                  'Email',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
@@ -403,6 +419,15 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 14),
 
                 // ================= PASSWORD =================
+                Text(
+                  'Password',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
@@ -449,6 +474,15 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 14),
 
                 // ================= CONFIRM PASSWORD =================
+                Text(
+                  'Confirm Password',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
                 TextFormField(
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,

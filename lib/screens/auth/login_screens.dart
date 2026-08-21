@@ -1,6 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart'; // kIsWeb کے لیے
+import 'package:flutter/foundation.dart'; // kIsWeb ke liye
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
@@ -117,7 +117,6 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      // ⚠️ Firebase Console -> Authentication -> Sign-in method -> Google -> Web SDK configuration سے ملنے والی Web Client ID یہاں درج کریں:
       const String webClientId =
           '33449994871-4pfst0aj5bi0p9fdm7qookmrn1o2i208.apps.googleusercontent.com';
 
@@ -244,7 +243,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 24),
 
-              // ================= EMAIL =================
+              // ================= EMAIL LABEL & FIELD =================
+              Text(
+                'Email',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+              const SizedBox(height: 8),
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -274,9 +282,18 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
-              // ================= PASSWORD =================
+              // ================= PASSWORD LABEL & FIELD =================
+              Text(
+                'Password',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: textColor,
+                ),
+              ),
+              const SizedBox(height: 8),
               TextField(
                 controller: _passwordController,
                 obscureText: _obscurePassword,
