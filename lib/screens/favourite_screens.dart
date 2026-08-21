@@ -5,6 +5,7 @@ import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
 import 'package:soul_voice/core/theme/widget/custom_card.dart';
 import 'package:soul_voice/screens/favorite_bloc.dart';
+import 'package:soul_voice/screens/favorite_event.dart';
 import 'package:soul_voice/screens/favorite_state.dart';
 
 class FavoritesScreen extends StatelessWidget {
@@ -132,8 +133,6 @@ class FavoritesScreen extends StatelessWidget {
       },
     );
   }
-<<<<<<< HEAD
-=======
 }  
 
 // =====================================================
@@ -213,5 +212,4 @@ class FavoriteQuoteCard extends StatelessWidget {
       ),
     );
   }
->>>>>>> origin/qandeel
 }

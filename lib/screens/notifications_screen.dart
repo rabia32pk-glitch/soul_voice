@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 
 class NotificationsScreen extends StatefulWidget {
@@ -11,9 +12,88 @@ class NotificationsScreen extends StatefulWidget {
 
 class _NotificationsScreenState
     extends State<NotificationsScreen> {
+
   bool dailyQuotes = true;
   bool newQuotes = true;
   bool reminders = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotificationSettings();
+  }
+
+  // ==========================================
+  // LOAD SAVED SETTINGS
+  // ==========================================
+
+  Future<void> _loadNotificationSettings() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (!mounted) return;
+
+    setState(() {
+      dailyQuotes =
+          prefs.getBool('daily_quotes') ?? true;
+
+      newQuotes =
+          prefs.getBool('new_quotes') ?? true;
+
+      reminders =
+          prefs.getBool('reminders') ?? false;
+    });
+  }
+
+  // ==========================================
+  // SAVE DAILY QUOTES
+  // ==========================================
+
+  Future<void> _setDailyQuotes(bool value) async {
+    setState(() {
+      dailyQuotes = value;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool(
+      'daily_quotes',
+      value,
+    );
+  }
+
+  // ==========================================
+  // SAVE NEW QUOTES
+  // ==========================================
+
+  Future<void> _setNewQuotes(bool value) async {
+    setState(() {
+      newQuotes = value;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool(
+      'new_quotes',
+      value,
+    );
+  }
+
+  // ==========================================
+  // SAVE REMINDERS
+  // ==========================================
+
+  Future<void> _setReminders(bool value) async {
+    setState(() {
+      reminders = value;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+
+    await prefs.setBool(
+      'reminders',
+      value,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,17 +120,23 @@ class _NotificationsScreenState
 
           const SizedBox(height: 15),
 
+          // ==========================================
+          // DAILY QUOTES
+          // ==========================================
+
           _NotificationTile(
             title: 'Daily Quotes',
             subtitle:
                 'Receive daily inspirational quotes',
             value: dailyQuotes,
             onChanged: (value) {
-              setState(() {
-                dailyQuotes = value;
-              });
+              _setDailyQuotes(value);
             },
           ),
+
+          // ==========================================
+          // NEW QUOTES
+          // ==========================================
 
           _NotificationTile(
             title: 'New Quotes',
@@ -58,11 +144,13 @@ class _NotificationsScreenState
                 'Get notified when new quotes are available',
             value: newQuotes,
             onChanged: (value) {
-              setState(() {
-                newQuotes = value;
-              });
+              _setNewQuotes(value);
             },
           ),
+
+          // ==========================================
+          // REMINDERS
+          // ==========================================
 
           _NotificationTile(
             title: 'Reminders',
@@ -70,9 +158,7 @@ class _NotificationsScreenState
                 'Receive reminders to check Soul Voice',
             value: reminders,
             onChanged: (value) {
-              setState(() {
-                reminders = value;
-              });
+              _setReminders(value);
             },
           ),
         ],
@@ -80,6 +166,10 @@ class _NotificationsScreenState
     );
   }
 }
+
+// =====================================================
+// NOTIFICATION TILE
+// =====================================================
 
 class _NotificationTile extends StatelessWidget {
   final String title;
@@ -97,33 +187,40 @@ class _NotificationTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin:
-          const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 10),
+
       decoration: BoxDecoration(
         color: Theme.of(context)
             .colorScheme
             .surface,
+
         borderRadius:
             BorderRadius.circular(16),
+
         border: Border.all(
           color:
               Theme.of(context).dividerColor,
         ),
       ),
+
       child: SwitchListTile(
         value: value,
+
         onChanged: onChanged,
+
         activeThumbColor:
             AppColors.primary,
+
         title: Text(
           title,
           style: const TextStyle(
             fontWeight: FontWeight.w600,
           ),
         ),
-        subtitle: Text(
-          subtitle,
-          style: const TextStyle(
+
+        subtitle: const Text(
+          'Receive notifications',
+          style: TextStyle(
             fontSize: 12,
             color: AppColors.textSecondary,
           ),
