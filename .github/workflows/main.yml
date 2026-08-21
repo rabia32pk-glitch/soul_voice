@@ -1,0 +1,16 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  test-job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Run test message
+      run: echo "GitHub Actions setup successful for soul_voice!"
