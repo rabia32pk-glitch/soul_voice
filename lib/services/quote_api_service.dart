@@ -10,6 +10,22 @@ class QuoteApiService {
   // Total quotes available on DummyJSON API is 1453
   static const int _totalApiQuotes = 1453;
 
+  // ==========================================
+  // HELPER METHOD TO CLEAN ALL QUOTATION MARKS
+  // ==========================================
+  QuoteModel _cleanQuoteModel(QuoteModel quote) {
+    // Ye RegExp har tarah ke double/single, curly quotes ko clean kar dega
+    final cleanContent = quote.content
+        .replaceAll(RegExp(r'["“”‘’`\\]'), '')
+        .trim();
+
+    return QuoteModel(
+      id: quote.id,
+      content: cleanContent,
+      author: quote.author,
+    );
+  }
+
   // 1. Dynamic Random Quote
   Future<QuoteModel> fetchRandomQuote() async {
     try {
@@ -20,14 +36,16 @@ class QuoteApiService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = jsonDecode(response.body);
-        return QuoteModel.fromJson(data);
+        final rawQuote = QuoteModel.fromJson(data);
+        return _cleanQuoteModel(rawQuote);
       }
     } catch (e) {
       // Fallback on failure
     }
 
     final fallbackList = _getCategoryFallback('general');
-    return fallbackList[_random.nextInt(fallbackList.length)];
+    final rawFallback = fallbackList[_random.nextInt(fallbackList.length)];
+    return _cleanQuoteModel(rawFallback);
   }
 
   // 2. Fetch All 1400+ Quotes at Once (Unlimited Mode)
@@ -41,19 +59,22 @@ class QuoteApiService {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final List<dynamic> quotesJson = data['quotes'] ?? [];
         if (quotesJson.isNotEmpty) {
-          return quotesJson.map((json) => QuoteModel.fromJson(json)).toList();
+          return quotesJson
+              .map((json) => _cleanQuoteModel(QuoteModel.fromJson(json)))
+              .toList();
         }
       }
     } catch (e) {
       // Fallback on failure
     }
 
-    return _getAllFallbackQuotes();
+    return _getAllFallbackQuotes()
+        .map((quote) => _cleanQuoteModel(quote))
+        .toList();
   }
 
   // 3. Featured Quotes with True Unlimited Scroll Support
   Future<List<QuoteModel>> getQuotes({int limit = 10, int page = 1}) async {
-    // True infinite page rotation
     final totalPages = (_totalApiQuotes / limit).ceil();
     final effectivePage = ((page - 1) % totalPages) + 1;
     final skip = (effectivePage - 1) * limit;
@@ -68,10 +89,9 @@ class QuoteApiService {
         final List<dynamic> quotesJson = data['quotes'] ?? [];
         if (quotesJson.isNotEmpty) {
           final list = quotesJson
-              .map((json) => QuoteModel.fromJson(json))
+              .map((json) => _cleanQuoteModel(QuoteModel.fromJson(json)))
               .toList();
-          
-          // Inject dynamic fallback items when looping back to keep content fresh
+
           if (page > totalPages) {
             list.shuffle(_random);
           }
@@ -82,7 +102,6 @@ class QuoteApiService {
       // Fallback on Network Error
     }
 
-    // Unlimited Local Fallback Rotation on API Failure
     final allFallback = _getAllFallbackQuotes();
     allFallback.shuffle(_random);
     final startIndex = ((page - 1) * limit) % allFallback.length;
@@ -90,7 +109,10 @@ class QuoteApiService {
         ? allFallback.length
         : (startIndex + limit);
 
-    return allFallback.sublist(startIndex, endIndex);
+    return allFallback
+        .sublist(startIndex, endIndex)
+        .map((quote) => _cleanQuoteModel(quote))
+        .toList();
   }
 
   // 4. Category Specific Quotes List
@@ -108,24 +130,44 @@ class QuoteApiService {
         final List<dynamic> quotesJson = data['quotes'] ?? [];
 
         if (quotesJson.length >= 3) {
-          return quotesJson.map((json) => QuoteModel.fromJson(json)).toList();
+          return quotesJson
+              .map((json) => _cleanQuoteModel(QuoteModel.fromJson(json)))
+              .toList();
         }
       }
     } catch (e) {
       // Fallback
     }
 
-    return _getCategoryFallback(cleanCategory);
+    return _getCategoryFallback(
+      cleanCategory,
+    ).map((quote) => _cleanQuoteModel(quote)).toList();
   }
 
   // Helper method to combine all fallback lists
   List<QuoteModel> _getAllFallbackQuotes() {
     final List<QuoteModel> allQuotes = [];
     final categories = [
-      'faith', 'life', 'wisdom', 'success', 'love', 'peace', 'hope',
-      'gratitude', 'motivation', 'hard_work', 'self_care', 'patience',
-      'friendship', 'family', 'heartbreak', 'trust', 'time', 'morning',
-      'night', 'mindset'
+      'faith',
+      'life',
+      'wisdom',
+      'success',
+      'love',
+      'peace',
+      'hope',
+      'gratitude',
+      'motivation',
+      'hard_work',
+      'self_care',
+      'patience',
+      'friendship',
+      'family',
+      'heartbreak',
+      'trust',
+      'time',
+      'morning',
+      'night',
+      'mindset',
     ];
 
     for (var cat in categories) {

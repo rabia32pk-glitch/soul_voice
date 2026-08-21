@@ -28,200 +28,53 @@ class _SearchScreenState extends State<SearchScreen> {
   // ================= SUGGESTIONS LIST =================
   final List<String> allSuggestions = [
     // A
-    'Apple',
-    'Amazing',
-    'Adventure',
-    'Achievement',
-    'Attitude',
-    'Angel',
-    'Art',
-    'Alone',
+    'Apple', 'Amazing', 'Adventure', 'Achievement', 'Attitude', 'Angel', 'Art', 'Alone',
     // B
-    'Beauty',
-    'Believe',
-    'Bravery',
-    'Business',
-    'Balance',
-    'Blessing',
-    'Brother',
-    'Better',
+    'Beauty', 'Believe', 'Bravery', 'Business', 'Balance', 'Blessing', 'Brother', 'Better',
     // C
-    'Camera',
-    'Car',
-    'Coffee',
-    'Computer',
-    'Confidence',
-    'Courage',
-    'Change',
-    'Career',
+    'Camera', 'Car', 'Coffee', 'Computer', 'Confidence', 'Courage', 'Change', 'Career',
     // D
-    'Dream',
-    'Dreams',
-    'Daily',
-    'Danger',
-    'Dance',
-    'Decision',
-    'Desire',
-    'Destiny',
+    'Dream', 'Dreams', 'Daily', 'Danger', 'Dance', 'Decision', 'Desire', 'Destiny',
     // E
-    'Education',
-    'Energy',
-    'Emotion',
-    'Enjoy',
-    'Effort',
-    'Experience',
-    'Equality',
-    'Excitement',
+    'Education', 'Energy', 'Emotion', 'Enjoy', 'Effort', 'Experience', 'Equality', 'Excitement',
     // F
-    'Faith',
-    'Family',
-    'Friendship',
-    'Freedom',
-    'Future',
-    'Focus',
-    'Fear',
-    'Forgiveness',
+    'Faith', 'Family', 'Friendship', 'Freedom', 'Future', 'Focus', 'Fear', 'Forgiveness',
     // G
-    'Goal',
-    'Goals',
-    'Good',
-    'Growth',
-    'Gratitude',
-    'Greatness',
-    'Gift',
-    'Guidance',
+    'Goal', 'Goals', 'Good', 'Growth', 'Gratitude', 'Greatness', 'Gift', 'Guidance',
     // H
-    'Hope',
-    'Happiness',
-    'Health',
-    'Heart',
-    'Honesty',
-    'Home',
-    'Help',
-    'Hardwork',
+    'Hope', 'Happiness', 'Health', 'Heart', 'Honesty', 'Home', 'Help', 'Hardwork',
     // I
-    'Inspiration',
-    'Important',
-    'Ideas',
-    'Intelligence',
-    'Improvement',
-    'Independence',
-    'Innovation',
-    'Integrity',
+    'Inspiration', 'Important', 'Ideas', 'Intelligence', 'Improvement', 'Independence', 'Innovation', 'Integrity',
     // J
-    'Joy',
-    'Journey',
-    'Justice',
-    'Job',
-    'Joke',
-    'Judgement',
-    'Jump',
-    'Jubilation',
+    'Joy', 'Journey', 'Justice', 'Job', 'Joke', 'Judgement', 'Jump', 'Jubilation',
     // K
-    'Knowledge',
-    'Kindness',
-    'King',
-    'Keep',
-    'Key',
-    'Kids',
-    'Knowledgeable',
-    'Karma',
+    'Knowledge', 'Kindness', 'King', 'Keep', 'Key', 'Kids', 'Knowledgeable', 'Karma',
     // L
-    'Love',
-    'Life',
-    'Luck',
-    'Leadership',
-    'Learning',
-    'Laugh',
-    'Light',
-    'Loyalty',
+    'Love', 'Life', 'Luck', 'Leadership', 'Learning', 'Laugh', 'Light', 'Loyalty',
     // M
-    'Mobile',
-    'Makeup',
-    'Medicine',
-    'Mango',
-    'Manager',
-    'Motivation',
-    'Money',
-    'Mind',
+    'Mobile', 'Makeup', 'Medicine', 'Mango', 'Manager', 'Motivation', 'Money', 'Mind',
     // N
     'Nature', 'Never', 'New', 'Night', 'Name', 'Nation', 'Nice', 'Nothing',
     // O
-    'Opportunity',
-    'Optimism',
-    'Open',
-    'Original',
-    'Objective',
-    'Ocean',
-    'Overcome',
-    'Outstanding',
+    'Opportunity', 'Optimism', 'Open', 'Original', 'Objective', 'Ocean', 'Overcome', 'Outstanding',
     // P
-    'Peace',
-    'Power',
-    'Passion',
-    'Patience',
-    'Positive',
-    'Purpose',
-    'Progress',
-    'Promise',
+    'Peace', 'Power', 'Passion', 'Patience', 'Positive', 'Purpose', 'Progress', 'Promise',
     // Q
-    'Quality',
-    'Quiet',
-    'Quick',
-    'Question',
-    'Queen',
-    'Quest',
-    'Quote',
-    'Quotable',
+    'Quality', 'Quiet', 'Quick', 'Question', 'Queen', 'Quest', 'Quote', 'Quotable',
     // R
-    'Respect',
-    'Relationship',
-    'Success',
-    'Rise',
-    'Reality',
-    'Reason',
-    'Resilience',
-    'Reward',
+    'Respect', 'Relationship', 'Success', 'Rise', 'Reality', 'Reason', 'Resilience', 'Reward',
     // S
     'Success', 'Smile', 'Strength', 'Study', 'Support', 'Self', 'Soul',
     // T
-    'Trust',
-    'Time',
-    'Truth',
-    'Talent',
-    'Team',
-    'Together',
-    'Thought',
-    'Tomorrow',
+    'Trust', 'Time', 'Truth', 'Talent', 'Team', 'Together', 'Thought', 'Tomorrow',
     // U
-    'Unity',
-    'Understanding',
-    'Unique',
-    'Useful',
-    'Ultimate',
-    'Universe',
-    'Upgrade',
-    'Urgent',
+    'Unity', 'Understanding', 'Unique', 'Useful', 'Ultimate', 'Universe', 'Upgrade', 'Urgent',
     // V
     'Victory', 'Value', 'Vision', 'Voice', 'Vitality', 'Virtue', 'Volunteer',
     // W
-    'Wisdom',
-    'Work',
-    'World',
-    'Wonderful',
-    'Wealth',
-    'Welcome',
-    'Winning',
-    'Wish',
+    'Wisdom', 'Work', 'World', 'Wonderful', 'Wealth', 'Welcome', 'Winning', 'Wish',
     // X
-    'Xenon',
-    'Xylophone',
-    'Xenial',
-    'Xeric',
-    'Xylem',
-    'Xenophobia',
-    'Xerophyte',
-    'Xylograph',
+    'Xenon', 'Xylophone', 'Xenial', 'Xeric', 'Xylem', 'Xenophobia', 'Xerophyte', 'Xylograph',
     // Y
     'Youth', 'Young', 'Yes', 'Yesterday', 'Year', 'Yourself', 'Yoga', 'Yard',
     // Z
@@ -536,9 +389,15 @@ class _QuoteCard extends StatelessWidget {
     required this.secondaryTextColor,
   });
 
+  // Function to remove all quotation marks
+  String _cleanText(String text) {
+    return text.replaceAll(RegExp(r'["“”‘’`\\]'), '').trim();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final quoteMap = {'quote': quote, 'author': author};
+    final String cleanQuoteText = _cleanText(quote);
+    final quoteMap = {'quote': cleanQuoteText, 'author': author};
 
     return Container(
       width: double.infinity,
@@ -564,8 +423,9 @@ class _QuoteCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // PRINTING CLEANED TEXT WITHOUT HARDCODED QUOTES
                     Text(
-                      '"$quote"',
+                      cleanQuoteText,
                       style: TextStyle(
                         color: primaryTextColor,
                         fontSize: 15,
@@ -593,7 +453,7 @@ class _QuoteCard extends StatelessWidget {
           BlocBuilder<FavoriteBloc, FavoriteState>(
             builder: (context, favState) {
               final isFav = favState.favoriteQuotes.any(
-                (q) => q['quote'] == quote,
+                (q) => _cleanText(q['quote'] ?? '') == cleanQuoteText,
               );
 
               return Row(
@@ -629,7 +489,7 @@ class _QuoteCard extends StatelessWidget {
                   // 📋 COPY BUTTON
                   IconButton(
                     onPressed: () async {
-                      final text = '"$quote"\n— $author';
+                      final text = '$cleanQuoteText\n— $author';
                       await Clipboard.setData(ClipboardData(text: text));
 
                       if (context.mounted) {
@@ -648,7 +508,7 @@ class _QuoteCard extends StatelessWidget {
                   // ↗️ SHARE BUTTON
                   IconButton(
                     onPressed: () {
-                      final shareText = '"$quote"\n— $author';
+                      final shareText = '$cleanQuoteText\n— $author';
                       Share.share(shareText);
                     },
                     icon: Icon(Icons.share_outlined, color: secondaryTextColor),

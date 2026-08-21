@@ -29,15 +29,21 @@ class CustomFavoriteCard extends StatelessWidget {
   });
 
   // ==============================
+  // HELPER METHOD TO CLEAN QUOTES
+  // ==============================
+  String _getCleanQuote(String text) {
+    return text.replaceAll('"', '').replaceAll('“', '').replaceAll('”', '');
+  }
+
+  // ==============================
   // COPY QUOTE
   // ==============================
 
   void _copyQuote(BuildContext context) {
-    final text = '"$quote"\n\n— $author';
+    final cleanQuote = _getCleanQuote(quote);
+    final text = '$cleanQuote\n\n— $author';
 
-    Clipboard.setData(
-      ClipboardData(text: text),
-    );
+    Clipboard.setData(ClipboardData(text: text));
 
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
@@ -55,13 +61,11 @@ class CustomFavoriteCard extends StatelessWidget {
   // ==============================
 
   Future<void> _shareQuote() async {
-    final text = '"$quote"\n\n— $author';
+    final cleanQuote = _getCleanQuote(quote);
+    final text = '$cleanQuote\n\n— $author';
 
     await SharePlus.instance.share(
-      ShareParams(
-        text: text,
-        subject: 'Soul Voice Quote',
-      ),
+      ShareParams(text: text, subject: 'Soul Voice Quote'),
     );
   }
 
@@ -70,19 +74,13 @@ class CustomFavoriteCard extends StatelessWidget {
   // ==============================
 
   void _removeFavorite(BuildContext context) {
-    context.read<FavoriteBloc>().add(
-      ToggleFavoriteEvent(
-        quoteData,
-      ),
-    );
+    context.read<FavoriteBloc>().add(ToggleFavoriteEvent(quoteData));
 
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(
         const SnackBar(
-          content: Text(
-            'Quote removed from favorites 💔',
-          ),
+          content: Text('Quote removed from favorites 💔'),
           duration: Duration(seconds: 1),
           behavior: SnackBarBehavior.floating,
         ),
@@ -91,6 +89,8 @@ class CustomFavoriteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String cleanQuoteText = _getCleanQuote(quote);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
 
@@ -99,23 +99,18 @@ class CustomFavoriteCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: borderColor,
-        ),
+        border: Border.all(color: borderColor),
       ),
 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           // ==========================================
           // QUOTE + AUTHOR
           // ==========================================
-
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               // QUOTATION ICON
               const Icon(
                 Icons.format_quote_rounded,
@@ -130,10 +125,9 @@ class CustomFavoriteCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
-                    // QUOTE
+                    // QUOTE (Cleaned text display)
                     Text(
-                      quote,
+                      cleanQuoteText,
                       style: TextStyle(
                         color: primaryTextColor,
                         fontSize: 16,
@@ -146,10 +140,7 @@ class CustomFavoriteCard extends StatelessWidget {
                     // AUTHOR
                     Text(
                       '— $author',
-                      style: TextStyle(
-                        color: secondaryTextColor,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: secondaryTextColor, fontSize: 12),
                     ),
                   ],
                 ),
@@ -162,11 +153,9 @@ class CustomFavoriteCard extends StatelessWidget {
           // ==========================================
           // COPY + SHARE + FAVORITE
           // ==========================================
-
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-
               // COPY
               IconButton(
                 tooltip: 'Copy',
