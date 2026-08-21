@@ -27,11 +27,13 @@ class QuoteApiService {
     return fallbackList[_random.nextInt(fallbackList.length)];
   }
 
-  // 2. Featured Quotes (Home Screen)
-  Future<List<QuoteModel>> getQuotes() async {
+  // 2. Featured Quotes with Pagination Support (Home Screen Unlimited Loading)
+  Future<List<QuoteModel>> getQuotes({int limit = 10, int page = 1}) async {
+    final skip = (page - 1) * limit;
+
     try {
       final response = await http
-          .get(Uri.parse('$_baseUrl?limit=15'))
+          .get(Uri.parse('$_baseUrl?limit=$limit&skip=$skip'))
           .timeout(const Duration(seconds: 7));
 
       if (response.statusCode == 200) {
@@ -41,7 +43,6 @@ class QuoteApiService {
           final list = quotesJson
               .map((json) => QuoteModel.fromJson(json))
               .toList();
-          list.shuffle();
           return list;
         }
       }
@@ -65,7 +66,6 @@ class QuoteApiService {
         final Map<String, dynamic> data = jsonDecode(response.body);
         final List<dynamic> quotesJson = data['quotes'] ?? [];
 
-        // DummyJSON search is often inaccurate; use fallback if results are too few
         if (quotesJson.length >= 3) {
           return quotesJson.map((json) => QuoteModel.fromJson(json)).toList();
         }

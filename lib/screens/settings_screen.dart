@@ -6,27 +6,22 @@ import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/about_soul_voice_screen.dart';
 import 'package:soul_voice/screens/heplsupportscreen.dart';
 
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+class AccountSettingsScreen extends StatelessWidget {
+  const AccountSettingsScreen({super.key});
 
-  // Rate Us function (Play Store / App Store kholne ke liye)
+  // Rate Us function (Play Store / App Store opening)
   Future<void> _openStoreRating(BuildContext context) async {
     const packageName = 'com.example.soul_voice';
     
-    // Play Store app URL
     final Uri appStoreUrl = Uri.parse('market://details?id=$packageName');
-    // Web Browser URL
     final Uri webStoreUrl = Uri.parse(
       'https://play.google.com/store/apps/details?id=$packageName',
     );
 
     try {
-      // Pehle Play Store app open karne ki koshish karega
       if (await canLaunchUrl(appStoreUrl)) {
         await launchUrl(appStoreUrl, mode: LaunchMode.externalApplication);
-      } 
-      // Agar app na khule toh Web Browser par Play Store kholega
-      else if (await canLaunchUrl(webStoreUrl)) {
+      } else if (await canLaunchUrl(webStoreUrl)) {
         await launchUrl(webStoreUrl, mode: LaunchMode.externalApplication);
       } else {
         if (!context.mounted) return;
@@ -59,7 +54,7 @@ class SettingsScreen extends StatelessWidget {
         backgroundColor: backgroundColor,
         elevation: 0,
         title: Text(
-          'Settings',
+          'Account Settings',
           style: TextStyle(
             color: primaryTextColor,
             fontWeight: FontWeight.bold,
@@ -151,8 +146,8 @@ class SettingsScreen extends StatelessWidget {
           // 4. About Soul Voice
           _SettingsTile(
             icon: Icons.info_outline_rounded,
-            title: 'About Soul Voice',
-            subtitle: 'App information',
+            title: 'About Service',
+            subtitle: 'App information and details',
             surfaceColor: surfaceColor,
             borderColor: borderColor,
             titleColor: primaryTextColor,

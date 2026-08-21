@@ -319,7 +319,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   textInputAction: TextInputAction.next,
                   style: TextStyle(color: textColor),
                   decoration: InputDecoration(
-                    labelText: 'Full Name',
                     hintText: 'Enter your full name',
                     prefixIcon: const Icon(Icons.person_outline_rounded),
                     border: OutlineInputBorder(
@@ -363,7 +362,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   autocorrect: false,
                   style: TextStyle(color: textColor),
                   decoration: InputDecoration(
-                    labelText: 'Email',
                     hintText: 'Enter your email',
                     prefixIcon: const Icon(Icons.email_outlined),
                     border: OutlineInputBorder(
@@ -411,7 +409,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   textInputAction: TextInputAction.next,
                   style: TextStyle(color: textColor),
                   decoration: InputDecoration(
-                    labelText: 'Password',
                     hintText: 'Create a password',
                     prefixIcon: const Icon(Icons.lock_outline_rounded),
                     suffixIcon: IconButton(
@@ -463,7 +460,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                   style: TextStyle(color: textColor),
                   decoration: InputDecoration(
-                    labelText: 'Confirm Password',
                     hintText: 'Confirm your password',
                     prefixIcon: const Icon(Icons.lock_outline_rounded),
                     suffixIcon: IconButton(

@@ -250,7 +250,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 keyboardType: TextInputType.emailAddress,
                 style: TextStyle(color: textColor),
                 decoration: InputDecoration(
-                  labelText: 'Email',
                   hintText: 'Enter your email',
                   prefixIcon: const Icon(Icons.email_outlined),
                   border: OutlineInputBorder(
@@ -283,7 +282,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 obscureText: _obscurePassword,
                 style: TextStyle(color: textColor),
                 decoration: InputDecoration(
-                  labelText: 'Password',
                   hintText: 'Enter your password',
                   prefixIcon: const Icon(Icons.lock_outline),
                   suffixIcon: IconButton(

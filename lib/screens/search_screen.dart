@@ -19,278 +19,214 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final QuoteApiService _apiService = QuoteApiService();
-  final TextEditingController _searchController =
-      TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
   List<QuoteModel> _searchResults = [];
   bool _isLoading = false;
   bool _hasSearched = false;
 
-  // ================= SUGGESTIONS =================
-
+  // ================= SUGGESTIONS LIST =================
   final List<String> allSuggestions = [
-  
-  // A
-  'Apple',
-  'Amazing',
-  'Adventure',
-  'Achievement',
-  'Attitude',
-  'Angel',
-  'Art',
-  'Alone',
-
-  // B
-  'Beauty',
-  'Believe',
-  'Bravery',
-  'Business',
-  'Balance',
-  'Blessing',
-  'Brother',
-  'Better',
-
-  // C
-  'Camera',
-  'Car',
-  'Coffee',
-  'Computer',
-  'Confidence',
-  'Courage',
-  'Change',
-  'Career',
-
-  // D
-  'Dream',
-  'Dreams',
-  'Daily',
-  'Danger',
-  'Dance',
-  'Decision',
-  'Desire',
-  'Destiny',
-
-  // E
-  'Education',
-  'Energy',
-  'Emotion',
-  'Enjoy',
-  'Effort',
-  'Experience',
-  'Equality',
-  'Excitement',
-
-  // F
-  'Faith',
-  'Family',
-  'Friendship',
-  'Freedom',
-  'Future',
-  'Focus',
-  'Fear',
-  'Forgiveness',
-
-  // G
-  'Goal',
-  'Goals',
-  'Good',
-  'Growth',
-  'Gratitude',
-  'Greatness',
-  'Gift',
-  'Guidance',
-
-  // H
-  'Hope',
-  'Happiness',
-  'Health',
-  'Heart',
-  'Honesty',
-  'Home',
-  'Help',
-  'Hardwork',
-
-  // I
-  'Inspiration',
-  'Important',
-  'Ideas',
-  'Intelligence',
-  'Improvement',
-  'Independence',
-  'Innovation',
-  'Integrity',
-
-  // J
-  'Joy',
-  'Journey',
-  'Justice',
-  'Job',
-  'Joke',
-  'Judgement',
-  'Jump',
-  'Jubilation',
-
-  // K
-  'Knowledge',
-  'Kindness',
-  'King',
-  'Keep',
-  'Key',
-  'Kids',
-  'Knowledgeable',
-  'Karma',
-
-  // L
-  'Love',
-  'Life',
-  'Luck',
-  'Leadership',
-  'Learning',
-  'Laugh',
-  'Light',
-  'Loyalty',
-
-  // M
-  'Mobile',
-  'Makeup',
-  'Medicine',
-  'Mango',
-  'Manager',
-  'Motivation',
-  'Money',
-  'Mind',
-
-  // N
-  'Nature',
-  'Never',
-  'New',
-  'Night',
-  'Name',
-  'Nation',
-  'Nice',
-  'Nothing',
-
-  // O
-  'Opportunity',
-  'Optimism',
-  'Open',
-  'Original',
-  'Objective',
-  'Ocean',
-  'Overcome',
-  'Outstanding',
-
-  // P
-  'Peace',
-  'Power',
-  'Passion',
-  'Patience',
-  'Positive',
-  'Purpose',
-  'Progress',
-  'Promise',
-
-  // Q
-  'Quality',
-  'Quiet',
-  'Quick',
-  'Question',
-  'Queen',
-  'Quest',
-  'Quote',
-  'Quotable',
-
-  // R
-  'Respect',
-  'Relationship',
-  'Success',
-  'Rise',
-  'Reality',
-  'Reason',
-  'Resilience',
-  'Reward',
-
-  // S
-  'Success',
-  'Smile',
-  'Strength',
-  'Success',
-  'Study',
-  'Support',
-  'Self',
-  'Soul',
-
-  // T
-  'Trust',
-  'Time',
-  'Truth',
-  'Talent',
-  'Team',
-  'Together',
-  'Thought',
-  'Tomorrow',
-
-  // U
-  'Unity',
-  'Understanding',
-  'Unique',
-  'Useful',
-  'Ultimate',
-  'Universe',
-  'Upgrade',
-  'Urgent',
-
-  // V
-  'Victory',
-  'Value',
-  'Vision',
-  'Voice',
-  'Victory',
-  'Vitality',
-  'Virtue',
-  'Volunteer',
-
-  // W
-  'Wisdom',
-  'Work',
-  'World',
-  'Wonderful',
-  'Wealth',
-  'Welcome',
-  'Winning',
-  'Wish',
-
-  // X
-  'Xenon',
-  'Xylophone',
-  'Xenial',
-  'Xeric',
-  'Xylem',
-  'Xenophobia',
-  'Xerophyte',
-  'Xylograph',
-
-  // Y
-  'Youth',
-  'Young',
-  'Yes',
-  'Yesterday',
-  'Year',
-  'Yourself',
-  'Yoga',
-  'Yard',
-
-  // Z
-  'Zeal',
-  'Zero',
-  'Zone',
-  'Zest',
-  'Zen',
-  'Zoom',
-  'Zodiac',
-  'Zigzag',
-];
-  
+    // A
+    'Apple',
+    'Amazing',
+    'Adventure',
+    'Achievement',
+    'Attitude',
+    'Angel',
+    'Art',
+    'Alone',
+    // B
+    'Beauty',
+    'Believe',
+    'Bravery',
+    'Business',
+    'Balance',
+    'Blessing',
+    'Brother',
+    'Better',
+    // C
+    'Camera',
+    'Car',
+    'Coffee',
+    'Computer',
+    'Confidence',
+    'Courage',
+    'Change',
+    'Career',
+    // D
+    'Dream',
+    'Dreams',
+    'Daily',
+    'Danger',
+    'Dance',
+    'Decision',
+    'Desire',
+    'Destiny',
+    // E
+    'Education',
+    'Energy',
+    'Emotion',
+    'Enjoy',
+    'Effort',
+    'Experience',
+    'Equality',
+    'Excitement',
+    // F
+    'Faith',
+    'Family',
+    'Friendship',
+    'Freedom',
+    'Future',
+    'Focus',
+    'Fear',
+    'Forgiveness',
+    // G
+    'Goal',
+    'Goals',
+    'Good',
+    'Growth',
+    'Gratitude',
+    'Greatness',
+    'Gift',
+    'Guidance',
+    // H
+    'Hope',
+    'Happiness',
+    'Health',
+    'Heart',
+    'Honesty',
+    'Home',
+    'Help',
+    'Hardwork',
+    // I
+    'Inspiration',
+    'Important',
+    'Ideas',
+    'Intelligence',
+    'Improvement',
+    'Independence',
+    'Innovation',
+    'Integrity',
+    // J
+    'Joy',
+    'Journey',
+    'Justice',
+    'Job',
+    'Joke',
+    'Judgement',
+    'Jump',
+    'Jubilation',
+    // K
+    'Knowledge',
+    'Kindness',
+    'King',
+    'Keep',
+    'Key',
+    'Kids',
+    'Knowledgeable',
+    'Karma',
+    // L
+    'Love',
+    'Life',
+    'Luck',
+    'Leadership',
+    'Learning',
+    'Laugh',
+    'Light',
+    'Loyalty',
+    // M
+    'Mobile',
+    'Makeup',
+    'Medicine',
+    'Mango',
+    'Manager',
+    'Motivation',
+    'Money',
+    'Mind',
+    // N
+    'Nature', 'Never', 'New', 'Night', 'Name', 'Nation', 'Nice', 'Nothing',
+    // O
+    'Opportunity',
+    'Optimism',
+    'Open',
+    'Original',
+    'Objective',
+    'Ocean',
+    'Overcome',
+    'Outstanding',
+    // P
+    'Peace',
+    'Power',
+    'Passion',
+    'Patience',
+    'Positive',
+    'Purpose',
+    'Progress',
+    'Promise',
+    // Q
+    'Quality',
+    'Quiet',
+    'Quick',
+    'Question',
+    'Queen',
+    'Quest',
+    'Quote',
+    'Quotable',
+    // R
+    'Respect',
+    'Relationship',
+    'Success',
+    'Rise',
+    'Reality',
+    'Reason',
+    'Resilience',
+    'Reward',
+    // S
+    'Success', 'Smile', 'Strength', 'Study', 'Support', 'Self', 'Soul',
+    // T
+    'Trust',
+    'Time',
+    'Truth',
+    'Talent',
+    'Team',
+    'Together',
+    'Thought',
+    'Tomorrow',
+    // U
+    'Unity',
+    'Understanding',
+    'Unique',
+    'Useful',
+    'Ultimate',
+    'Universe',
+    'Upgrade',
+    'Urgent',
+    // V
+    'Victory', 'Value', 'Vision', 'Voice', 'Vitality', 'Virtue', 'Volunteer',
+    // W
+    'Wisdom',
+    'Work',
+    'World',
+    'Wonderful',
+    'Wealth',
+    'Welcome',
+    'Winning',
+    'Wish',
+    // X
+    'Xenon',
+    'Xylophone',
+    'Xenial',
+    'Xeric',
+    'Xylem',
+    'Xenophobia',
+    'Xerophyte',
+    'Xylograph',
+    // Y
+    'Youth', 'Young', 'Yes', 'Yesterday', 'Year', 'Yourself', 'Yoga', 'Yard',
+    // Z
+    'Zeal', 'Zero', 'Zone', 'Zest', 'Zen', 'Zoom', 'Zodiac', 'Zigzag',
+  ];
 
   List<String> _suggestions = [];
 
@@ -300,18 +236,13 @@ class _SearchScreenState extends State<SearchScreen> {
         _suggestions = [];
       } else {
         _suggestions = allSuggestions
-            .where(
-              (word) => word.toLowerCase().startsWith(
-                    query.toLowerCase(),
-                  ),
-            )
+            .where((word) => word.toLowerCase().startsWith(query.toLowerCase()))
             .toList();
       }
     });
   }
 
-  // ================= SEARCH =================
-
+  // ================= SEARCH FUNCTION =================
   void _performSearch(String query) async {
     final trimmedQuery = query.trim();
 
@@ -331,9 +262,7 @@ class _SearchScreenState extends State<SearchScreen> {
     });
 
     try {
-      final results =
-          await _apiService.getQuotesByCategory(trimmedQuery);
-
+      final results = await _apiService.getQuotesByCategory(trimmedQuery);
       setState(() {
         _searchResults = results;
         _isLoading = false;
@@ -354,41 +283,22 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark =
-        Theme.of(context).brightness == Brightness.dark;
-
-    final backgroundColor =
-        isDark ? AppColors.background : Colors.white;
-
-    final surfaceColor =
-        isDark ? AppColors.surface : const Color(0xFFF7F7F7);
-
-    final primaryTextColor =
-        isDark ? AppColors.textPrimary : Colors.black87;
-
-    final secondaryTextColor =
-        isDark ? AppColors.textSecondary : Colors.black54;
-
-    final borderColor =
-        isDark ? AppColors.border : const Color(0xFFE0E0E0);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final backgroundColor = isDark ? AppColors.background : Colors.white;
+    final surfaceColor = isDark ? AppColors.surface : const Color(0xFFF7F7F7);
+    final primaryTextColor = isDark ? AppColors.textPrimary : Colors.black87;
+    final secondaryTextColor = isDark
+        ? AppColors.textSecondary
+        : Colors.black54;
+    final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
 
     return Scaffold(
-<<<<<<< HEAD
       backgroundColor: backgroundColor,
-=======
-      backgroundColor: AppColors.background,
-
-      // ================= APP BAR =================
->>>>>>> origin/qandeel
-
       appBar: AppBar(
         backgroundColor: backgroundColor,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-            color: primaryTextColor,
-          ),
+          icon: Icon(Icons.arrow_back_ios_new_rounded, color: primaryTextColor),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -400,207 +310,103 @@ class _SearchScreenState extends State<SearchScreen> {
           ),
         ),
       ),
-
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-
           child: Column(
             children: [
               const SizedBox(height: 10),
 
-<<<<<<< HEAD
-              // ================= SEARCH BAR =================
-
+              // ================= SEARCH INPUT (FIXED) =================
               TextField(
                 controller: _searchController,
                 autofocus: true,
-
-                style: TextStyle(
-                  color: primaryTextColor,
-=======
-              // ================= SEARCH INPUT =================
-
-              Container(
-                height: 52,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: AppColors.border,
-                  ),
->>>>>>> origin/qandeel
-                ),
-
-                onSubmitted: (value) {
-                  _performSearch(value);
-                },
-
+                style: TextStyle(color: primaryTextColor),
+                onSubmitted: (value) => _performSearch(value),
                 onChanged: (value) {
-                  setState(() {});
-
+                  _showSuggestions(value);
                   if (value.isEmpty) {
                     _performSearch('');
                   }
                 },
-
                 decoration: InputDecoration(
-                  hintText:
-                      'Search by category or keyword...',
-
-                  hintStyle: TextStyle(
-                    color: secondaryTextColor,
-                    fontSize: 14,
-                  ),
-
                   filled: true,
                   fillColor: surfaceColor,
-
-                  contentPadding:
-                      const EdgeInsets.symmetric(
+                  hintText: 'Search by category or keyword...',
+                  hintStyle: TextStyle(color: secondaryTextColor, fontSize: 14),
+                  contentPadding: const EdgeInsets.symmetric(
                     vertical: 14,
                     horizontal: 16,
                   ),
-
                   prefixIcon: Icon(
                     Icons.search_rounded,
                     color: secondaryTextColor,
                   ),
-
-                  suffixIcon:
-                      _searchController.text.isNotEmpty
-                          ? IconButton(
-                              icon: Icon(
-                                Icons.close_rounded,
-                                color: secondaryTextColor,
-                                size: 20,
-                              ),
-                              onPressed: () {
-                                _searchController.clear();
-                                _performSearch('');
-                              },
-                            )
-                          : null,
-
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(16),
-                    borderSide: BorderSide(
-                      color: borderColor,
-                    ),
-<<<<<<< HEAD
-                  ),
-
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius:
-                        BorderRadius.circular(16),
-                    borderSide: const BorderSide(
-                      color: AppColors.primary,
-                      width: 1.5,
-                    ),
-                  ),
-=======
-
-                    const SizedBox(width: 12),
-
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        autofocus: true,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                        ),
-                        decoration: const InputDecoration(
-                          hintText:
-                              'Search by category or keyword...',
-                          hintStyle: TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: 14,
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: secondaryTextColor,
+                            size: 20,
                           ),
-                          border: InputBorder.none,
-                        ),
-
-                        onSubmitted: (value) {
-                          _performSearch(value);
-                        },
-
-                        onChanged: (value) {
-                          _showSuggestions(value);
-
-                          if (value.isEmpty) {
-                            _performSearch('');
-                          }
-                        },
-                      ),
-                    ),
-
-                    // ================= CLEAR BUTTON =================
-
-                    if (_searchController.text.isNotEmpty)
-                      GestureDetector(
-                        onTap: () {
-                          _searchController.clear();
-
-                          setState(() {
-                            _suggestions = [];
-                            _searchResults = [];
-                            _hasSearched = false;
-                            _isLoading = false;
-                          });
-                        },
-                        child: const Icon(
-                          Icons.close_rounded,
-                          color: AppColors.textSecondary,
-                          size: 20,
-                        ),
-                      ),
-                  ],
->>>>>>> origin/qandeel
+                          onPressed: () {
+                            _searchController.clear();
+                            setState(() {
+                              _suggestions = [];
+                              _searchResults = [];
+                              _hasSearched = false;
+                              _isLoading = false;
+                            });
+                          },
+                        )
+                      : null,
+                  // Normal state border
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: borderColor, width: 1),
+                  ),
+                  // Focus state border (poori screen par yellow border sahi se dikhayega)
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide(color: borderColor, width: 1.5),
+                  ),
                 ),
               ),
 
-              // ================= SUGGESTIONS =================
-
+              // ================= SUGGESTIONS LIST =================
               if (_suggestions.isNotEmpty)
                 Container(
                   width: double.infinity,
                   margin: const EdgeInsets.only(top: 6),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: surfaceColor,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.border,
-                    ),
+                    border: Border.all(color: borderColor),
                   ),
                   child: ListView.builder(
                     shrinkWrap: true,
-                    physics:
-                        const NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: _suggestions.length,
                     itemBuilder: (context, index) {
                       final suggestion = _suggestions[index];
-
                       return ListTile(
                         dense: true,
-                        leading: const Icon(
+                        leading: Icon(
                           Icons.search_rounded,
-                          color: AppColors.textSecondary,
+                          color: secondaryTextColor,
                         ),
                         title: Text(
                           suggestion,
-                          style: const TextStyle(
-                            color: AppColors.textPrimary,
+                          style: TextStyle(
+                            color: primaryTextColor,
                             fontSize: 14,
                           ),
                         ),
                         onTap: () {
                           _searchController.text = suggestion;
-
                           setState(() {
                             _suggestions = [];
                           });
-
                           _performSearch(suggestion);
                         },
                       );
@@ -610,12 +416,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
               const SizedBox(height: 20),
 
-<<<<<<< HEAD
-              // ================= RESULTS =================
-=======
               // ================= RESULTS BODY =================
->>>>>>> origin/qandeel
-
               Expanded(
                 child: _isLoading
                     ? const Center(
@@ -624,64 +425,25 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       )
                     : !_hasSearched
-<<<<<<< HEAD
-                        ? _buildInitialState(
-                            primaryTextColor,
-                            secondaryTextColor,
-                          )
-                        : _searchResults.isEmpty
-                            ? _buildEmptyState(
-                                primaryTextColor,
-                                secondaryTextColor,
-                              )
-                            : ListView.separated(
-                                physics:
-                                    const BouncingScrollPhysics(),
-
-                                itemCount:
-                                    _searchResults.length,
-
-                                separatorBuilder:
-                                    (_, __) =>
-                                        const SizedBox(
-                                  height: 12,
-                                ),
-
-                                itemBuilder:
-                                    (context, index) {
-=======
-                        ? _buildInitialState()
-                        : _searchResults.isEmpty
-                            ? _buildEmptyState()
-                            : ListView.separated(
-                                physics:
-                                    const BouncingScrollPhysics(),
-                                itemCount:
-                                    _searchResults.length,
-                                separatorBuilder: (_, __) =>
-                                    const SizedBox(height: 12),
-                                itemBuilder: (context, index) {
->>>>>>> origin/qandeel
-                                  final quote =
-                                      _searchResults[index];
-
-                                  return _QuoteCard(
-                                    quote: quote.content,
-                                    author: quote.author,
-<<<<<<< HEAD
-                                    surfaceColor:
-                                        surfaceColor,
-                                    borderColor:
-                                        borderColor,
-                                    primaryTextColor:
-                                        primaryTextColor,
-                                    secondaryTextColor:
-                                        secondaryTextColor,
-=======
->>>>>>> origin/qandeel
-                                  );
-                                },
-                              ),
+                    ? _buildInitialState(primaryTextColor, secondaryTextColor)
+                    : _searchResults.isEmpty
+                    ? _buildEmptyState(primaryTextColor, secondaryTextColor)
+                    : ListView.separated(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: _searchResults.length,
+                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        itemBuilder: (context, index) {
+                          final quote = _searchResults[index];
+                          return _QuoteCard(
+                            quote: quote.content,
+                            author: quote.author,
+                            surfaceColor: surfaceColor,
+                            borderColor: borderColor,
+                            primaryTextColor: primaryTextColor,
+                            secondaryTextColor: secondaryTextColor,
+                          );
+                        },
+                      ),
               ),
             ],
           ),
@@ -690,31 +452,13 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-<<<<<<< HEAD
-  // =====================================================
-  // INITIAL STATE
-  // =====================================================
-
-  Widget _buildInitialState(
-    Color primaryTextColor,
-    Color secondaryTextColor,
-  ) {
-=======
   // ================= INITIAL STATE =================
-
-  Widget _buildInitialState() {
->>>>>>> origin/qandeel
+  Widget _buildInitialState(Color primaryTextColor, Color secondaryTextColor) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          Icons.manage_search_rounded,
-          size: 70,
-          color: secondaryTextColor,
-        ),
-
+        Icon(Icons.manage_search_rounded, size: 70, color: secondaryTextColor),
         const SizedBox(height: 16),
-
         Text(
           'Find Your Motivation',
           style: TextStyle(
@@ -723,40 +467,18 @@ class _SearchScreenState extends State<SearchScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-
         const SizedBox(height: 8),
-
         Text(
-          'Type keywords like "faith", "life", or "wisdom" '
-          'to search quotes.',
+          'Type keywords like "faith", "life", or "wisdom" to search quotes.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-<<<<<<< HEAD
-            color: secondaryTextColor,
-=======
-            color: AppColors.textSecondary,
->>>>>>> origin/qandeel
-            fontSize: 13,
-          ),
+          style: TextStyle(color: secondaryTextColor, fontSize: 13),
         ),
       ],
     );
   }
 
-<<<<<<< HEAD
-  // =====================================================
-  // EMPTY STATE
-  // =====================================================
-
-  Widget _buildEmptyState(
-    Color primaryTextColor,
-    Color secondaryTextColor,
-  ) {
-=======
   // ================= EMPTY STATE =================
-
-  Widget _buildEmptyState() {
->>>>>>> origin/qandeel
+  Widget _buildEmptyState(Color primaryTextColor, Color secondaryTextColor) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -765,9 +487,7 @@ class _SearchScreenState extends State<SearchScreen> {
           size: 60,
           color: AppColors.primary,
         ),
-
         const SizedBox(height: 14),
-
         Text(
           'No quotes found',
           style: TextStyle(
@@ -776,41 +496,21 @@ class _SearchScreenState extends State<SearchScreen> {
             fontWeight: FontWeight.bold,
           ),
         ),
-
         const SizedBox(height: 6),
-
         Text(
-          'We couldn\'t find anything for '
-          '"${_searchController.text}".',
+          'We couldn\'t find anything for "${_searchController.text}".',
           textAlign: TextAlign.center,
-<<<<<<< HEAD
-          style: TextStyle(
-            color: secondaryTextColor,
-=======
-          style: const TextStyle(
-            color: AppColors.textSecondary,
->>>>>>> origin/qandeel
-            fontSize: 13,
-          ),
+          style: TextStyle(color: secondaryTextColor, fontSize: 13),
         ),
       ],
     );
   }
 }
 
-// =====================================================
-<<<<<<< HEAD
-// SEARCH QUOTE CARD
-=======
-// QUOTE CARD
->>>>>>> origin/qandeel
-// =====================================================
-
+// ================= SEARCH QUOTE CARD =================
 class _QuoteCard extends StatelessWidget {
   final String quote;
   final String author;
-
-<<<<<<< HEAD
   final Color surfaceColor;
   final Color borderColor;
   final Color primaryTextColor;
@@ -823,58 +523,35 @@ class _QuoteCard extends StatelessWidget {
     required this.borderColor,
     required this.primaryTextColor,
     required this.secondaryTextColor,
-=======
-  const _QuoteCard({
-    required this.quote,
-    required this.author,
->>>>>>> origin/qandeel
   });
 
   @override
   Widget build(BuildContext context) {
-    final quoteMap = {
-      'quote': quote,
-      'author': author,
-    };
+    final quoteMap = {'quote': quote, 'author': author};
 
     return Container(
       width: double.infinity,
-
       padding: const EdgeInsets.all(18),
-
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-<<<<<<< HEAD
-          color: borderColor,
-=======
-          color: AppColors.border,
->>>>>>> origin/qandeel
-        ),
+        border: Border.all(color: borderColor),
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ================= QUOTE =================
-
           Row(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Icon(
                 Icons.format_quote_rounded,
                 color: AppColors.primary,
                 size: 30,
               ),
-
               const SizedBox(width: 12),
-
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       '"$quote"',
@@ -885,9 +562,7 @@ class _QuoteCard extends StatelessWidget {
                         height: 1.4,
                       ),
                     ),
-
                     const SizedBox(height: 10),
-
                     Text(
                       '- $author',
                       style: TextStyle(
@@ -901,45 +576,34 @@ class _QuoteCard extends StatelessWidget {
               ),
             ],
           ),
-
-<<<<<<< HEAD
           const SizedBox(height: 12),
 
-          // ================= BUTTONS =================
-
+          // ================= ACTION BUTTONS =================
           BlocBuilder<FavoriteBloc, FavoriteState>(
             builder: (context, favState) {
-              final isFav =
-                  favState.favoriteQuotes.any(
+              final isFav = favState.favoriteQuotes.any(
                 (q) => q['quote'] == quote,
               );
 
               return Row(
-                mainAxisAlignment:
-                    MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  // ❤️ FAVORITE
+                  // ❤️ FAVORITE BUTTON
                   IconButton(
                     onPressed: () {
                       context.read<FavoriteBloc>().add(
-                        ToggleFavoriteEvent(
-                          quoteMap,
-                        ),
+                        ToggleFavoriteEvent(quoteMap),
                       );
 
-                      ScaffoldMessenger.of(context)
-                          .clearSnackBars();
-
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
                             isFav
                                 ? 'Removed from favorites 💔'
                                 : 'Quote added to favorites ❤️',
                           ),
-                          duration:
-                              const Duration(seconds: 1),
+                          duration: const Duration(seconds: 1),
                         ),
                       );
                     },
@@ -947,81 +611,36 @@ class _QuoteCard extends StatelessWidget {
                       isFav
                           ? Icons.favorite_rounded
                           : Icons.favorite_border_rounded,
-                      color: isFav
-                          ? Colors.red
-                          : secondaryTextColor,
+                      color: isFav ? Colors.red : secondaryTextColor,
                     ),
                   ),
 
-                  // 📋 COPY
+                  // 📋 COPY BUTTON
                   IconButton(
                     onPressed: () async {
-                      final text =
-                          '"$quote"\n— $author';
+                      final text = '"$quote"\n— $author';
+                      await Clipboard.setData(ClipboardData(text: text));
 
-                      await Clipboard.setData(
-                        ClipboardData(text: text),
-                      );
-
-                      ScaffoldMessenger.of(context)
-                          .clearSnackBars();
-
-                      ScaffoldMessenger.of(context)
-                          .showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                            'Quote copied successfully 📋',
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).clearSnackBars();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Quote copied successfully 📋'),
+                            duration: Duration(seconds: 1),
                           ),
-                          duration:
-                              Duration(seconds: 1),
-                        ),
-                      );
+                        );
+                      }
                     },
-                    icon: Icon(
-                      Icons.copy_rounded,
-                      color: secondaryTextColor,
-                    ),
-=======
-          const SizedBox(width: 12),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '"$quote"',
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    height: 1.4,
-                  ),
-                ),
-
-                const SizedBox(height: 10),
-
-                Text(
-                  '- $author',
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                    fontStyle: FontStyle.italic,
->>>>>>> origin/qandeel
+                    icon: Icon(Icons.copy_rounded, color: secondaryTextColor),
                   ),
 
-                  // ↗️ SHARE
+                  // ↗️ SHARE BUTTON
                   IconButton(
                     onPressed: () {
-                      final shareText =
-                          '"$quote"\n— $author';
-
+                      final shareText = '"$quote"\n— $author';
                       Share.share(shareText);
                     },
-                    icon: Icon(
-                      Icons.share_outlined,
-                      color: secondaryTextColor,
-                    ),
+                    icon: Icon(Icons.share_outlined, color: secondaryTextColor),
                   ),
                 ],
               );
