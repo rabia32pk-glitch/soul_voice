@@ -432,15 +432,28 @@ class _HomeScreenState extends State<HomeScreen> {
                             ],
                           ),
                           const SizedBox(height: 18),
-                          Text(
-                            '"${todayQuoteMap['quote']}"',
-                            style: TextStyle(
-                              color: primaryTextColor,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w600,
-                              height: 1.4,
-                            ),
-                          ),
+                          Row(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    const Icon(
+      Icons.format_quote_rounded,
+      color: AppColors.primary,
+      size: 30,
+    ),
+    const SizedBox(width: 12),
+    Expanded(
+      child: Text(
+        todayQuoteMap['quote']!,
+        style: TextStyle(
+          color: primaryTextColor,
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          height: 1.4,
+        ),
+      ),
+    ),
+  ],
+),
                           const SizedBox(height: 14),
                           Text(
                             todayQuoteMap['author']!,
