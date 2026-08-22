@@ -144,8 +144,7 @@ class CategoriesScreen extends StatelessWidget {
       {
         'name': 'Happiness',
         'tag': 'happiness',
-        'icon':
-            Icons.sentiment_very_satisfied_rounded,
+        'icon': Icons.sentiment_very_satisfied_rounded,
         'description':
             'Joy, smiles, and positive vibes',
         'image':
@@ -227,12 +226,10 @@ class CategoriesScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: backgroundColor,
-
       appBar: AppBar(
         backgroundColor: backgroundColor,
         elevation: 0,
         centerTitle: true,
-
         title: Text(
           'Categories',
           style: TextStyle(
@@ -241,21 +238,17 @@ class CategoriesScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-
         iconTheme: IconThemeData(
           color: primaryTextColor,
         ),
       ),
-
       body: SafeArea(
         child: Padding(
           padding:
               const EdgeInsets.fromLTRB(20, 10, 20, 20),
-
           child: Column(
             crossAxisAlignment:
                 CrossAxisAlignment.start,
-
             children: [
               Text(
                 'Explore Quotes',
@@ -265,9 +258,7 @@ class CategoriesScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               const SizedBox(height: 7),
-
               Text(
                 'Choose a category and discover inspiring quotes.',
                 style: TextStyle(
@@ -275,13 +266,10 @@ class CategoriesScreen extends StatelessWidget {
                   fontSize: 14,
                 ),
               ),
-
               const SizedBox(height: 22),
-
               Expanded(
                 child: GridView.builder(
                   itemCount: categories.length,
-
                   gridDelegate:
                       const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
@@ -289,22 +277,24 @@ class CategoriesScreen extends StatelessWidget {
                     mainAxisSpacing: 14,
                     childAspectRatio: 0.95,
                   ),
-
                   itemBuilder: (context, index) {
                     final category =
                         categories[index];
 
                     return _CategoryCard(
-                      name: category['name'] as String,
-                      icon: category['icon'] as IconData,
+                      name:
+                          category['name'] as String,
+                      icon:
+                          category['icon'] as IconData,
                       description:
                           category['description']
                               as String,
                       imageUrl:
                           category['image'] as String,
-                      surfaceColor: surfaceColor,
-                      borderColor: borderColor,
-
+                      surfaceColor:
+                          surfaceColor,
+                      borderColor:
+                          borderColor,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -360,24 +350,19 @@ class _CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-
       borderRadius:
           BorderRadius.circular(20),
-
       child: ClipRRect(
         borderRadius:
             BorderRadius.circular(20),
-
         child: Stack(
           children: [
             Positioned.fill(
               child: Container(
                 color: surfaceColor,
-
                 child: Image.network(
                   imageUrl,
                   fit: BoxFit.cover,
-
                   errorBuilder:
                       (context, error, stackTrace) =>
                           Container(
@@ -386,26 +371,21 @@ class _CategoryCard extends StatelessWidget {
                 ),
               ),
             ),
-
             Positioned.fill(
               child: Container(
                 padding:
                     const EdgeInsets.all(16),
-
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: borderColor,
                   ),
-
                   borderRadius:
                       BorderRadius.circular(20),
-
                   gradient: LinearGradient(
                     begin:
                         Alignment.topCenter,
                     end:
                         Alignment.bottomCenter,
-
                     colors: [
                       Colors.black.withValues(
                         alpha: 0.15,
@@ -416,28 +396,23 @@ class _CategoryCard extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 child: Column(
                   crossAxisAlignment:
                       CrossAxisAlignment.start,
-
                   children: [
                     Container(
                       height: 40,
                       width: 40,
-
                       decoration:
                           BoxDecoration(
                         color:
                             Colors.black.withValues(
                           alpha: 0.35,
                         ),
-
                         borderRadius:
                             BorderRadius.circular(
                           12,
                         ),
-
                         border: Border.all(
                           color:
                               Colors.white.withValues(
@@ -445,7 +420,6 @@ class _CategoryCard extends StatelessWidget {
                           ),
                         ),
                       ),
-
                       child: Icon(
                         icon,
                         color:
@@ -453,9 +427,7 @@ class _CategoryCard extends StatelessWidget {
                         size: 22,
                       ),
                     ),
-
                     const Spacer(),
-
                     Text(
                       name,
                       style:
@@ -464,7 +436,6 @@ class _CategoryCard extends StatelessWidget {
                         fontSize: 18,
                         fontWeight:
                             FontWeight.bold,
-
                         shadows: [
                           Shadow(
                             color:
@@ -476,15 +447,12 @@ class _CategoryCard extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 4),
-
                     Text(
                       description,
                       maxLines: 2,
                       overflow:
                           TextOverflow.ellipsis,
-
                       style: TextStyle(
                         color:
                             Colors.white.withValues(
@@ -507,6 +475,7 @@ class _CategoryCard extends StatelessWidget {
 
 // =====================================================
 // CATEGORY QUOTES SCREEN
+// INFINITE SCROLLING
 // =====================================================
 
 class CategoryQuotesScreen
@@ -531,33 +500,168 @@ class _CategoryQuotesScreenState
   final QuoteApiService _apiService =
       QuoteApiService();
 
-  late Future<List<QuoteModel>>
-      _quotesFuture;
+  final ScrollController _scrollController =
+      ScrollController();
+
+  // All quotes currently shown
+  final List<QuoteModel> _quotes = [];
+
+  // Original quotes received for category
+  List<QuoteModel> _categoryQuotes = [];
+
+  bool _isInitialLoading = true;
+  bool _isLoadingMore = false;
+
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _fetchQuotes();
-  }
 
-  void _fetchQuotes() {
-    final tagToFetch =
-        widget.categoryTag ??
-        widget.category
-            .toLowerCase()
-            .replaceAll(' ', '_');
-
-    _quotesFuture =
-        _apiService.getQuotesByCategory(
-      tagToFetch,
+    _scrollController.addListener(
+      _onScroll,
     );
+
+    _loadInitialQuotes();
   }
 
-  void _retry() {
+  @override
+  void dispose() {
+    _scrollController.removeListener(
+      _onScroll,
+    );
+
+    _scrollController.dispose();
+
+    super.dispose();
+  }
+
+  // =====================================================
+  // INITIAL LOAD
+  // =====================================================
+
+  Future<void> _loadInitialQuotes() async {
     setState(() {
-      _fetchQuotes();
+      _isInitialLoading = true;
+      _errorMessage = null;
+    });
+
+    try {
+      final tagToFetch =
+          widget.categoryTag ??
+          widget.category
+              .toLowerCase()
+              .replaceAll(' ', '_');
+
+      final result =
+          await _apiService.getQuotesByCategory(
+        tagToFetch,
+      );
+
+      if (!mounted) return;
+
+      if (result.isEmpty) {
+        setState(() {
+          _isInitialLoading = false;
+          _errorMessage =
+              'No ${widget.category} quotes found.';
+        });
+
+        return;
+      }
+
+      _categoryQuotes =
+          List<QuoteModel>.from(result);
+
+      _categoryQuotes.shuffle();
+
+      _quotes.clear();
+
+      _quotes.addAll(
+        _categoryQuotes,
+      );
+
+      setState(() {
+        _isInitialLoading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isInitialLoading = false;
+        _errorMessage =
+            'Unable to load quotes.';
+      });
+    }
+  }
+
+  // =====================================================
+  // SCROLL LISTENER
+  // =====================================================
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) {
+      return;
+    }
+
+    final position =
+        _scrollController.position;
+
+    // Load more before reaching bottom
+    if (position.pixels >=
+        position.maxScrollExtent - 500) {
+      _loadMoreQuotes();
+    }
+  }
+
+  // =====================================================
+  // LOAD MORE
+  // =====================================================
+
+  Future<void> _loadMoreQuotes() async {
+    if (_isLoadingMore) {
+      return;
+    }
+
+    if (_categoryQuotes.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      _isLoadingMore = true;
+    });
+
+    await Future.delayed(
+      const Duration(milliseconds: 500),
+    );
+
+    if (!mounted) return;
+
+    // Create a new shuffled batch
+    final List<QuoteModel> newBatch =
+        List<QuoteModel>.from(
+      _categoryQuotes,
+    );
+
+    newBatch.shuffle();
+
+    setState(() {
+      _quotes.addAll(newBatch);
+      _isLoadingMore = false;
     });
   }
+
+  // =====================================================
+  // RETRY
+  // =====================================================
+
+  Future<void> _retry() async {
+    await _loadInitialQuotes();
+  }
+
+  // =====================================================
+  // BUILD
+  // =====================================================
 
   @override
   Widget build(BuildContext context) {
@@ -591,457 +695,523 @@ class _CategoryQuotesScreenState
             : const Color(0xFFE0E0E0);
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor:
+          backgroundColor,
 
       appBar: AppBar(
-        backgroundColor: backgroundColor,
+        backgroundColor:
+            backgroundColor,
         elevation: 0,
-
         title: Text(
           '${widget.category} Quotes',
           style: TextStyle(
-            color: primaryTextColor,
-            fontWeight: FontWeight.bold,
+            color:
+                primaryTextColor,
+            fontWeight:
+                FontWeight.bold,
           ),
         ),
-
-        iconTheme: IconThemeData(
-          color: primaryTextColor,
+        iconTheme:
+            IconThemeData(
+          color:
+              primaryTextColor,
         ),
       ),
 
-      body: FutureBuilder<List<QuoteModel>>(
-        future: _quotesFuture,
+      body: _buildBody(
+        surfaceColor:
+            surfaceColor,
+        primaryTextColor:
+            primaryTextColor,
+        secondaryTextColor:
+            secondaryTextColor,
+        borderColor:
+            borderColor,
+      ),
+    );
+  }
 
-        builder:
-            (context, snapshot) {
+  // =====================================================
+  // BODY
+  // =====================================================
 
-          // ==========================================
-          // LOADING
-          // ==========================================
+  Widget _buildBody({
+    required Color surfaceColor,
+    required Color primaryTextColor,
+    required Color secondaryTextColor,
+    required Color borderColor,
+  }) {
 
-          if (snapshot.connectionState ==
-              ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.primary,
+    // ===================================================
+    // INITIAL LOADING
+    // ===================================================
+
+    if (_isInitialLoading) {
+      return const Center(
+        child:
+            CircularProgressIndicator(
+          color:
+              AppColors.primary,
+        ),
+      );
+    }
+
+    // ===================================================
+    // ERROR
+    // ===================================================
+
+    if (_errorMessage != null) {
+      return Center(
+        child: Padding(
+          padding:
+              const EdgeInsets.all(25),
+
+          child: Column(
+            mainAxisAlignment:
+                MainAxisAlignment.center,
+
+            children: [
+              const Icon(
+                Icons.cloud_off_rounded,
+                color:
+                    AppColors.primary,
+                size: 55,
               ),
-            );
-          }
 
-          // ==========================================
-          // ERROR
-          // ==========================================
+              const SizedBox(
+                height: 15,
+              ),
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Padding(
+              Text(
+                'Unable to load quotes',
+                style: TextStyle(
+                  color:
+                      primaryTextColor,
+                  fontSize: 18,
+                  fontWeight:
+                      FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(
+                height: 8,
+              ),
+
+              Text(
+                'Please check your internet connection and try again.',
+                textAlign:
+                    TextAlign.center,
+                style: TextStyle(
+                  color:
+                      secondaryTextColor,
+                  fontSize: 13,
+                ),
+              ),
+
+              const SizedBox(
+                height: 18,
+              ),
+
+              ElevatedButton(
+                onPressed:
+                    _retry,
+
+                style:
+                    ElevatedButton.styleFrom(
+                  backgroundColor:
+                      AppColors.primary,
+                  foregroundColor:
+                      Colors.white,
+                ),
+
+                child:
+                    const Text(
+                  'Try Again',
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // ===================================================
+    // EMPTY
+    // ===================================================
+
+    if (_quotes.isEmpty) {
+      return Center(
+        child: Padding(
+          padding:
+              const EdgeInsets.all(25),
+
+          child: Column(
+            mainAxisAlignment:
+                MainAxisAlignment.center,
+
+            children: [
+              const Icon(
+                Icons.format_quote_rounded,
+                color:
+                    AppColors.primary,
+                size: 55,
+              ),
+
+              const SizedBox(
+                height: 15,
+              ),
+
+              Text(
+                'No ${widget.category} quotes found',
+                style: TextStyle(
+                  color:
+                      primaryTextColor,
+                  fontSize: 18,
+                  fontWeight:
+                      FontWeight.bold,
+                ),
+              ),
+
+              const SizedBox(
+                height: 8,
+              ),
+
+              Text(
+                'Try another category.',
+                style: TextStyle(
+                  color:
+                      secondaryTextColor,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // ===================================================
+    // INFINITE QUOTES LIST
+    // ===================================================
+
+    return BlocBuilder<
+        FavoriteBloc,
+        FavoriteState>(
+      builder:
+          (context, favState) {
+
+        return ListView.builder(
+          controller:
+              _scrollController,
+
+          padding:
+              const EdgeInsets.all(20),
+
+          // +1 = loading indicator
+          itemCount:
+              _quotes.length + 1,
+
+          itemBuilder:
+              (context, index) {
+
+            // =========================================
+            // LOADING MORE
+            // =========================================
+
+            if (index ==
+                _quotes.length) {
+              return Padding(
                 padding:
-                    const EdgeInsets.all(25),
+                    const EdgeInsets.symmetric(
+                  vertical: 20,
+                ),
 
-                child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center,
+                child: Center(
+                  child:
+                      _isLoadingMore
+                          ? const CircularProgressIndicator(
+                              color:
+                                  AppColors.primary,
+                            )
+                          : const SizedBox(
+                              height: 20,
+                            ),
+                ),
+              );
+            }
 
-                  children: [
-                    const Icon(
-                      Icons.cloud_off_rounded,
-                      color:
-                          AppColors.primary,
-                      size: 55,
-                    ),
+            // =========================================
+            // CURRENT QUOTE
+            // =========================================
 
-                    const SizedBox(height: 15),
+            final quote =
+                _quotes[index];
 
-                    Text(
-                      'Unable to load quotes',
-                      style: TextStyle(
-                        color:
-                            primaryTextColor,
-                        fontSize: 18,
-                        fontWeight:
-                            FontWeight.bold,
+            final quoteMap = {
+              'quote':
+                  quote.content,
+              'author':
+                  quote.author,
+            };
+
+            final isFav =
+                favState.favoriteQuotes.any(
+              (q) =>
+                  q['quote'] ==
+                  quote.content,
+            );
+
+            // =========================================
+            // QUOTE CARD
+            // =========================================
+
+            return Container(
+              margin:
+                  const EdgeInsets.only(
+                bottom: 14,
+              ),
+
+              padding:
+                  const EdgeInsets.all(
+                18,
+              ),
+
+              decoration:
+                  BoxDecoration(
+                color:
+                    surfaceColor,
+
+                borderRadius:
+                    BorderRadius.circular(
+                  18,
+                ),
+
+                border:
+                    Border.all(
+                  color:
+                      borderColor,
+                ),
+              ),
+
+              child: Column(
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
+
+                children: [
+
+                  // ===================================
+                  // QUOTE
+                  // ===================================
+
+                  Row(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.start,
+
+                    children: [
+
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(
+                          top: 1,
+                        ),
+
+                        child:
+                            const Icon(
+                          Icons
+                              .format_quote_rounded,
+                          color:
+                              AppColors.primary,
+                          size: 30,
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(height: 8),
-
-                    Text(
-                      'Please check your internet connection and try again.',
-                      textAlign:
-                          TextAlign.center,
-
-                      style: TextStyle(
-                        color:
-                            secondaryTextColor,
-                        fontSize: 13,
+                      const SizedBox(
+                        width: 7,
                       ),
+
+                      Expanded(
+                        child: Text(
+                          quote.content,
+
+                          style:
+                              TextStyle(
+                            color:
+                                primaryTextColor,
+                            fontSize: 15,
+                            height: 1.45,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(
+                    height: 12,
+                  ),
+
+                  // ===================================
+                  // AUTHOR
+                  // ===================================
+
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(
+                      left: 37,
                     ),
 
-                    const SizedBox(height: 18),
-
-                    ElevatedButton(
-                      onPressed: _retry,
+                    child: Text(
+                      '— ${quote.author}',
 
                       style:
-                          ElevatedButton.styleFrom(
-                        backgroundColor:
-                            AppColors.primary,
-                        foregroundColor:
-                            Colors.white,
-                      ),
-
-                      child:
-                          const Text(
-                        'Try Again',
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-
-          final quotes =
-              snapshot.data ?? [];
-
-          // ==========================================
-          // EMPTY
-          // ==========================================
-
-          if (quotes.isEmpty) {
-            return Center(
-              child: Padding(
-                padding:
-                    const EdgeInsets.all(25),
-
-                child: Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center,
-
-                  children: [
-                    const Icon(
-                      Icons
-                          .format_quote_rounded,
-                      color:
-                          AppColors.primary,
-                      size: 55,
-                    ),
-
-                    const SizedBox(height: 15),
-
-                    Text(
-                      'No ${widget.category} quotes found',
-
-                      style: TextStyle(
-                        color:
-                            primaryTextColor,
-                        fontSize: 18,
-                        fontWeight:
-                            FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    Text(
-                      'Try another category.',
-
-                      style: TextStyle(
+                          TextStyle(
                         color:
                             secondaryTextColor,
-                        fontSize: 13,
+                        fontSize: 12,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+
+                  const SizedBox(
+                    height: 8,
+                  ),
+
+                  // ===================================
+                  // BUTTONS
+                  // ===================================
+
+                  Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.end,
+
+                    children: [
+
+                      // ===============================
+                      // FAVORITE
+                      // ===============================
+
+                      IconButton(
+                        onPressed: () {
+
+                          context
+                              .read<
+                                  FavoriteBloc>()
+                              .add(
+                                ToggleFavoriteEvent(
+                                  quoteMap,
+                                ),
+                              );
+
+                          ScaffoldMessenger
+                              .of(context)
+                              .clearSnackBars();
+
+                          ScaffoldMessenger
+                              .of(context)
+                              .showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text(
+                                isFav
+                                    ? 'Removed from favorites 💔'
+                                    : 'Quote added to favorites ❤️',
+                              ),
+
+                              duration:
+                                  const Duration(
+                                seconds: 1,
+                              ),
+                            ),
+                          );
+                        },
+
+                        icon: Icon(
+                          isFav
+                              ? Icons
+                                  .favorite_rounded
+                              : Icons
+                                  .favorite_border_rounded,
+
+                          color:
+                              isFav
+                                  ? Colors.red
+                                  : AppColors.primary,
+                        ),
+                      ),
+
+                      // ===============================
+                      // COPY
+                      // ===============================
+
+                      IconButton(
+                        onPressed: () async {
+
+                          final text =
+                              '"${quote.content}"\n— ${quote.author}';
+
+                          await Clipboard
+                              .setData(
+                            ClipboardData(
+                              text: text,
+                            ),
+                          );
+
+                          ScaffoldMessenger
+                              .of(context)
+                              .clearSnackBars();
+
+                          ScaffoldMessenger
+                              .of(context)
+                              .showSnackBar(
+                            const SnackBar(
+                              content:
+                                  Text(
+                                'Quote copied successfully 📋',
+                              ),
+
+                              duration:
+                                  Duration(
+                                seconds: 1,
+                              ),
+                            ),
+                          );
+                        },
+
+                        icon: Icon(
+                          Icons.copy_rounded,
+                          color:
+                              secondaryTextColor,
+                        ),
+                      ),
+
+                      // ===============================
+                      // SHARE
+                      // ===============================
+
+                      IconButton(
+                        onPressed: () {
+
+                          final shareText =
+                              '"${quote.content}"\n— ${quote.author}';
+
+                          Share.share(
+                            shareText,
+                          );
+                        },
+
+                        icon: Icon(
+                          Icons.share_outlined,
+                          color:
+                              secondaryTextColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             );
-          }
-
-          // ==========================================
-          // QUOTES LIST
-          // ==========================================
-
-          return BlocBuilder<
-              FavoriteBloc,
-              FavoriteState>(
-            builder:
-                (context, favState) {
-
-              return ListView.builder(
-                padding:
-                    const EdgeInsets.all(20),
-
-                itemCount:
-                    quotes.length,
-
-                itemBuilder:
-                    (context, index) {
-
-                  final quote =
-                      quotes[index];
-
-                  final quoteMap = {
-                    'quote':
-                        quote.content,
-                    'author':
-                        quote.author,
-                  };
-
-                  final isFav =
-                      favState.favoriteQuotes
-                          .any(
-                    (q) =>
-                        q['quote'] ==
-                        quote.content,
-                  );
-
-                  return Container(
-                    margin:
-                        const EdgeInsets.only(
-                      bottom: 14,
-                    ),
-
-                    padding:
-                        const EdgeInsets.all(
-                      18,
-                    ),
-
-                    decoration:
-                        BoxDecoration(
-                      color: surfaceColor,
-
-                      borderRadius:
-                          BorderRadius.circular(
-                        18,
-                      ),
-
-                      border: Border.all(
-                        color: borderColor,
-                      ),
-                    ),
-
-                    child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
-
-                      children: [
-
-                        // ==================================
-                        // QUOTE + QUOTATION MARK
-                        // ==================================
-
-                        Row(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
-
-                          children: [
-
-                            // QUOTATION MARK
-                            Padding(
-                              padding:
-                                  const EdgeInsets
-                                      .only(
-                                top: 1,
-                              ),
-
-                              child:
-                                  const Icon(
-                                Icons
-                                    .format_quote_rounded,
-                                color:
-                                    AppColors.primary,
-                                size: 30,
-                              ),
-                            ),
-
-                            const SizedBox(
-                              width: 7,
-                            ),
-
-                            // QUOTE
-                            Expanded(
-                              child: Text(
-                                quote.content,
-
-                                style:
-                                    TextStyle(
-                                  color:
-                                      primaryTextColor,
-                                  fontSize: 15,
-                                  height: 1.45,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(
-                          height: 12,
-                        ),
-
-                        // ==================================
-                        // AUTHOR
-                        // ==================================
-
-                        Padding(
-                          padding:
-                              const EdgeInsets
-                                  .only(
-                            left: 37,
-                          ),
-
-                          child: Text(
-                            '— ${quote.author}',
-
-                            style:
-                                TextStyle(
-                              color:
-                                  secondaryTextColor,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-
-                        const SizedBox(
-                          height: 8,
-                        ),
-
-                        // ==================================
-                        // BUTTONS
-                        // ==================================
-
-                        Row(
-                          mainAxisAlignment:
-                              MainAxisAlignment.end,
-
-                          children: [
-
-                            // FAVORITE
-                            IconButton(
-                              onPressed: () {
-                                context
-                                    .read<
-                                        FavoriteBloc>()
-                                    .add(
-                                      ToggleFavoriteEvent(
-                                        quoteMap,
-                                      ),
-                                    );
-
-                                ScaffoldMessenger
-                                    .of(
-                                  context,
-                                )
-                                    .clearSnackBars();
-
-                                ScaffoldMessenger
-                                    .of(
-                                  context,
-                                )
-                                    .showSnackBar(
-                                  SnackBar(
-                                    content:
-                                        Text(
-                                      isFav
-                                          ? 'Removed from favorites 💔'
-                                          : 'Quote added to favorites ❤️',
-                                    ),
-                                    duration:
-                                        const Duration(
-                                      seconds: 1,
-                                    ),
-                                  ),
-                                );
-                              },
-
-                              icon: Icon(
-                                isFav
-                                    ? Icons
-                                        .favorite_rounded
-                                    : Icons
-                                        .favorite_border_rounded,
-
-                                color: isFav
-                                    ? Colors.red
-                                    : AppColors.primary,
-                              ),
-                            ),
-
-                            // COPY
-                            IconButton(
-                              onPressed: () async {
-                                final text =
-                                    '"${quote.content}"\n— ${quote.author}';
-
-                                await Clipboard
-                                    .setData(
-                                  ClipboardData(
-                                    text: text,
-                                  ),
-                                );
-
-                                ScaffoldMessenger
-                                    .of(
-                                  context,
-                                )
-                                    .clearSnackBars();
-
-                                ScaffoldMessenger
-                                    .of(
-                                  context,
-                                )
-                                    .showSnackBar(
-                                  const SnackBar(
-                                    content:
-                                        Text(
-                                      'Quote copied successfully 📋',
-                                    ),
-                                    duration:
-                                        Duration(
-                                      seconds: 1,
-                                    ),
-                                  ),
-                                );
-                              },
-
-                              icon: Icon(
-                                Icons.copy_rounded,
-                                color:
-                                    secondaryTextColor,
-                              ),
-                            ),
-
-                            // SHARE
-                            IconButton(
-                              onPressed: () {
-                                final shareText =
-                                    '"${quote.content}"\n— ${quote.author}';
-
-                                Share.share(
-                                  shareText,
-                                );
-                              },
-
-                              icon: Icon(
-                                Icons
-                                    .share_outlined,
-                                color:
-                                    secondaryTextColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
-          );
-        },
-      ),
+          },
+        );
+      },
     );
   }
 }

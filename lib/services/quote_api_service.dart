@@ -1,22 +1,37 @@
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:http/http.dart' as http;
+
 import 'models/quote_model.dart';
 
 class QuoteApiService {
-  static const String _baseUrl = 'https://dummyjson.com/quotes';
+  static const String _baseUrl =
+      'https://dummyjson.com/quotes';
+
   final Random _random = Random();
 
-  // Total quotes available on DummyJSON API is 1453
-  static const int _totalApiQuotes = 1453;
+  // ============================================================
+  // MAX QUOTES PER CATEGORY
+  // ============================================================
 
-  // ==========================================
-  // HELPER METHOD TO CLEAN ALL QUOTATION MARKS
-  // ==========================================
-  QuoteModel _cleanQuoteModel(QuoteModel quote) {
-    // Ye RegExp har tarah ke double/single, curly quotes ko clean kar dega
+  static const int _categoryQuoteLimit = 30;
+
+  // DummyJSON total quotes
+  static const int _totalApiQuotes = 1454;
+
+  // ============================================================
+  // CLEAN QUOTE
+  // ============================================================
+
+  QuoteModel _cleanQuoteModel(
+    QuoteModel quote,
+  ) {
     final cleanContent = quote.content
-        .replaceAll(RegExp(r'["“”‘’`\\]'), '')
+        .replaceAll(
+          RegExp(r'["“”‘’`\\]'),
+          '',
+        )
         .trim();
 
     return QuoteModel(
@@ -26,127 +41,289 @@ class QuoteApiService {
     );
   }
 
-  // 1. Dynamic Random Quote
-  Future<QuoteModel> fetchRandomQuote() async {
-    try {
-      final randomId = _random.nextInt(_totalApiQuotes) + 1;
-      final response = await http
-          .get(Uri.parse('$_baseUrl/$randomId'))
-          .timeout(const Duration(seconds: 7));
+  // ============================================================
+  // REMOVE DUPLICATES
+  // ============================================================
 
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        final rawQuote = QuoteModel.fromJson(data);
-        return _cleanQuoteModel(rawQuote);
+  List<QuoteModel> _removeDuplicates(
+    List<QuoteModel> quotes,
+  ) {
+    final seen = <String>{};
+    final result = <QuoteModel>[];
+
+    for (final quote in quotes) {
+      final cleaned = _cleanQuoteModel(quote);
+
+      final key =
+          cleaned.content.trim().toLowerCase();
+
+      if (key.isEmpty) {
+        continue;
       }
-    } catch (e) {
-      // Fallback on failure
+
+      if (!seen.contains(key)) {
+        seen.add(key);
+        result.add(cleaned);
+      }
     }
 
-    final fallbackList = _getCategoryFallback('general');
-    final rawFallback = fallbackList[_random.nextInt(fallbackList.length)];
-    return _cleanQuoteModel(rawFallback);
+    return result;
   }
 
-  // 2. Fetch All 1400+ Quotes at Once (Unlimited Mode)
+  // ============================================================
+  // RANDOM QUOTE
+  // ============================================================
+
+  Future<QuoteModel> fetchRandomQuote() async {
+    try {
+      final randomId =
+          _random.nextInt(_totalApiQuotes) + 1;
+
+      final response = await http
+          .get(
+            Uri.parse(
+              '$_baseUrl/$randomId',
+            ),
+          )
+          .timeout(
+            const Duration(seconds: 7),
+          );
+
+      if (response.statusCode == 200) {
+        final data =
+            jsonDecode(response.body);
+
+        return _cleanQuoteModel(
+          QuoteModel.fromJson(data),
+        );
+      }
+    } catch (_) {}
+
+    final fallback =
+        _getCategoryFallback('faith');
+
+    return fallback[
+        _random.nextInt(fallback.length)];
+  }
+
+  // ============================================================
+  // GET ALL API QUOTES
+  // ============================================================
+
   Future<List<QuoteModel>> fetchAllQuotes() async {
     try {
       final response = await http
-          .get(Uri.parse('$_baseUrl?limit=0'))
-          .timeout(const Duration(seconds: 10));
+          .get(
+            Uri.parse(
+              '$_baseUrl?limit=0',
+            ),
+          )
+          .timeout(
+            const Duration(seconds: 20),
+          );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        final List<dynamic> quotesJson = data['quotes'] ?? [];
+        final data =
+            jsonDecode(response.body);
+
+        final List<dynamic> quotesJson =
+            data['quotes'] ?? [];
+
         if (quotesJson.isNotEmpty) {
-          return quotesJson
-              .map((json) => _cleanQuoteModel(QuoteModel.fromJson(json)))
+          final quotes = quotesJson
+              .map(
+                (json) =>
+                    QuoteModel.fromJson(json),
+              )
               .toList();
+
+          return _removeDuplicates(
+            quotes,
+          );
         }
       }
-    } catch (e) {
-      // Fallback on failure
-    }
+    } catch (_) {}
 
-    return _getAllFallbackQuotes()
-        .map((quote) => _cleanQuoteModel(quote))
-        .toList();
+    return _getAllFallbackQuotes();
   }
 
-  // 3. Featured Quotes with True Unlimited Scroll Support
-  Future<List<QuoteModel>> getQuotes({int limit = 10, int page = 1}) async {
-    final totalPages = (_totalApiQuotes / limit).ceil();
-    final effectivePage = ((page - 1) % totalPages) + 1;
-    final skip = (effectivePage - 1) * limit;
+  // ============================================================
+  // NORMAL PAGINATION
+  // ============================================================
+
+  Future<List<QuoteModel>> getQuotes({
+    int limit = 20,
+    int page = 1,
+  }) async {
+    final skip =
+        (page - 1) * limit;
 
     try {
       final response = await http
-          .get(Uri.parse('$_baseUrl?limit=$limit&skip=$skip'))
-          .timeout(const Duration(seconds: 7));
+          .get(
+            Uri.parse(
+              '$_baseUrl?limit=$limit&skip=$skip',
+            ),
+          )
+          .timeout(
+            const Duration(seconds: 8),
+          );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        final List<dynamic> quotesJson = data['quotes'] ?? [];
+        final data =
+            jsonDecode(response.body);
+
+        final List<dynamic> quotesJson =
+            data['quotes'] ?? [];
+
+        final quotes = quotesJson
+            .map(
+              (json) =>
+                  QuoteModel.fromJson(json),
+            )
+            .toList();
+
+        return _removeDuplicates(
+          quotes,
+        );
+      }
+    } catch (_) {}
+
+    return [];
+  }
+
+  // ============================================================
+  // GET CATEGORY QUOTES
+  //
+  // ONLY 30 QUOTES
+  // ============================================================
+
+  Future<List<QuoteModel>> getAllQuotesByCategory(
+    String category,
+  ) async {
+    final cleanCategory =
+        category.toLowerCase().trim();
+
+    try {
+      final url =
+          '$_baseUrl/search?q='
+          '${Uri.encodeQueryComponent(cleanCategory)}'
+          '&limit=30';
+
+      final response = await http
+          .get(
+            Uri.parse(url),
+          )
+          .timeout(
+            const Duration(seconds: 15),
+          );
+
+      if (response.statusCode == 200) {
+        final data =
+            jsonDecode(response.body);
+
+        final List<dynamic> quotesJson =
+            data['quotes'] ?? [];
+
         if (quotesJson.isNotEmpty) {
-          final list = quotesJson
-              .map((json) => _cleanQuoteModel(QuoteModel.fromJson(json)))
+          final quotes = quotesJson
+              .map(
+                (json) =>
+                    QuoteModel.fromJson(json),
+              )
               .toList();
 
-          if (page > totalPages) {
-            list.shuffle(_random);
+          final cleaned =
+              _removeDuplicates(quotes);
+
+          if (cleaned.isNotEmpty) {
+            // Maximum 30 quotes
+            return cleaned
+                .take(_categoryQuoteLimit)
+                .toList();
           }
-          return list;
         }
       }
-    } catch (e) {
-      // Fallback on Network Error
-    }
+    } catch (_) {}
 
-    final allFallback = _getAllFallbackQuotes();
-    allFallback.shuffle(_random);
-    final startIndex = ((page - 1) * limit) % allFallback.length;
-    final endIndex = (startIndex + limit) > allFallback.length
-        ? allFallback.length
-        : (startIndex + limit);
-
-    return allFallback
-        .sublist(startIndex, endIndex)
-        .map((quote) => _cleanQuoteModel(quote))
-        .toList();
-  }
-
-  // 4. Category Specific Quotes List
-  Future<List<QuoteModel>> getQuotesByCategory(String category) async {
-    final cleanCategory = category.toLowerCase().trim().replaceAll(' ', '_');
-
-    try {
-      final url = '$_baseUrl/search?q=$cleanCategory';
-      final response = await http
-          .get(Uri.parse(url))
-          .timeout(const Duration(seconds: 5));
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        final List<dynamic> quotesJson = data['quotes'] ?? [];
-
-        if (quotesJson.length >= 3) {
-          return quotesJson
-              .map((json) => _cleanQuoteModel(QuoteModel.fromJson(json)))
-              .toList();
-        }
-      }
-    } catch (e) {
-      // Fallback
-    }
-
+    // API fail ہونے کی صورت میں
+    // fallback سے صرف 30 quotes
     return _getCategoryFallback(
       cleanCategory,
-    ).map((quote) => _cleanQuoteModel(quote)).toList();
+    );
   }
 
-  // Helper method to combine all fallback lists
+  // ============================================================
+  // CATEGORY QUOTES
+  //
+  // EXISTING SCREEN COMPATIBILITY
+  // ============================================================
+
+  Future<List<QuoteModel>> getQuotesByCategory(
+    String category,
+  ) async {
+    final quotes =
+        await getAllQuotesByCategory(
+      category,
+    );
+
+    return quotes
+        .take(_categoryQuoteLimit)
+        .toList();
+  }
+
+  // ============================================================
+  // CATEGORY PAGINATION
+  //
+  // KEPT FOR EXISTING CODE
+  // ============================================================
+
+  Future<List<QuoteModel>>
+      getQuotesByCategoryPage({
+    required String category,
+    int page = 1,
+    int limit = 30,
+  }) async {
+    if (page < 1) {
+      page = 1;
+    }
+
+    if (limit < 1) {
+      limit = 30;
+    }
+
+    final allQuotes =
+        await getAllQuotesByCategory(
+      category,
+    );
+
+    if (allQuotes.isEmpty) {
+      return [];
+    }
+
+    final start =
+        (page - 1) * limit;
+
+    if (start >= allQuotes.length) {
+      return [];
+    }
+
+    final end = min(
+      start + limit,
+      allQuotes.length,
+    );
+
+    return allQuotes.sublist(
+      start,
+      end,
+    );
+  }
+
+  // ============================================================
+  // ALL FALLBACK QUOTES
+  // ============================================================
+
   List<QuoteModel> _getAllFallbackQuotes() {
-    final List<QuoteModel> allQuotes = [];
     final categories = [
       'faith',
       'life',
@@ -154,621 +331,815 @@ class QuoteApiService {
       'success',
       'love',
       'peace',
+      'courage',
       'hope',
-      'gratitude',
-      'motivation',
-      'hard_work',
-      'self_care',
       'patience',
+      'gratitude',
+      'strength',
+      'happiness',
+      'motivation',
       'friendship',
-      'family',
-      'heartbreak',
-      'trust',
+      'knowledge',
+      'kindness',
       'time',
-      'morning',
-      'night',
-      'mindset',
+      'forgiveness',
+      'truth',
+      'future',
     ];
 
-    for (var cat in categories) {
-      allQuotes.addAll(_getCategoryFallback(cat));
+    final allQuotes =
+        <QuoteModel>[];
+
+    for (final category in categories) {
+      allQuotes.addAll(
+        _getCategoryFallback(category),
+      );
     }
-    return allQuotes;
+
+    return _removeDuplicates(
+      allQuotes,
+    );
   }
 
-  // Complete 20 Categories Local Dataset (5 Quotes Each)
-  List<QuoteModel> _getCategoryFallback(String category) {
-    final Map<String, List<QuoteModel>> categoryData = {
+  // ============================================================
+  // CATEGORY FALLBACK
+  //
+  // EACH CATEGORY = 30 QUOTES
+  // ============================================================
+
+  List<QuoteModel> _getCategoryFallback(
+    String category,
+  ) {
+    final Map<String, List<String>>
+        categoryData = {
+
+      // ========================================================
+      // FAITH
+      // ========================================================
+
       'faith': [
-        QuoteModel(
-          id: 101,
-          content: "Verily, with hardship comes ease.",
-          author: "Quran (94:6)",
-        ),
-        QuoteModel(
-          id: 102,
-          content: "Do not lose hope, nor be sad.",
-          author: "Quran (3:139)",
-        ),
-        QuoteModel(
-          id: 103,
-          content:
-              "Faith is taking the first step even when you don't see the whole staircase.",
-          author: "Martin Luther King Jr.",
-        ),
-        QuoteModel(
-          id: 104,
-          content: "Trust in Allah, but tie your camel.",
-          author: "Prophet Muhammad (PBUH)",
-        ),
-        QuoteModel(
-          id: 105,
-          content: "Faith does not make things easy, it makes them possible.",
-          author: "Luke 1:37",
-        ),
+        'Verily, with hardship comes ease.',
+        'Do not lose hope, nor be sad.',
+        'Faith gives strength during difficult times.',
+        'Trust Allah and keep moving forward.',
+        'Faith makes the heart peaceful.',
+        'Allah is always near to those who remember Him.',
+        'Keep your heart connected to Allah.',
+        'Never give up on the mercy of Allah.',
+        'A faithful heart finds peace in every situation.',
+        'Trust the plan of Allah.',
+        'Prayer brings peace to the heart.',
+        'Faith grows when you remain patient.',
+        'Put your worries in the hands of Allah.',
+        'A sincere heart is never truly alone.',
+        'Hope in Allah should never disappear.',
+        'Remember Allah in ease and difficulty.',
+        'Faith teaches patience and gratitude.',
+        'Let your heart rely upon Allah.',
+        'Allah knows what your heart cannot explain.',
+        'Every difficulty can bring you closer to Allah.',
+        'Keep making dua and keep believing.',
+        'A peaceful heart begins with faith.',
+        'Allah knows what is best for you.',
+        'Patience and faith walk together.',
+        'Do good and trust Allah with the result.',
+        'Faith turns fear into hope.',
+        'Remember that Allah never forgets His servants.',
+        'Keep your heart hopeful.',
+        'Trust Allah even when the path is unclear.',
+        'A strong faith brings lasting peace.',
       ],
+
+      // ========================================================
+      // LIFE
+      // ========================================================
+
       'life': [
-        QuoteModel(
-          id: 201,
-          content: "Life is what happens when you're busy making other plans.",
-          author: "John Lennon",
-        ),
-        QuoteModel(
-          id: 202,
-          content: "Get busy living or get busy dying.",
-          author: "Stephen King",
-        ),
-        QuoteModel(
-          id: 203,
-          content: "The purpose of our lives is to be happy.",
-          author: "Dalai Lama",
-        ),
-        QuoteModel(
-          id: 204,
-          content:
-              "Life is 10% what happens to you and 90% how you react to it.",
-          author: "Charles R. Swindoll",
-        ),
-        QuoteModel(
-          id: 205,
-          content:
-              "In three words I can sum up everything I've learned about life: it goes on.",
-          author: "Robert Frost",
-        ),
+        'Life is a journey, not a destination.',
+        'Every day is a new opportunity.',
+        'Life becomes meaningful when we appreciate simple moments.',
+        'Keep moving forward one step at a time.',
+        'Learn from yesterday and live today.',
+        'Every experience teaches something valuable.',
+        'Life changes when your perspective changes.',
+        'Make today count.',
+        'Be thankful for the life you have.',
+        'Small moments often become beautiful memories.',
+        'Life is full of lessons.',
+        'Do not be afraid of a new beginning.',
+        'Enjoy the journey.',
+        'Choose peace whenever possible.',
+        'Your actions shape your future.',
+        'Be present in the moment.',
+        'Life is easier when you stop comparing yourself to others.',
+        'Grow through every experience.',
+        'Make room for kindness.',
+        'Use your time wisely.',
+        'Every morning brings another chance.',
+        'Let go of what you cannot change.',
+        'Keep learning and keep growing.',
+        'Life becomes brighter when gratitude grows.',
+        'Be patient with your journey.',
+        'Focus on what truly matters.',
+        'Create memories, not regrets.',
+        'A simple life can be a beautiful life.',
+        'Keep your heart hopeful.',
+        'There is always something worth appreciating.',
       ],
+
+      // ========================================================
+      // WISDOM
+      // ========================================================
+
       'wisdom': [
-        QuoteModel(
-          id: 301,
-          content: "The only true wisdom is in knowing you know nothing.",
-          author: "Socrates",
-        ),
-        QuoteModel(
-          id: 302,
-          content: "Silence is a source of great strength.",
-          author: "Lao Tzu",
-        ),
-        QuoteModel(
-          id: 303,
-          content:
-              "The best among you are those who have the best manners and character.",
-          author: "Prophet Muhammad (PBUH)",
-        ),
-        QuoteModel(
-          id: 304,
-          content: "Turn your wounds into wisdom.",
-          author: "Oprah Winfrey",
-        ),
-        QuoteModel(
-          id: 305,
-          content: "Knowing yourself is the beginning of all wisdom.",
-          author: "Aristotle",
-        ),
+        'The only true wisdom is knowing that you can always learn more.',
+        'Silence can be a source of great strength.',
+        'Think before you speak.',
+        'Wisdom grows through experience.',
+        'A wise person listens before responding.',
+        'Knowledge becomes wisdom when it is applied.',
+        'Learn from every mistake.',
+        'Patience often reveals the best answer.',
+        'Choose understanding over judgment.',
+        'A calm mind makes better decisions.',
+        'Listen carefully and speak thoughtfully.',
+        'Wisdom begins with humility.',
+        'Every person can teach you something.',
+        'Do not rush decisions.',
+        'Learn to see beyond appearances.',
+        'Good character is a form of wisdom.',
+        'Experience is a powerful teacher.',
+        'Think deeply before choosing your path.',
+        'A wise heart knows when to remain silent.',
+        'Seek knowledge throughout your life.',
+        'Understanding brings clarity.',
+        'Kindness and wisdom work together.',
+        'Learn from the past without living in it.',
+        'A patient person sees opportunities others miss.',
+        'Wisdom teaches balance.',
+        'Choose your words carefully.',
+        'Growth begins when you accept what you do not know.',
+        'Listen more and assume less.',
+        'A thoughtful mind creates better choices.',
+        'True wisdom creates peace.',
       ],
+
+      // ========================================================
+      // SUCCESS
+      // ========================================================
+
       'success': [
-        QuoteModel(
-          id: 401,
-          content:
-              "Success is not final, failure is not fatal: it is the courage to continue that counts.",
-          author: "Winston Churchill",
-        ),
-        QuoteModel(
-          id: 402,
-          content: "The way to get started is to quit talking and begin doing.",
-          author: "Walt Disney",
-        ),
-        QuoteModel(
-          id: 403,
-          content:
-              "Don't let the fear of losing be greater than the excitement of winning.",
-          author: "Robert Kiyosaki",
-        ),
-        QuoteModel(
-          id: 404,
-          content:
-              "Success usually comes to those who are too busy to be looking for it.",
-          author: "Henry David Thoreau",
-        ),
-        QuoteModel(
-          id: 405,
-          content: "Opportunities don't happen. You create them.",
-          author: "Chris Grosser",
-        ),
+        'Success begins with taking the first step.',
+        'Consistency creates results.',
+        'Believe in your ability to improve.',
+        'Small progress is still progress.',
+        'Do not fear failure.',
+        'Keep working toward your goals.',
+        'Success requires patience.',
+        'Your effort matters.',
+        'Learn from every setback.',
+        'Stay focused on your purpose.',
+        'Great results take time.',
+        'Discipline creates progress.',
+        'Keep showing up.',
+        'Dreams require action.',
+        'Turn challenges into lessons.',
+        'Believe in the process.',
+        'Do not stop because progress feels slow.',
+        'Every achievement starts with an idea.',
+        'Work quietly and let your results speak.',
+        'Stay committed to your goals.',
+        'Success is built one decision at a time.',
+        'Be willing to learn.',
+        'Keep improving yourself.',
+        'Use failure as feedback.',
+        'Stay patient with your progress.',
+        'Focus on progress, not perfection.',
+        'Your future is shaped by your choices.',
+        'Keep going when things become difficult.',
+        'Hard work creates opportunities.',
+        'Never stop growing.',
       ],
+
+      // ========================================================
+      // LOVE
+      // ========================================================
+
       'love': [
-        QuoteModel(
-          id: 501,
-          content: "The best thing to hold onto in life is each other.",
-          author: "Audrey Hepburn",
-        ),
-        QuoteModel(
-          id: 502,
-          content: "Love all, trust a few, do wrong to none.",
-          author: "William Shakespeare",
-        ),
-        QuoteModel(
-          id: 503,
-          content: "Where there is love there is life.",
-          author: "Mahatma Gandhi",
-        ),
-        QuoteModel(
-          id: 504,
-          content: "Spread love everywhere you go.",
-          author: "Mother Teresa",
-        ),
-        QuoteModel(
-          id: 505,
-          content:
-              "You know you're in love when you can't fall asleep because reality is finally better than your dreams.",
-          author: "Dr. Seuss",
-        ),
+        'Love begins with kindness.',
+        'A caring heart makes ordinary moments meaningful.',
+        'Love grows through respect.',
+        'Kind words can make a difference.',
+        'True care is shown through actions.',
+        'Love teaches us to understand others.',
+        'A kind heart is a beautiful gift.',
+        'Respect makes relationships stronger.',
+        'Love grows when trust grows.',
+        'Care for people with sincerity.',
+        'Kindness is one of the purest forms of love.',
+        'Love brings people closer.',
+        'A thoughtful gesture can brighten someone’s day.',
+        'Good relationships need patience.',
+        'Listen with your heart.',
+        'Respect every person you meet.',
+        'Love is shown through compassion.',
+        'A caring heart notices the little things.',
+        'Be gentle with others.',
+        'Sincere love brings peace.',
+        'Forgiveness can strengthen relationships.',
+        'Appreciate the people who care for you.',
+        'Kindness makes love stronger.',
+        'Treat others with dignity.',
+        'Love grows through understanding.',
+        'Be patient with the people around you.',
+        'A peaceful heart gives love freely.',
+        'Care without expecting something in return.',
+        'Gratitude makes relationships beautiful.',
+        'Let kindness guide your heart.',
       ],
+
+      // ========================================================
+      // PEACE
+      // ========================================================
+
       'peace': [
-        QuoteModel(
-          id: 601,
-          content: "Peace comes from within. Do not seek it without.",
-          author: "Buddha",
-        ),
-        QuoteModel(
-          id: 602,
-          content:
-              "When the power of love overcomes the love of power, the world will know peace.",
-          author: "Jimi Hendrix",
-        ),
-        QuoteModel(
-          id: 603,
-          content: "If you want peace, stop fighting.",
-          author: "Unknown",
-        ),
-        QuoteModel(
-          id: 604,
-          content:
-              "Peace is not absence of conflict, it is the ability to handle conflict.",
-          author: "Ronald Reagan",
-        ),
-        QuoteModel(
-          id: 605,
-          content: "Nobody can bring you peace but yourself.",
-          author: "Ralph Waldo Emerson",
-        ),
+        'Peace begins within the heart.',
+        'Choose calm over unnecessary conflict.',
+        'A peaceful mind sees things clearly.',
+        'Let go of what you cannot control.',
+        'Silence can bring peace.',
+        'Protect your inner peace.',
+        'Forgiveness can bring peace to the heart.',
+        'Take time to breathe and reflect.',
+        'Peace grows through understanding.',
+        'Do not carry every problem in your heart.',
+        'A calm heart makes better choices.',
+        'Choose kindness over anger.',
+        'Peace requires patience.',
+        'Let your heart rest.',
+        'Avoid unnecessary arguments.',
+        'A peaceful life begins with peaceful choices.',
+        'Give yourself time to think.',
+        'Keep your surroundings positive.',
+        'Do not allow temporary problems to steal your peace.',
+        'Gratitude creates peace.',
+        'A gentle heart creates harmony.',
+        'Choose understanding before judgment.',
+        'Peace grows when expectations become balanced.',
+        'Keep your mind calm.',
+        'Release unnecessary worries.',
+        'Be patient with yourself.',
+        'A peaceful heart is a strong heart.',
+        'Seek solutions instead of conflict.',
+        'Let kindness lead your actions.',
+        'Peace is worth protecting.',
       ],
+
+      // ========================================================
+      // COURAGE
+      // ========================================================
+
+      'courage': [
+        'Courage is taking action despite fear.',
+        'Be brave enough to begin again.',
+        'Every difficult step can make you stronger.',
+        'Courage grows through experience.',
+        'Do not let fear make your decisions.',
+        'Take one small step forward.',
+        'Believe that you can learn.',
+        'Difficult moments can teach courage.',
+        'Stand firmly for what is right.',
+        'Keep going when the path becomes difficult.',
+        'Bravery begins with believing in yourself.',
+        'Do not be afraid of change.',
+        'Face challenges with patience.',
+        'Courage requires persistence.',
+        'A brave heart keeps hope alive.',
+        'Learn to face uncertainty calmly.',
+        'Every new beginning requires courage.',
+        'Do what is right even when it is difficult.',
+        'Strength grows when you face challenges.',
+        'Keep your heart strong.',
+        'Do not give fear control over your choices.',
+        'Courage can begin with one decision.',
+        'Be patient with your progress.',
+        'Believe in your ability to improve.',
+        'Face tomorrow with hope.',
+        'Challenges do not define your future.',
+        'Keep moving forward.',
+        'A strong heart does not give up easily.',
+        'Choose courage over unnecessary fear.',
+        'You can grow through difficult experiences.',
+      ],
+
+      // ========================================================
+      // HOPE
+      // ========================================================
+
       'hope': [
-        QuoteModel(
-          id: 701,
-          content:
-              "Hope is being able to see that there is light despite all of the darkness.",
-          author: "Desmond Tutu",
-        ),
-        QuoteModel(
-          id: 702,
-          content:
-              "We must accept finite disappointment, but never lose infinite hope.",
-          author: "Martin Luther King Jr.",
-        ),
-        QuoteModel(
-          id: 703,
-          content: "Hope is a waking dream.",
-          author: "Aristotle",
-        ),
-        QuoteModel(
-          id: 704,
-          content:
-              "There is always hope, even when your brain tells you there isn't.",
-          author: "John Green",
-        ),
-        QuoteModel(
-          id: 705,
-          content: "May your choices reflect your hopes, not your fears.",
-          author: "Nelson Mandela",
-        ),
+        'Hope gives light to difficult moments.',
+        'Never stop believing in better days.',
+        'Every morning brings a new opportunity.',
+        'Hope keeps the heart strong.',
+        'Difficult times do not last forever.',
+        'Keep looking forward.',
+        'A hopeful heart finds possibilities.',
+        'Do not give up on tomorrow.',
+        'There is always room for a new beginning.',
+        'Hope grows when gratitude grows.',
+        'Keep your heart positive.',
+        'Better days can come with patience.',
+        'Believe that things can improve.',
+        'Hope gives courage to continue.',
+        'Do not let temporary problems define your future.',
+        'Keep walking toward the light.',
+        'A hopeful mind sees opportunities.',
+        'Tomorrow can bring something beautiful.',
+        'Keep believing in good possibilities.',
+        'Hope makes difficult journeys easier.',
+        'Be patient with your journey.',
+        'Let hope guide your choices.',
+        'Every challenge can have a lesson.',
+        'Keep your dreams alive.',
+        'A hopeful heart does not give up easily.',
+        'Look ahead with confidence.',
+        'There is always another chance to begin.',
+        'Choose hope over unnecessary worry.',
+        'Stay patient and positive.',
+        'Hope is a powerful source of strength.',
       ],
-      'gratitude': [
-        QuoteModel(
-          id: 801,
-          content: "If you are grateful, I will surely give you more.",
-          author: "Quran (14:7)",
-        ),
-        QuoteModel(
-          id: 802,
-          content: "Gratitude turns what we have into enough.",
-          author: "Aesop",
-        ),
-        QuoteModel(
-          id: 803,
-          content:
-              "When you are grateful, fear disappears and abundance appears.",
-          author: "Tony Robbins",
-        ),
-        QuoteModel(
-          id: 804,
-          content:
-              "Gratitude is the fairest blossom which springs from the soul.",
-          author: "Henry Ward Beecher",
-        ),
-        QuoteModel(
-          id: 805,
-          content:
-              "Enjoy the little things, for one day you may look back and realize they were the big things.",
-          author: "Robert Brault",
-        ),
-      ],
-      'motivation': [
-        QuoteModel(
-          id: 901,
-          content: "It always seems impossible until it's done.",
-          author: "Nelson Mandela",
-        ),
-        QuoteModel(
-          id: 902,
-          content: "Don't watch the clock; do what it does. Keep going.",
-          author: "Sam Levenson",
-        ),
-        QuoteModel(
-          id: 903,
-          content:
-              "Push yourself, because no one else is going to do it for you.",
-          author: "Unknown",
-        ),
-        QuoteModel(
-          id: 904,
-          content: "Great things never come from comfort zones.",
-          author: "Roy T. Bennett",
-        ),
-        QuoteModel(
-          id: 905,
-          content: "Dream it. Wish it. Do it.",
-          author: "Unknown",
-        ),
-      ],
-      'hard_work': [
-        QuoteModel(
-          id: 1001,
-          content: "Hard work beats talent when talent doesn't work hard.",
-          author: "Tim Notke",
-        ),
-        QuoteModel(
-          id: 1002,
-          content:
-              "There are no secrets to success. It is the result of preparation, hard work, and learning from failure.",
-          author: "Colin Powell",
-        ),
-        QuoteModel(
-          id: 1003,
-          content:
-              "A dream does not become reality through magic; it takes sweat, determination, and hard work.",
-          author: "Colin Powell",
-        ),
-        QuoteModel(
-          id: 1004,
-          content: "Work hard in silence, let your success be your noise.",
-          author: "Frank Ocean",
-        ),
-        QuoteModel(
-          id: 1005,
-          content: "Strive not to be a success, but rather to be of value.",
-          author: "Albert Einstein",
-        ),
-      ],
-      'self_care': [
-        QuoteModel(
-          id: 1101,
-          content: "Self-care is how you take your power back.",
-          author: "Lalah Delia",
-        ),
-        QuoteModel(
-          id: 1102,
-          content:
-              "Nurturing yourself is not selfish, it's essential to your survival and your well-being.",
-          author: "Renee Peterson Trudeau",
-        ),
-        QuoteModel(
-          id: 1103,
-          content: "Talk to yourself like you would to someone you love.",
-          author: "Brené Brown",
-        ),
-        QuoteModel(
-          id: 1104,
-          content:
-              "Almost everything will work again if you unplug it for a few minutes, including you.",
-          author: "Anne Lamott",
-        ),
-        QuoteModel(
-          id: 1105,
-          content:
-              "An empty lantern provides no light. Self-care is the fuel that allows your light to shine brightly.",
-          author: "Unknown",
-        ),
-      ],
+
+      // ========================================================
+      // PATIENCE
+      // ========================================================
+
       'patience': [
-        QuoteModel(
-          id: 1201,
-          content: "Patience is beautiful.",
-          author: "Quran (12:18)",
-        ),
-        QuoteModel(
-          id: 1202,
-          content:
-              "Patience is not the ability to wait, but the ability to keep a good attitude while waiting.",
-          author: "Joyce Meyer",
-        ),
-        QuoteModel(
-          id: 1203,
-          content: "Adopt the pace of nature: her secret is patience.",
-          author: "Ralph Waldo Emerson",
-        ),
-        QuoteModel(
-          id: 1204,
-          content:
-              "Patience, persistence and perspiration make an unbeatable combination for success.",
-          author: "Napoleon Hill",
-        ),
-        QuoteModel(
-          id: 1205,
-          content: "Trees that are slow to grow bear the best fruit.",
-          author: "Molière",
-        ),
+        'Patience is beautiful.',
+        'Good things often take time.',
+        'Patience gives wisdom to difficult moments.',
+        'Learn to wait without losing hope.',
+        'Stay calm while life unfolds.',
+        'Patience strengthens the heart.',
+        'Do not rush what needs time.',
+        'Trust the process.',
+        'A patient heart sees possibilities.',
+        'Waiting can teach valuable lessons.',
+        'Patience and gratitude create peace.',
+        'Keep faith while you wait.',
+        'Slow progress is still progress.',
+        'Give yourself time to grow.',
+        'Not everything needs an immediate answer.',
+        'Patience helps us make better decisions.',
+        'Stay calm during difficult seasons.',
+        'Good results require consistency.',
+        'Learn to accept the timing of life.',
+        'Patience is a form of strength.',
+        'Keep going while you wait.',
+        'Do not lose hope because something takes time.',
+        'Let experiences teach you patience.',
+        'A calm heart can wait wisely.',
+        'Give your goals time to grow.',
+        'Be patient with yourself.',
+        'Be patient with others.',
+        'Every season has its own timing.',
+        'Patience creates inner peace.',
+        'Trust that growth takes time.',
       ],
+
+      // ========================================================
+      // GRATITUDE
+      // ========================================================
+
+      'gratitude': [
+        'If you are grateful, I will surely give you more.',
+        'Gratitude turns what we have into enough.',
+        'Be thankful for the little things.',
+        'A grateful heart finds more joy.',
+        'Appreciate what you already have.',
+        'Gratitude changes perspective.',
+        'Thankfulness creates peace.',
+        'Notice the blessings around you.',
+        'A thankful heart is a peaceful heart.',
+        'Be grateful for another day.',
+        'Appreciate the people who support you.',
+        'Gratitude makes ordinary moments special.',
+        'Count your blessings.',
+        'Thankfulness creates happiness.',
+        'Look for something good every day.',
+        'A grateful mind sees abundance.',
+        'Appreciate every small blessing.',
+        'Gratitude brings positivity.',
+        'Be thankful for lessons as well as blessings.',
+        'A thankful heart stays hopeful.',
+        'Remember the good things in your life.',
+        'Gratitude makes the heart lighter.',
+        'Give thanks for every opportunity.',
+        'Appreciate simple moments.',
+        'Thankfulness strengthens relationships.',
+        'Gratitude helps us notice beauty.',
+        'Be grateful for progress.',
+        'A grateful heart needs less comparison.',
+        'Choose gratitude every day.',
+        'Let thankfulness guide your heart.',
+      ],
+
+      // ========================================================
+      // STRENGTH
+      // ========================================================
+
+      'strength': [
+        'Strength grows through challenges.',
+        'A strong mind stays calm in difficult moments.',
+        'Inner strength begins with self-belief.',
+        'You can become stronger through experience.',
+        'Strength requires patience.',
+        'Keep going even when progress is slow.',
+        'Challenges can build resilience.',
+        'Believe in your ability to learn.',
+        'A calm heart is a strong heart.',
+        'Do not underestimate your ability to grow.',
+        'Strength comes from persistence.',
+        'Every difficult lesson can make you wiser.',
+        'Keep your heart hopeful.',
+        'Stand strong during difficult seasons.',
+        'Learn to recover from setbacks.',
+        'Strength grows when you keep trying.',
+        'A positive mindset creates resilience.',
+        'Do not let temporary problems define you.',
+        'Keep moving forward.',
+        'Believe that you can improve.',
+        'Strong people also know when to rest.',
+        'Patience is a form of strength.',
+        'Kindness can be a form of strength.',
+        'Courage creates strength.',
+        'Faith gives strength to the heart.',
+        'Every challenge can teach resilience.',
+        'Keep your mind focused.',
+        'Choose hope during difficult moments.',
+        'Your effort can make you stronger.',
+        'Keep building your inner strength.',
+      ],
+
+      // ========================================================
+      // HAPPINESS
+      // ========================================================
+
+      'happiness': [
+        'Happiness is found in simple moments.',
+        'Choose joy whenever you can.',
+        'A grateful heart is often a happy heart.',
+        'Happiness grows when shared.',
+        'Find something beautiful in every day.',
+        'Enjoy the little things.',
+        'Smile at the small blessings.',
+        'Happiness begins with gratitude.',
+        'Choose positive thoughts.',
+        'Spend time with people who bring peace.',
+        'A peaceful heart can find happiness anywhere.',
+        'Appreciate today.',
+        'Do not wait for perfect moments.',
+        'Create happiness through kindness.',
+        'Celebrate small achievements.',
+        'Enjoy your journey.',
+        'Happiness grows through meaningful moments.',
+        'Be thankful for what you have.',
+        'Let go of unnecessary comparison.',
+        'Find joy in learning.',
+        'Make time for things you enjoy.',
+        'Kindness can create happiness.',
+        'A simple life can be a happy life.',
+        'Choose peace over unnecessary stress.',
+        'Be present in beautiful moments.',
+        'Happiness often begins with perspective.',
+        'Share a smile with someone.',
+        'Notice the good around you.',
+        'Keep your heart grateful.',
+        'Let joy grow through gratitude.',
+      ],
+
+      // ========================================================
+      // MOTIVATION
+      // ========================================================
+
+      'motivation': [
+        'It always seems impossible until it is done.',
+        'Keep going.',
+        'Great things begin with small steps.',
+        'Believe in your potential.',
+        'Do not stop because progress is slow.',
+        'Your effort matters.',
+        'Start where you are.',
+        'Keep learning.',
+        'Turn your goals into action.',
+        'Progress begins with consistency.',
+        'Believe that you can improve.',
+        'Stay focused.',
+        'Keep moving forward.',
+        'Every step matters.',
+        'Do not wait for perfect conditions.',
+        'Use your time wisely.',
+        'Keep your purpose clear.',
+        'Work toward something meaningful.',
+        'Learn from mistakes.',
+        'Do not fear starting again.',
+        'Be consistent with your efforts.',
+        'Small actions create big changes.',
+        'Keep your mindset positive.',
+        'Stay patient with yourself.',
+        'Do not give up on your goals.',
+        'Your future depends on today’s choices.',
+        'Keep pushing forward with patience.',
+        'Believe in the process.',
+        'Make today productive.',
+        'Never stop growing.',
+      ],
+
+      // ========================================================
+      // FRIENDSHIP
+      // ========================================================
+
       'friendship': [
-        QuoteModel(
-          id: 1301,
-          content:
-              "A real friend is one who walks in when the rest of the world walks out.",
-          author: "Walter Winchell",
-        ),
-        QuoteModel(
-          id: 1302,
-          content:
-              "Friendship is the only cement that will ever hold the world together.",
-          author: "Woodrow Wilson",
-        ),
-        QuoteModel(
-          id: 1303,
-          content:
-              "A person is upon the religion of his best friend, so let one of you look at whom he befriends.",
-          author: "Prophet Muhammad (PBUH)",
-        ),
-        QuoteModel(
-          id: 1304,
-          content:
-              "True friendship comes when the silence between two people is comfortable.",
-          author: "David Tyson",
-        ),
-        QuoteModel(
-          id: 1305,
-          content: "Friends are the family you choose.",
-          author: "Jess C. Scott",
-        ),
+        'A true friend brings peace to your heart.',
+        'Friendship grows through trust.',
+        'Good friends support each other.',
+        'A kind friend is a valuable blessing.',
+        'True friendship needs honesty.',
+        'Good friends listen without judgment.',
+        'Friendship becomes stronger through respect.',
+        'Appreciate the people who stand by you.',
+        'A good friend celebrates your progress.',
+        'Friendship requires patience.',
+        'Kindness strengthens friendships.',
+        'Trust is the foundation of friendship.',
+        'A true friend wants the best for you.',
+        'Good friendships create beautiful memories.',
+        'Be the kind of friend you wish to have.',
+        'Listen to your friends with care.',
+        'Respect your friends’ feelings.',
+        'Friendship grows through shared experiences.',
+        'A sincere friend brings comfort.',
+        'Good friends encourage growth.',
+        'Friendship is built through small acts of kindness.',
+        'Appreciate loyal people.',
+        'Be honest with your friends.',
+        'Forgive small mistakes.',
+        'Support your friends during difficult times.',
+        'Celebrate your friends’ achievements.',
+        'Good friendship creates happiness.',
+        'Treat friendship as a blessing.',
+        'Keep sincere friendships close.',
+        'A kind friend can brighten an ordinary day.',
       ],
-      'family': [
-        QuoteModel(
-          id: 1401,
-          content: "Family is not an important thing. It's everything.",
-          author: "Michael J. Fox",
-        ),
-        QuoteModel(
-          id: 1402,
-          content: "The love of family is life's greatest blessing.",
-          author: "Unknown",
-        ),
-        QuoteModel(
-          id: 1403,
-          content: "Paradise lies under the feet of mothers.",
-          author: "Prophet Muhammad (PBUH)",
-        ),
-        QuoteModel(
-          id: 1404,
-          content: "Rejoice with your family in the beautiful land of life.",
-          author: "Albert Einstein",
-        ),
-        QuoteModel(
-          id: 1405,
-          content: "Family means no one gets left behind or forgotten.",
-          author: "David Ogden Stiers",
-        ),
+
+      // ========================================================
+      // KNOWLEDGE
+      // ========================================================
+
+      'knowledge': [
+        'Knowledge gives you the power to understand.',
+        'Learning never truly ends.',
+        'The more you learn, the more you discover.',
+        'Knowledge grows when it is shared.',
+        'Ask questions and keep learning.',
+        'Every experience can teach something.',
+        'Read something useful every day.',
+        'Learning creates new possibilities.',
+        'Knowledge helps us make better decisions.',
+        'Stay curious.',
+        'Never be afraid to learn something new.',
+        'Education opens doors.',
+        'Learning requires patience.',
+        'Experience adds depth to knowledge.',
+        'Good questions lead to good learning.',
+        'Share knowledge with kindness.',
+        'Learn from people around you.',
+        'Knowledge grows through practice.',
+        'Keep improving your skills.',
+        'Learning makes the mind stronger.',
+        'Be curious about the world.',
+        'Listen to different perspectives.',
+        'Knowledge creates confidence.',
+        'Learn from your mistakes.',
+        'Keep an open mind.',
+        'Never stop asking why.',
+        'Learning is a lifelong journey.',
+        'Read, reflect, and practice.',
+        'Knowledge becomes useful when applied.',
+        'Keep your mind curious.',
       ],
-      'heartbreak': [
-        QuoteModel(
-          id: 1501,
-          content:
-              "The emotion that can break your heart is sometimes the very one that heals it.",
-          author: "Nicholas Sparks",
-        ),
-        QuoteModel(
-          id: 1502,
-          content:
-              "Hearts will never be practical until they can be made unbreakable.",
-          author: "Wizard of Oz",
-        ),
-        QuoteModel(
-          id: 1503,
-          content: "With time the heart heals, and the soul grows stronger.",
-          author: "Unknown",
-        ),
-        QuoteModel(
-          id: 1504,
-          content:
-              "Healing doesn't mean the damage never existed. It means the damage no longer controls our lives.",
-          author: "Akshay Dubey",
-        ),
-        QuoteModel(
-          id: 1505,
-          content:
-              "Sometimes good things fall apart so better things can fall together.",
-          author: "Marilyn Monroe",
-        ),
+
+      // ========================================================
+      // KINDNESS
+      // ========================================================
+
+      'kindness': [
+        'Kindness costs nothing but means everything.',
+        'One kind word can change someone’s day.',
+        'Be kind whenever possible.',
+        'Kindness makes the world brighter.',
+        'A small act of kindness can have a big impact.',
+        'Treat people with respect.',
+        'A gentle word can bring comfort.',
+        'Help others when you can.',
+        'Kindness creates connection.',
+        'Be patient with people.',
+        'Listen when someone needs to talk.',
+        'A smile can brighten someone’s day.',
+        'Choose compassion.',
+        'Kindness creates positive energy.',
+        'Small good actions matter.',
+        'Be thoughtful in your words.',
+        'Respect everyone you meet.',
+        'Give encouragement freely.',
+        'Kindness strengthens communities.',
+        'Help without expecting praise.',
+        'Be gentle with yourself and others.',
+        'Compassion creates peace.',
+        'A kind heart notices when others need help.',
+        'Choose understanding over judgment.',
+        'Kindness is always worth giving.',
+        'Make someone feel valued.',
+        'Speak with care.',
+        'Good actions inspire more good actions.',
+        'Let kindness guide your choices.',
+        'Make kindness a daily habit.',
       ],
-      'trust': [
-        QuoteModel(
-          id: 1601,
-          content:
-              "Trust in the Lord with all your heart and lean not on your own understanding.",
-          author: "Proverbs 3:5",
-        ),
-        QuoteModel(
-          id: 1602,
-          content:
-              "Trust takes years to build, seconds to break, and forever to repair.",
-          author: "Unknown",
-        ),
-        QuoteModel(
-          id: 1603,
-          content:
-              "The best way to find out if you can trust somebody is to trust them.",
-          author: "Ernest Hemingway",
-        ),
-        QuoteModel(
-          id: 1604,
-          content: "Trust starts with truth and ends with truth.",
-          author: "Santosh Kalwar",
-        ),
-        QuoteModel(
-          id: 1605,
-          content:
-              "When Allah puts a hardship in your path, trust that He is preparing you for greatness.",
-          author: "Unknown",
-        ),
-      ],
+
+      // ========================================================
+      // TIME
+      // ========================================================
+
       'time': [
-        QuoteModel(
-          id: 1701,
-          content: "Time you enjoy wasting is not wasted time.",
-          author: "John Lennon",
-        ),
-        QuoteModel(
-          id: 1702,
-          content: "The two most powerful warriors are patience and time.",
-          author: "Leo Tolstoy",
-        ),
-        QuoteModel(
-          id: 1703,
-          content:
-              "Time is a created thing. To say 'I don't have time' is to say 'I don't want to.'",
-          author: "Lao Tzu",
-        ),
-        QuoteModel(
-          id: 1704,
-          content: "Lost time is never found again.",
-          author: "Benjamin Franklin",
-        ),
-        QuoteModel(
-          id: 1705,
-          content:
-              "Your time is limited, so don't waste it living someone else's life.",
-          author: "Steve Jobs",
-        ),
+        'Time you enjoy is never truly wasted.',
+        'Time is precious.',
+        'Use your time wisely.',
+        'Lost time cannot be recovered.',
+        'Every moment is an opportunity.',
+        'Do not postpone what truly matters.',
+        'Value the present moment.',
+        'Time teaches valuable lessons.',
+        'Good things take time.',
+        'Be patient with your journey.',
+        'Spend time with people who matter.',
+        'Make time for what is important.',
+        'Every day is valuable.',
+        'Do not waste today worrying about tomorrow.',
+        'Use your time to grow.',
+        'Moments become memories.',
+        'Time changes many things.',
+        'Be present while life is happening.',
+        'Learn to prioritize your time.',
+        'Give yourself time to rest.',
+        'Time can heal and teach.',
+        'Make every day meaningful.',
+        'Do not wait forever to begin.',
+        'Use today wisely.',
+        'Time is one of life’s greatest gifts.',
+        'Create memories with your time.',
+        'Respect other people’s time.',
+        'Balance work and rest.',
+        'Enjoy the moment.',
+        'Let time work with patience.',
       ],
-      'morning': [
-        QuoteModel(
-          id: 1801,
-          content:
-              "Every morning brings new potential, but if you dwell on the misfortunes of the day before, you tend to overlook tremendous opportunities.",
-          author: "Harvey Mackay",
-        ),
-        QuoteModel(
-          id: 1802,
-          content:
-              "Write it on your heart that every day is the best day in the year.",
-          author: "Ralph Waldo Emerson",
-        ),
-        QuoteModel(
-          id: 1803,
-          content:
-              "When you arise in the morning think of what a privilege it is to be alive, to think, to enjoy, to love.",
-          author: "Marcus Aurelius",
-        ),
-        QuoteModel(
-          id: 1804,
-          content:
-              "Morning is an important time of day, because how you spend your morning can often tell you what kind of day you are going to have.",
-          author: "Lemony Snicket",
-        ),
-        QuoteModel(
-          id: 1805,
-          content: "An early-morning walk is a blessing for the whole day.",
-          author: "Henry David Thoreau",
-        ),
+
+      // ========================================================
+      // FORGIVENESS
+      // ========================================================
+
+      'forgiveness': [
+        'Forgiveness brings peace to the heart.',
+        'Let go of what you cannot change.',
+        'Forgiveness can be a gift to yourself.',
+        'A forgiving heart finds peace.',
+        'Healing can begin with forgiveness.',
+        'Do not carry unnecessary anger.',
+        'Learn from mistakes and move forward.',
+        'Forgiveness requires courage.',
+        'Let your heart choose peace.',
+        'Release old resentment.',
+        'Everyone makes mistakes.',
+        'Forgive when it is appropriate.',
+        'Choose healing over bitterness.',
+        'Peace grows when anger is released.',
+        'Do not let the past control your present.',
+        'Learn the lesson and move forward.',
+        'Forgiveness creates emotional freedom.',
+        'A peaceful heart does not hold unnecessary grudges.',
+        'Give yourself permission to grow.',
+        'Let difficult experiences teach you.',
+        'Choose understanding when possible.',
+        'Healing takes time.',
+        'Be patient with yourself.',
+        'Forgiveness can create a new beginning.',
+        'Do not allow anger to define you.',
+        'Peace is more valuable than resentment.',
+        'Learn to release what hurts you.',
+        'Growth often follows difficult experiences.',
+        'Choose peace when you can.',
+        'Let your heart heal with patience.',
       ],
-      'night': [
-        QuoteModel(
-          id: 1901,
-          content:
-              "The night is more alive and more richly colored than the day.",
-          author: "Vincent van Gogh",
-        ),
-        QuoteModel(
-          id: 1902,
-          content:
-              "Night is the wonderful opportunity to take rest, to forgive, to smile, to get ready for all the battles that you have to fight tomorrow.",
-          author: "Allen Ginsberg",
-        ),
-        QuoteModel(
-          id: 1903,
-          content:
-              "Day is over, night has come. Today is gone, what's done is done.",
-          author: "Unknown",
-        ),
-        QuoteModel(
-          id: 1904,
-          content: "Stars cannot shine without darkness.",
-          author: "D.H. Sidebottom",
-        ),
-        QuoteModel(
-          id: 1905,
-          content: "Sleep is the best meditation.",
-          author: "Dalai Lama",
-        ),
+
+      // ========================================================
+      // TRUTH
+      // ========================================================
+
+      'truth': [
+        'Truth needs no decoration.',
+        'Honesty builds trust.',
+        'Always choose truth.',
+        'Truth brings clarity.',
+        'Integrity means doing what is right.',
+        'Be honest with yourself.',
+        'Truth creates strong relationships.',
+        'Honesty requires courage.',
+        'Speak the truth with kindness.',
+        'Do not hide from reality.',
+        'Truth helps us learn.',
+        'A truthful heart is peaceful.',
+        'Keep your promises.',
+        'Let your actions match your words.',
+        'Integrity matters even when nobody is watching.',
+        'Choose honesty over convenience.',
+        'Truth can guide good decisions.',
+        'Be sincere in your intentions.',
+        'Honesty creates respect.',
+        'Do not fear constructive truth.',
+        'Learn to accept reality.',
+        'Truth builds lasting trust.',
+        'Speak carefully and honestly.',
+        'Keep your character strong.',
+        'Be truthful without being harsh.',
+        'Honesty is a valuable quality.',
+        'Let integrity guide you.',
+        'A clear conscience brings peace.',
+        'Choose what is right.',
+        'Truth creates clarity in difficult situations.',
       ],
-      'mindset': [
-        QuoteModel(
-          id: 2001,
-          content:
-              "Whether you think you can or you think you can't, you're right.",
-          author: "Henry Ford",
-        ),
-        QuoteModel(
-          id: 2002,
-          content:
-              "Once your mindset changes, everything on the outside will change along with it.",
-          author: "Steve Maraboli",
-        ),
-        QuoteModel(
-          id: 2003,
-          content:
-              "Mind is a flexible mirror, adjust it to see a better world.",
-          author: "Amit Ray",
-        ),
-        QuoteModel(
-          id: 2004,
-          content: "Change your thoughts and you change your world.",
-          author: "Norman Vincent Peale",
-        ),
-        QuoteModel(
-          id: 2005,
-          content: "Believe you can and you're halfway there.",
-          author: "Theodore Roosevelt",
-        ),
+
+      // ========================================================
+      // FUTURE
+      // ========================================================
+
+      'future': [
+        'The future begins with what you do today.',
+        'Look forward with hope.',
+        'Every day is a chance to create a better future.',
+        'Your future is built one choice at a time.',
+        'Believe in the possibilities ahead.',
+        'Small actions shape tomorrow.',
+        'Prepare today for better opportunities.',
+        'Your choices create your direction.',
+        'Keep learning for your future.',
+        'Do not fear a new beginning.',
+        'The future can change with effort.',
+        'Build your future with patience.',
+        'Keep your goals clear.',
+        'Hope makes the future brighter.',
+        'Every new day is another opportunity.',
+        'Plan wisely and remain flexible.',
+        'Your future deserves your effort.',
+        'Learn from the past and move forward.',
+        'Keep improving yourself.',
+        'Believe that growth is possible.',
+        'Create opportunities through action.',
+        'Do not let yesterday control tomorrow.',
+        'Stay focused on what matters.',
+        'Your future starts with today.',
+        'Be patient with your progress.',
+        'Keep moving toward meaningful goals.',
+        'Choose hope for tomorrow.',
+        'Every decision can shape your path.',
+        'Work for the future you want.',
+        'Keep believing in better possibilities.',
       ],
     };
 
-    return categoryData[category] ?? categoryData['faith']!;
+    final contents =
+        categoryData[category] ??
+            categoryData['faith']!;
+
+    final List<QuoteModel> quotes = [];
+
+    for (int i = 0;
+        i < contents.length;
+        i++) {
+      quotes.add(
+        QuoteModel(
+          id:
+              (category.hashCode.abs() % 100000) +
+                  i +
+                  1,
+          content:
+              contents[i],
+          author:
+              'Soul Voice',
+        ),
+      );
+    }
+
+    // Safety: ہمیشہ maximum 30
+    return quotes
+        .take(_categoryQuoteLimit)
+        .toList();
   }
 }

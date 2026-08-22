@@ -1,14 +1,17 @@
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:share_plus/share_plus.dart';
+
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
 import 'package:soul_voice/screens/categories_screen.dart';
 import 'package:soul_voice/screens/favorite_bloc.dart';
 import 'package:soul_voice/screens/favorite_event.dart';
 import 'package:soul_voice/screens/favorite_state.dart';
+import 'package:soul_voice/screens/main_wrapper_screen.dart';
 import 'package:soul_voice/screens/notifications_screen.dart';
 import 'package:soul_voice/screens/search_screen.dart';
 import 'package:soul_voice/services/models/quote_model.dart';
@@ -26,27 +29,56 @@ class _HomeScreenState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
 
   final List<QuoteModel> _quotes = [];
+
   bool _isLoadingInitial = true;
   bool _isLoadingMore = false;
   bool _hasError = false;
-  bool _hasMoreError = false; // Pagination error state
+  bool _hasMoreError = false;
 
   int _currentPage = 1;
   static const int _pageSize = 20;
 
   final List<Map<String, dynamic>> _categories = [
-    {'name': 'Faith', 'icon': Icons.auto_awesome_rounded, 'tag': 'faith'},
-    {'name': 'Life', 'icon': Icons.wb_sunny_outlined, 'tag': 'life'},
+    {
+      'name': 'Faith',
+      'icon': Icons.auto_awesome_rounded,
+      'tag': 'faith',
+    },
+    {
+      'name': 'Life',
+      'icon': Icons.wb_sunny_outlined,
+      'tag': 'life',
+    },
     {
       'name': 'Wisdom',
       'icon': Icons.lightbulb_outline_rounded,
       'tag': 'wisdom',
     },
-    {'name': 'Success', 'icon': Icons.trending_up_rounded, 'tag': 'success'},
-    {'name': 'Love', 'icon': Icons.favorite_border_rounded, 'tag': 'love'},
-    {'name': 'Peace', 'icon': Icons.spa_outlined, 'tag': 'peace'},
-    {'name': 'Courage', 'icon': Icons.shield_outlined, 'tag': 'courage'},
-    {'name': 'Hope', 'icon': Icons.wb_incandescent_outlined, 'tag': 'hope'},
+    {
+      'name': 'Success',
+      'icon': Icons.trending_up_rounded,
+      'tag': 'success',
+    },
+    {
+      'name': 'Love',
+      'icon': Icons.favorite_border_rounded,
+      'tag': 'love',
+    },
+    {
+      'name': 'Peace',
+      'icon': Icons.spa_outlined,
+      'tag': 'peace',
+    },
+    {
+      'name': 'Courage',
+      'icon': Icons.shield_outlined,
+      'tag': 'courage',
+    },
+    {
+      'name': 'Hope',
+      'icon': Icons.wb_incandescent_outlined,
+      'tag': 'hope',
+    },
     {
       'name': 'Patience',
       'icon': Icons.hourglass_empty_rounded,
@@ -67,22 +99,46 @@ class _HomeScreenState extends State<HomeScreen> {
       'icon': Icons.sentiment_very_satisfied_rounded,
       'tag': 'happiness',
     },
-    {'name': 'Motivation', 'icon': Icons.bolt_rounded, 'tag': 'motivation'},
+    {
+      'name': 'Motivation',
+      'icon': Icons.bolt_rounded,
+      'tag': 'motivation',
+    },
     {
       'name': 'Friendship',
       'icon': Icons.people_outline_rounded,
       'tag': 'friendship',
     },
-    {'name': 'Knowledge', 'icon': Icons.menu_book_rounded, 'tag': 'knowledge'},
-    {'name': 'Kindness', 'icon': Icons.handshake_outlined, 'tag': 'kindness'},
-    {'name': 'Time', 'icon': Icons.access_time_rounded, 'tag': 'time'},
+    {
+      'name': 'Knowledge',
+      'icon': Icons.menu_book_rounded,
+      'tag': 'knowledge',
+    },
+    {
+      'name': 'Kindness',
+      'icon': Icons.handshake_outlined,
+      'tag': 'kindness',
+    },
+    {
+      'name': 'Time',
+      'icon': Icons.access_time_rounded,
+      'tag': 'time',
+    },
     {
       'name': 'Forgiveness',
       'icon': Icons.self_improvement_rounded,
       'tag': 'forgiveness',
     },
-    {'name': 'Truth', 'icon': Icons.verified_outlined, 'tag': 'truth'},
-    {'name': 'Future', 'icon': Icons.explore_outlined, 'tag': 'future'},
+    {
+      'name': 'Truth',
+      'icon': Icons.verified_outlined,
+      'tag': 'truth',
+    },
+    {
+      'name': 'Future',
+      'icon': Icons.explore_outlined,
+      'tag': 'future',
+    },
   ];
 
   final List<Map<String, String>> _dailyInspirationQuotes = [
@@ -97,7 +153,8 @@ class _HomeScreenState extends State<HomeScreen> {
       'author': 'Daily Inspiration',
     },
     {
-      'quote': 'Trust the process. Your time and success will definitely come.',
+      'quote':
+          'Trust the process. Your time and success will definitely come.',
       'author': 'Daily Inspiration',
     },
     {
@@ -111,11 +168,13 @@ class _HomeScreenState extends State<HomeScreen> {
       'author': 'Daily Inspiration',
     },
     {
-      'quote': 'Small daily improvements over time lead to stunning results.',
+      'quote':
+          'Small daily improvements over time lead to stunning results.',
       'author': 'Daily Inspiration',
     },
     {
-      'quote': 'Do not lose hope. You never know what tomorrow will bring.',
+      'quote':
+          'Do not lose hope. You never know what tomorrow will bring.',
       'author': 'Daily Inspiration',
     },
     {
@@ -137,20 +196,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Map<String, String> _getTodayQuote() {
     final now = DateTime.now();
+
     final dayIndex = DateTime(
       now.year,
       now.month,
       now.day,
-    ).difference(DateTime(2025, 1, 1)).inDays;
+    ).difference(
+      DateTime(2025, 1, 1),
+    ).inDays;
+
     final index = dayIndex % _dailyInspirationQuotes.length;
+
     return _dailyInspirationQuotes[index];
   }
 
   @override
   void initState() {
     super.initState();
+
     _categories.shuffle();
+
     _fetchInitialQuotes();
+
     _scrollController.addListener(_onScroll);
   }
 
@@ -173,9 +240,11 @@ class _HomeScreenState extends State<HomeScreen> {
         page: _currentPage,
         limit: _pageSize,
       );
+
       newQuotes.shuffle(Random());
 
       if (!mounted) return;
+
       setState(() {
         _quotes.clear();
         _quotes.addAll(newQuotes);
@@ -183,6 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     } catch (_) {
       if (!mounted) return;
+
       setState(() {
         _hasError = true;
         _isLoadingInitial = false;
@@ -191,8 +261,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchMoreQuotes() async {
-    if (_isLoadingMore || _isLoadingInitial || _hasError || _hasMoreError)
+    if (_isLoadingMore ||
+        _isLoadingInitial ||
+        _hasError ||
+        _hasMoreError) {
       return;
+    }
 
     setState(() {
       _isLoadingMore = true;
@@ -201,19 +275,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       final nextPage = _currentPage + 1;
+
       final newQuotes = await _quoteApiService.getQuotes(
         page: nextPage,
         limit: _pageSize,
       );
 
-      final existingQuotesText = _quotes.map((q) => q.content).toSet();
+      final existingQuotesText =
+          _quotes.map((q) => q.content).toSet();
+
       final filteredNewQuotes = newQuotes
-          .where((q) => !existingQuotesText.contains(q.content))
+          .where(
+            (q) => !existingQuotesText.contains(q.content),
+          )
           .toList();
 
       filteredNewQuotes.shuffle(Random());
 
       if (!mounted) return;
+
       setState(() {
         _currentPage = nextPage;
         _quotes.addAll(filteredNewQuotes);
@@ -221,6 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     } catch (_) {
       if (!mounted) return;
+
       setState(() {
         _isLoadingMore = false;
         _hasMoreError = true;
@@ -234,6 +315,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _quotes.clear();
       _hasMoreError = false;
     });
+
     await _fetchInitialQuotes();
   }
 
@@ -241,6 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _scrollController.removeListener(_onScroll);
     _scrollController.dispose();
+
     super.dispose();
   }
 
@@ -251,77 +334,129 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocBuilder<ThemeCubit, ThemeMode>(
       builder: (context, themeMode) {
         final isDark = themeMode == ThemeMode.dark;
-        final backgroundColor = isDark ? AppColors.background : Colors.white;
-        final surfaceColor = isDark
-            ? AppColors.surface
-            : const Color(0xFFF7F7F7);
-        final primaryTextColor = isDark
-            ? AppColors.textPrimary
-            : Colors.black87;
-        final secondaryTextColor = isDark
-            ? AppColors.textSecondary
-            : Colors.black54;
-        final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
+
+        final backgroundColor =
+            isDark ? AppColors.background : Colors.white;
+
+        final surfaceColor =
+            isDark
+                ? AppColors.surface
+                : const Color(0xFFF7F7F7);
+
+        final primaryTextColor =
+            isDark
+                ? AppColors.textPrimary
+                : Colors.black87;
+
+        final secondaryTextColor =
+            isDark
+                ? AppColors.textSecondary
+                : Colors.black54;
+
+        final borderColor =
+            isDark
+                ? AppColors.border
+                : const Color(0xFFE0E0E0);
 
         return Scaffold(
           backgroundColor: backgroundColor,
+
           body: SafeArea(
             child: RefreshIndicator(
               color: AppColors.primary,
               onRefresh: _refreshQuotes,
+
               child: SingleChildScrollView(
                 controller: _scrollController,
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+                physics:
+                    const AlwaysScrollableScrollPhysics(),
+
+                padding:
+                    const EdgeInsets.fromLTRB(
+                  20,
+                  20,
+                  20,
+                  100,
+                ),
+
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
+
                   children: [
-                    // Header
+                    // =====================================================
+                    // HEADER
+                    // =====================================================
+
                     Row(
                       children: [
                         Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+
                             children: [
                               Text(
                                 'Assalam-o-Alaikum 👋',
+
                                 style: TextStyle(
-                                  color: secondaryTextColor,
+                                  color:
+                                      secondaryTextColor,
                                   fontSize: 14,
                                 ),
                               ),
-                              const SizedBox(height: 5),
+
+                              const SizedBox(
+                                height: 5,
+                              ),
+
                               Text(
                                 'Welcome to Soul Voice',
+
                                 style: TextStyle(
-                                  color: primaryTextColor,
+                                  color:
+                                      primaryTextColor,
                                   fontSize: 24,
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight:
+                                      FontWeight.bold,
                                 ),
                               ),
                             ],
                           ),
                         ),
+
                         Container(
                           height: 45,
                           width: 45,
-                          decoration: BoxDecoration(
+
+                          decoration:
+                              BoxDecoration(
                             color: surfaceColor,
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: borderColor),
+                            borderRadius:
+                                BorderRadius.circular(
+                              14,
+                            ),
+                            border: Border.all(
+                              color: borderColor,
+                            ),
                           ),
+
                           child: IconButton(
                             onPressed: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => const NotificationsScreen(),
+                                  builder: (_) =>
+                                      const NotificationsScreen(),
                                 ),
                               );
                             },
+
                             icon: Icon(
-                              Icons.notifications_none_rounded,
-                              color: primaryTextColor,
+                              Icons
+                                  .notifications_none_rounded,
+                              color:
+                                  primaryTextColor,
                             ),
                           ),
                         ),
@@ -330,35 +465,57 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 22),
 
-                    // Search Bar
+                    // =====================================================
+                    // SEARCH
+                    // =====================================================
+
                     GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const SearchScreen(),
+                            builder: (_) =>
+                                const SearchScreen(),
                           ),
                         );
                       },
+
                       child: Container(
                         height: 52,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: surfaceColor,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: borderColor),
+
+                        padding:
+                            const EdgeInsets.symmetric(
+                          horizontal: 16,
                         ),
+
+                        decoration:
+                            BoxDecoration(
+                          color: surfaceColor,
+                          borderRadius:
+                              BorderRadius.circular(
+                            16,
+                          ),
+                          border: Border.all(
+                            color: borderColor,
+                          ),
+                        ),
+
                         child: Row(
                           children: [
                             Icon(
                               Icons.search_rounded,
-                              color: secondaryTextColor,
+                              color:
+                                  secondaryTextColor,
                             ),
+
                             const SizedBox(width: 12),
+
                             Text(
                               'Search quotes...',
+
                               style: TextStyle(
-                                color: secondaryTextColor,
+                                color:
+                                    secondaryTextColor,
                                 fontSize: 14,
                               ),
                             ),
@@ -369,30 +526,54 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 28),
 
-                    // Categories Header
+                    // =====================================================
+                    // CATEGORIES HEADER
+                    // =====================================================
+
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+
                       children: [
                         Text(
                           'Categories',
+
                           style: TextStyle(
-                            color: primaryTextColor,
+                            color:
+                                primaryTextColor,
                             fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                            fontWeight:
+                                FontWeight.bold,
                           ),
                         ),
+
                         TextButton(
                           onPressed: () {
-                            Navigator.push(
+                            // =================================================
+                            // IMPORTANT:
+                            // See All ab MainWrapper ke Categories tab ko
+                            // open karega.
+                            // Is liye Bottom Navigation bhi show hogi.
+                            // =================================================
+
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const CategoriesScreen(),
+                                builder: (_) =>
+                                    const MainWrapperScreen(
+                                  initialIndex: 1,
+                                ),
                               ),
                             );
                           },
+
                           child: const Text(
                             'See All',
-                            style: TextStyle(color: AppColors.primary),
+
+                            style: TextStyle(
+                              color:
+                                  AppColors.primary,
+                            ),
                           ),
                         ),
                       ],
@@ -400,28 +581,63 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 8),
 
-                    // Categories Horizontal List
+                    // =====================================================
+                    // HORIZONTAL CATEGORIES
+                    // =====================================================
+
                     SizedBox(
                       height: 105,
+
                       child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _categories.length,
-                        separatorBuilder: (_, __) => const SizedBox(width: 12),
-                        itemBuilder: (context, index) {
-                          final category = _categories[index];
+                        scrollDirection:
+                            Axis.horizontal,
+
+                        itemCount:
+                            _categories.length,
+
+                        separatorBuilder:
+                            (_, __) =>
+                                const SizedBox(
+                          width: 12,
+                        ),
+
+                        itemBuilder:
+                            (context, index) {
+                          final category =
+                              _categories[index];
+
                           return _CategoryCard(
-                            key: ValueKey(category['tag']),
-                            name: category['name'] as String,
-                            icon: category['icon'] as IconData,
-                            surfaceColor: surfaceColor,
-                            borderColor: borderColor,
-                            textColor: primaryTextColor,
+                            key: ValueKey(
+                              category['tag'],
+                            ),
+
+                            name:
+                                category['name']
+                                    as String,
+
+                            icon:
+                                category['icon']
+                                    as IconData,
+
+                            surfaceColor:
+                                surfaceColor,
+
+                            borderColor:
+                                borderColor,
+
+                            textColor:
+                                primaryTextColor,
+
                             onTap: () {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => CategoryQuotesScreen(
-                                    category: category['tag'] as String,
+                                  builder: (_) =>
+                                      CategoryQuotesScreen(
+                                    category:
+                                        category[
+                                                'tag']
+                                            as String,
                                   ),
                                 ),
                               );
@@ -433,74 +649,126 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 28),
 
-                    // Daily Inspiration Card
+                    // =====================================================
+                    // DAILY INSPIRATION
+                    // =====================================================
+
                     Container(
                       width: double.infinity,
-                      padding: const EdgeInsets.all(22),
-                      decoration: BoxDecoration(
-                        color: surfaceColor,
-                        borderRadius: BorderRadius.circular(22),
-                        border: Border.all(color: borderColor),
+
+                      padding:
+                          const EdgeInsets.all(
+                        22,
                       ),
+
+                      decoration:
+                          BoxDecoration(
+                        color: surfaceColor,
+                        borderRadius:
+                            BorderRadius.circular(
+                          22,
+                        ),
+                        border: Border.all(
+                          color: borderColor,
+                        ),
+                      ),
+
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
+
                         children: [
                           const Row(
                             children: [
                               Icon(
-                                Icons.auto_awesome_rounded,
-                                color: AppColors.primary,
+                                Icons
+                                    .auto_awesome_rounded,
+                                color:
+                                    AppColors.primary,
                                 size: 20,
                               ),
+
                               SizedBox(width: 8),
+
                               Text(
                                 "Today's Inspiration",
+
                                 style: TextStyle(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.bold,
+                                  color:
+                                      AppColors.primary,
+                                  fontWeight:
+                                      FontWeight.bold,
                                   fontSize: 14,
                                 ),
                               ),
                             ],
                           ),
+
                           const SizedBox(height: 18),
+
                           Row(
-  crossAxisAlignment: CrossAxisAlignment.start,
-  children: [
-    const Icon(
-      Icons.format_quote_rounded,
-      color: AppColors.primary,
-      size: 30,
-    ),
-    const SizedBox(width: 12),
-    Expanded(
-      child: Text(
-        todayQuoteMap['quote']!,
-        style: TextStyle(
-          color: primaryTextColor,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          height: 1.4,
-        ),
-      ),
-    ),
-  ],
-),
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+
+                            children: [
+                              const Icon(
+                                Icons
+                                    .format_quote_rounded,
+                                color:
+                                    AppColors.primary,
+                                size: 30,
+                              ),
+
+                              const SizedBox(width: 12),
+
+                              Expanded(
+                                child: Text(
+                                  todayQuoteMap[
+                                      'quote']!,
+
+                                  style: TextStyle(
+                                    color:
+                                        primaryTextColor,
+                                    fontSize: 20,
+                                    fontWeight:
+                                        FontWeight.w600,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
                           const SizedBox(height: 14),
+
                           Text(
-                            todayQuoteMap['author']!,
+                            todayQuoteMap[
+                                'author']!,
+
                             style: TextStyle(
-                              color: secondaryTextColor,
+                              color:
+                                  secondaryTextColor,
                               fontSize: 13,
                             ),
                           ),
+
                           const SizedBox(height: 8),
+
                           Align(
-                            alignment: Alignment.centerRight,
+                            alignment:
+                                Alignment.centerRight,
+
                             child: _QuoteActions(
-                              quote: todayQuoteMap['quote']!,
-                              author: todayQuoteMap['author']!,
-                              secondaryTextColor: secondaryTextColor,
+                              quote:
+                                  todayQuoteMap[
+                                      'quote']!,
+
+                              author:
+                                  todayQuoteMap[
+                                      'author']!,
+
+                              secondaryTextColor:
+                                  secondaryTextColor,
                             ),
                           ),
                         ],
@@ -509,23 +777,35 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 28),
 
-                    // Featured Quotes Title
+                    // =====================================================
+                    // FEATURED QUOTES
+                    // =====================================================
+
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+
                       children: [
                         Text(
                           'Featured Quotes',
+
                           style: TextStyle(
-                            color: primaryTextColor,
+                            color:
+                                primaryTextColor,
                             fontSize: 20,
-                            fontWeight: FontWeight.bold,
+                            fontWeight:
+                                FontWeight.bold,
                           ),
                         ),
+
                         IconButton(
-                          onPressed: _refreshQuotes,
+                          onPressed:
+                              _refreshQuotes,
+
                           icon: const Icon(
                             Icons.refresh_rounded,
-                            color: AppColors.primary,
+                            color:
+                                AppColors.primary,
                           ),
                         ),
                       ],
@@ -533,107 +813,209 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     const SizedBox(height: 8),
 
-                    // Quotes Infinite Feed
+                    // =====================================================
+                    // QUOTES
+                    // =====================================================
+
                     if (_isLoadingInitial)
                       const Center(
                         child: Padding(
-                          padding: EdgeInsets.all(35),
-                          child: CircularProgressIndicator(
-                            color: AppColors.primary,
+                          padding:
+                              EdgeInsets.all(35),
+
+                          child:
+                              CircularProgressIndicator(
+                            color:
+                                AppColors.primary,
                           ),
                         ),
                       )
-                    else if (_hasError && _quotes.isEmpty)
+
+                    else if (_hasError &&
+                        _quotes.isEmpty)
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(22),
-                        decoration: BoxDecoration(
-                          color: surfaceColor,
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: borderColor),
+
+                        padding:
+                            const EdgeInsets.all(
+                          22,
                         ),
+
+                        decoration:
+                            BoxDecoration(
+                          color: surfaceColor,
+                          borderRadius:
+                              BorderRadius.circular(
+                            18,
+                          ),
+                          border: Border.all(
+                            color: borderColor,
+                          ),
+                        ),
+
                         child: Column(
                           children: [
                             const Icon(
-                              Icons.cloud_off_rounded,
-                              color: AppColors.primary,
+                              Icons
+                                  .cloud_off_rounded,
+                              color:
+                                  AppColors.primary,
                               size: 40,
                             ),
-                            const SizedBox(height: 12),
+
+                            const SizedBox(
+                              height: 12,
+                            ),
+
                             Text(
                               'Unable to load quotes',
+
                               style: TextStyle(
-                                color: primaryTextColor,
+                                color:
+                                    primaryTextColor,
                                 fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                fontWeight:
+                                    FontWeight.bold,
                               ),
                             ),
-                            const SizedBox(height: 6),
+
+                            const SizedBox(
+                              height: 6,
+                            ),
+
                             Text(
                               'Please check your internet connection and try again.',
-                              textAlign: TextAlign.center,
+
+                              textAlign:
+                                  TextAlign.center,
+
                               style: TextStyle(
-                                color: secondaryTextColor,
+                                color:
+                                    secondaryTextColor,
                                 fontSize: 13,
                               ),
                             ),
-                            const SizedBox(height: 15),
+
+                            const SizedBox(
+                              height: 15,
+                            ),
+
                             ElevatedButton(
-                              onPressed: _fetchInitialQuotes,
-                              child: const Text('Try Again'),
+                              onPressed:
+                                  _fetchInitialQuotes,
+
+                              child:
+                                  const Text(
+                                'Try Again',
+                              ),
                             ),
                           ],
                         ),
                       )
+
                     else if (_quotes.isEmpty)
                       Container(
                         width: double.infinity,
-                        padding: const EdgeInsets.all(25),
+
+                        padding:
+                            const EdgeInsets.all(
+                          25,
+                        ),
+
                         child: Text(
                           'No quotes found.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: secondaryTextColor),
+
+                          textAlign:
+                              TextAlign.center,
+
+                          style: TextStyle(
+                            color:
+                                secondaryTextColor,
+                          ),
                         ),
                       )
+
                     else
                       Column(
                         children: [
                           ..._quotes.map(
                             (quote) => Padding(
-                              key: ValueKey(quote.content),
-                              padding: const EdgeInsets.only(bottom: 12),
+                              key: ValueKey(
+                                quote.content,
+                              ),
+
+                              padding:
+                                  const EdgeInsets.only(
+                                bottom: 12,
+                              ),
+
                               child: _QuoteCard(
-                                quote: quote.content,
-                                author: quote.author,
-                                surfaceColor: surfaceColor,
-                                borderColor: borderColor,
-                                primaryTextColor: primaryTextColor,
-                                secondaryTextColor: secondaryTextColor,
+                                quote:
+                                    quote.content,
+
+                                author:
+                                    quote.author,
+
+                                surfaceColor:
+                                    surfaceColor,
+
+                                borderColor:
+                                    borderColor,
+
+                                primaryTextColor:
+                                    primaryTextColor,
+
+                                secondaryTextColor:
+                                    secondaryTextColor,
                               ),
                             ),
                           ),
+
                           if (_isLoadingMore)
                             const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 20),
+                              padding:
+                                  EdgeInsets.symmetric(
+                                vertical: 20,
+                              ),
+
                               child: Center(
-                                child: CircularProgressIndicator(
-                                  color: AppColors.primary,
+                                child:
+                                    CircularProgressIndicator(
+                                  color:
+                                      AppColors.primary,
                                 ),
                               ),
                             )
+
                           else if (_hasMoreError)
                             Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding:
+                                  const EdgeInsets.symmetric(
+                                vertical: 16,
+                              ),
+
                               child: Center(
-                                child: TextButton.icon(
-                                  onPressed: _fetchMoreQuotes,
+                                child:
+                                    TextButton.icon(
+                                  onPressed:
+                                      _fetchMoreQuotes,
+
                                   icon: const Icon(
-                                    Icons.refresh_rounded,
-                                    color: AppColors.primary,
+                                    Icons
+                                        .refresh_rounded,
+                                    color:
+                                        AppColors.primary,
                                   ),
-                                  label: const Text(
+
+                                  label:
+                                      const Text(
                                     'Failed to load more. Tap to retry',
-                                    style: TextStyle(color: AppColors.primary),
+
+                                    style:
+                                        TextStyle(
+                                      color:
+                                          AppColors.primary,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -650,6 +1032,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+// =====================================================
+// CATEGORY CARD
+// =====================================================
 
 class _CategoryCard extends StatelessWidget {
   final String name;
@@ -673,26 +1059,49 @@ class _CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+
       child: Container(
         width: 105,
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
+
+        padding:
+            const EdgeInsets.all(14),
+
+        decoration:
+            BoxDecoration(
           color: surfaceColor,
-          borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: borderColor),
+
+          borderRadius:
+              BorderRadius.circular(18),
+
+          border: Border.all(
+            color: borderColor,
+          ),
         ),
+
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment:
+              MainAxisAlignment.center,
+
           children: [
-            Icon(icon, color: AppColors.primary, size: 28),
+            Icon(
+              icon,
+              color: AppColors.primary,
+              size: 28,
+            ),
+
             const SizedBox(height: 10),
+
             Text(
               name,
-              textAlign: TextAlign.center,
+
+              textAlign:
+                  TextAlign.center,
+
               style: TextStyle(
                 color: textColor,
                 fontSize: 13,
-                fontWeight: FontWeight.w600,
+                fontWeight:
+                    FontWeight.w600,
               ),
             ),
           ],
@@ -701,6 +1110,10 @@ class _CategoryCard extends StatelessWidget {
     );
   }
 }
+
+// =====================================================
+// QUOTE CARD
+// =====================================================
 
 class _QuoteCard extends StatelessWidget {
   final String quote;
@@ -724,53 +1137,85 @@ class _QuoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
+
+      padding:
+          const EdgeInsets.all(18),
+
+      decoration:
+          BoxDecoration(
         color: surfaceColor,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: borderColor),
+
+        borderRadius:
+            BorderRadius.circular(18),
+
+        border: Border.all(
+          color: borderColor,
+        ),
       ),
+
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment:
+            CrossAxisAlignment.start,
+
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+
             children: [
               const Icon(
                 Icons.format_quote_rounded,
                 color: AppColors.primary,
                 size: 30,
               ),
+
               const SizedBox(width: 12),
+
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
+
                   children: [
                     Text(
                       quote,
+
                       style: TextStyle(
-                        color: primaryTextColor,
+                        color:
+                            primaryTextColor,
                         fontSize: 15,
                         height: 1.4,
                       ),
                     ),
+
                     const SizedBox(height: 8),
+
                     Text(
                       '— $author',
-                      style: TextStyle(color: secondaryTextColor, fontSize: 12),
+
+                      style: TextStyle(
+                        color:
+                            secondaryTextColor,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ),
               ),
             ],
           ),
+
           const SizedBox(height: 8),
+
           Align(
-            alignment: Alignment.centerRight,
+            alignment:
+                Alignment.centerRight,
+
             child: _QuoteActions(
               quote: quote,
               author: author,
-              secondaryTextColor: secondaryTextColor,
+              secondaryTextColor:
+                  secondaryTextColor,
             ),
           ),
         ],
@@ -778,6 +1223,10 @@ class _QuoteCard extends StatelessWidget {
     );
   }
 }
+
+// =====================================================
+// QUOTE ACTIONS
+// =====================================================
 
 class _QuoteActions extends StatelessWidget {
   final String quote;
@@ -792,20 +1241,40 @@ class _QuoteActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> quoteMap = {'quote': quote, 'author': author};
+    final Map<String, dynamic> quoteMap = {
+      'quote': quote,
+      'author': author,
+    };
 
-    return BlocBuilder<FavoriteBloc, FavoriteState>(
+    return BlocBuilder<
+        FavoriteBloc,
+        FavoriteState>(
       builder: (context, favState) {
-        final bool isFavorite = favState.favoriteQuotes.any(
-          (item) => item['quote']?.toString() == quote,
+        final bool isFavorite =
+            favState.favoriteQuotes.any(
+          (item) =>
+              item['quote']?.toString() ==
+              quote,
         );
 
         return Row(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisSize:
+              MainAxisSize.min,
+
           children: [
+            // =================================================
+            // FAVORITE
+            // =================================================
+
             IconButton(
               onPressed: () {
-                context.read<FavoriteBloc>().add(ToggleFavoriteEvent(quoteMap));
+                context
+                    .read<FavoriteBloc>()
+                    .add(
+                      ToggleFavoriteEvent(
+                        quoteMap,
+                      ),
+                    );
 
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
@@ -816,50 +1285,89 @@ class _QuoteActions extends StatelessWidget {
                             ? 'Quote removed from favorites 💔'
                             : 'Quote added to favorites ❤️',
                       ),
-                      duration: const Duration(seconds: 1),
-                      behavior: SnackBarBehavior.floating,
+
+                      duration:
+                          const Duration(
+                        seconds: 1,
+                      ),
+
+                      behavior:
+                          SnackBarBehavior.floating,
                     ),
                   );
               },
+
               icon: Icon(
                 isFavorite
                     ? Icons.favorite_rounded
                     : Icons.favorite_border_rounded,
-                color: isFavorite ? Colors.red : secondaryTextColor,
+
+                color: isFavorite
+                    ? Colors.red
+                    : secondaryTextColor,
+
                 size: 25,
               ),
             ),
+
+            // =================================================
+            // COPY
+            // =================================================
+
             IconButton(
               onPressed: () async {
-                final text = '"$quote"\n— $author';
-                await Clipboard.setData(ClipboardData(text: text));
+                final text =
+                    '"$quote"\n— $author';
+
+                await Clipboard.setData(
+                  ClipboardData(
+                    text: text,
+                  ),
+                );
 
                 if (context.mounted) {
                   ScaffoldMessenger.of(context)
                     ..hideCurrentSnackBar()
                     ..showSnackBar(
                       const SnackBar(
-                        content: Text('Quote copied successfully 📋'),
-                        duration: Duration(seconds: 1),
-                        behavior: SnackBarBehavior.floating,
+                        content: Text(
+                          'Quote copied successfully 📋',
+                        ),
+
+                        duration:
+                            Duration(seconds: 1),
+
+                        behavior:
+                            SnackBarBehavior.floating,
                       ),
                     );
                 }
               },
+
               icon: Icon(
                 Icons.copy_rounded,
-                color: secondaryTextColor,
+                color:
+                    secondaryTextColor,
                 size: 23,
               ),
             ),
+
+            // =================================================
+            // SHARE
+            // =================================================
+
             IconButton(
               onPressed: () {
-                final shareText = '"$quote"\n— $author';
+                final shareText =
+                    '"$quote"\n— $author';
+
                 Share.share(shareText);
               },
+
               icon: Icon(
                 Icons.share_outlined,
-                color: secondaryTextColor,
+                color:
+                    secondaryTextColor,
                 size: 23,
               ),
             ),

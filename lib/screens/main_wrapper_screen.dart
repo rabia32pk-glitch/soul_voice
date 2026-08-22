@@ -6,14 +6,19 @@ import 'package:soul_voice/screens/home_screen.dart';
 import 'package:soul_voice/screens/profile_screen.dart';
 
 class MainWrapperScreen extends StatefulWidget {
-  const MainWrapperScreen({super.key});
+  final int initialIndex;
+
+  const MainWrapperScreen({
+    super.key,
+    this.initialIndex = 0,
+  });
 
   @override
   State<MainWrapperScreen> createState() => _MainWrapperScreenState();
 }
 
 class _MainWrapperScreenState extends State<MainWrapperScreen> {
-  int _currentIndex = 0;
+  late int _currentIndex;
 
   final List<Widget> _screens = const [
     HomeScreen(),
@@ -23,61 +28,103 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+
+    // initialIndex decide karega ke kaunsi screen open hogi
+    _currentIndex = widget.initialIndex;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final navBackgroundColor = isDark ? AppColors.surface : Colors.white;
-    final unselectedColor = isDark
-        ? AppColors.textSecondary
-        : Colors.grey.shade600;
-    final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
+    final navBackgroundColor =
+        isDark ? AppColors.surface : Colors.white;
+
+    final unselectedColor =
+        isDark ? AppColors.textSecondary : Colors.grey.shade600;
+
+    final borderColor =
+        isDark ? AppColors.border : const Color(0xFFE0E0E0);
 
     return PopScope(
-      // اگر ہوم (Index 0) پر ہیں تو Pop ہونے دیں (ایپ کلوز ہوگی)، ورنہ روکے گا
+      // Agar Home par hain to app close hone di jayegi
       canPop: _currentIndex == 0,
+
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
 
-        // اگر یوزر کسی بھی دوسری ٹیب میں ہے تو پہلے ہوم سکرین (Index 0) پر لے آئے گا
+        // Agar Home ke ilawa kisi tab par hain
+        // to back press par Home par aa jayenge
         if (_currentIndex != 0) {
           setState(() {
             _currentIndex = 0;
           });
         }
       },
+
       child: Scaffold(
-        body: IndexedStack(index: _currentIndex, children: _screens),
+        body: IndexedStack(
+          index: _currentIndex,
+          children: _screens,
+        ),
+
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
-            border: Border(top: BorderSide(color: borderColor, width: 0.5)),
+            border: Border(
+              top: BorderSide(
+                color: borderColor,
+                width: 0.5,
+              ),
+            ),
           ),
+
           child: BottomNavigationBar(
             currentIndex: _currentIndex,
+
             backgroundColor: navBackgroundColor,
+
             selectedItemColor: AppColors.primary,
+
             unselectedItemColor: unselectedColor,
+
             type: BottomNavigationBarType.fixed,
+
             elevation: 0,
+
             onTap: (index) {
               setState(() {
                 _currentIndex = index;
               });
             },
+
             items: const [
               BottomNavigationBarItem(
-                icon: Icon(Icons.home_rounded),
+                icon: Icon(
+                  Icons.home_rounded,
+                ),
                 label: 'Home',
               ),
+
               BottomNavigationBarItem(
-                icon: Icon(Icons.grid_view_rounded),
+                icon: Icon(
+                  Icons.grid_view_rounded,
+                ),
                 label: 'Categories',
               ),
+
               BottomNavigationBarItem(
-                icon: Icon(Icons.favorite_border_rounded),
+                icon: Icon(
+                  Icons.favorite_border_rounded,
+                ),
                 label: 'Favorites',
               ),
+
               BottomNavigationBarItem(
-                icon: Icon(Icons.person_outline_rounded),
+                icon: Icon(
+                  Icons.person_outline_rounded,
+                ),
                 label: 'Profile',
               ),
             ],
