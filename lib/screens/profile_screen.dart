@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:soul_voice/screens/auth/login_screens.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
@@ -396,9 +397,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: () async {
                 Navigator.pop(ctx);
                 try {
+                  // 1. Firebase Sign Out
                   await FirebaseAuth.instance.signOut();
+
+                  // 2. Clear local session data
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.clear();
+
+                  // 3. Navigate to Login Screen and clear stack
+                  if (context.mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      (route) => false,
+                    );
+                  }
                 } catch (e) {
-                  if (mounted) {
+                  if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Logout failed: $e')),
                     );
@@ -458,10 +473,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     await user.delete();
 
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Account deleted successfully'),
-                        ),
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        (route) => false,
                       );
                     }
                   }
