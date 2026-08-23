@@ -15,21 +15,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<Map<String, String>> pages = const [
     {
-      'title': 'Discover Knowledge',
+      'tag': 'WISDOM & KNOWLEDGE',
+      'title': 'Discover Deep Wisdom',
       'description':
-          'Explore meaningful quotes, Islamic knowledge and inspiring content.',
+          'Explore timeless quotes, profound Islamic thoughts, and daily inspiration to uplift your soul.',
       'icon': 'auto_awesome',
     },
     {
-      'title': 'Learn Your Way',
+      'tag': 'MULTI-LINGUAL EXPERIENCE',
+      'title': 'Learn In Your Language',
       'description':
-          'Read and explore content in English, Roman Urdu and Punjabi.',
+          'Seamlessly read and reflect on curated content across English, Roman Urdu, and Punjabi.',
       'icon': 'menu_book',
     },
     {
-      'title': 'Learn • Reflect • Grow',
+      'tag': 'GROWTH & MINDFULNESS',
+      'title': 'Reflect, Save & Grow',
       'description':
-          'Take a moment for yourself and discover something meaningful every day.',
+          'Bookmark your favorite quotes offline, share light with friends, and cultivate positive daily habits.',
       'icon': 'favorite',
     },
   ];
@@ -44,8 +47,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void _nextPage() {
     if (_currentPage < pages.length - 1) {
       _pageController.nextPage(
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeInOutCubic,
       );
     } else {
       _openLogin();
@@ -61,10 +64,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
-    final isShortScreen = size.height < 650;
-    final circleSize = isShortScreen ? 130.0 : (size.width < 360 ? 150.0 : 180.0);
-    final iconSize = isShortScreen ? 55.0 : (size.width < 360 ? 65.0 : 75.0);
+    final isShortScreen = size.height < 680;
+
+    final Color cardBackground = isDark ? const Color(0xFF141D2E) : const Color(0xFFFFFFFF);
+    final Color borderColor = isDark ? const Color(0xFF293449) : const Color(0xFFEADBBE);
+    final Color textColor = isDark ? AppColors.textPrimary : const Color(0xFF2C241D);
+    final Color subtitleColor = isDark ? AppColors.textSecondary : const Color(0xFF6B5E52);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -74,6 +81,68 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             constraints: const BoxConstraints(maxWidth: 500),
             child: Column(
               children: [
+                // Top Header Row with Skip Button
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Soul Voice Brand Pill
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: AppColors.primary.withValues(alpha: 0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.auto_stories_rounded,
+                              size: 14,
+                              color: AppColors.primary,
+                            ),
+                            SizedBox(width: 6),
+                            Text(
+                              'SOUL VOICE',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                letterSpacing: 0.8,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      // Skip Button
+                      if (_currentPage < pages.length - 1)
+                        TextButton(
+                          onPressed: _openLogin,
+                          style: TextButton.styleFrom(
+                            foregroundColor: subtitleColor,
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                          ),
+                          child: const Text(
+                            'Skip',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        )
+                      else
+                        const SizedBox(width: 48),
+                    ],
+                  ),
+                ),
+
+                // Page View
                 Expanded(
                   child: PageView.builder(
                     controller: _pageController,
@@ -95,44 +164,106 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const SizedBox(height: 10),
+
+                                // Hero Illustration Card
                                 Container(
-                                  height: circleSize,
-                                  width: circleSize,
+                                  width: isShortScreen ? 170 : 210,
+                                  height: isShortScreen ? 170 : 210,
                                   decoration: BoxDecoration(
-                                    color: theme.colorScheme.surface,
                                     shape: BoxShape.circle,
+                                    color: cardBackground,
                                     border: Border.all(
-                                      color: AppColors.primary,
+                                      color: borderColor,
                                       width: 1.5,
                                     ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColors.primary.withValues(alpha: isDark ? 0.18 : 0.15),
+                                        blurRadius: 36,
+                                        spreadRadius: 4,
+                                        offset: const Offset(0, 10),
+                                      ),
+                                    ],
                                   ),
-                                  child: Icon(
-                                    _getIcon(page['icon']!),
-                                    size: iconSize,
-                                    color: AppColors.primary,
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      // Inner ambient ring
+                                      Container(
+                                        width: isShortScreen ? 130 : 160,
+                                        height: isShortScreen ? 130 : 160,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          gradient: RadialGradient(
+                                            colors: [
+                                              AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.20),
+                                              AppColors.primary.withValues(alpha: 0.0),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Main Icon
+                                      Icon(
+                                        _getIcon(page['icon']!),
+                                        size: isShortScreen ? 64 : 80,
+                                        color: AppColors.primary,
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(height: isShortScreen ? 25 : 40),
+
+                                SizedBox(height: isShortScreen ? 24 : 36),
+
+                                // Category Tag Badge
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary.withValues(alpha: 0.1),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    page['tag']!,
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 0.5,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 14),
+
+                                // Title
                                 Text(
                                   page['title']!,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    color: theme.colorScheme.onSurface,
+                                    color: textColor,
                                     fontSize: isShortScreen || size.width < 360 ? 22 : 26,
                                     fontWeight: FontWeight.bold,
+                                    letterSpacing: -0.3,
                                   ),
                                 ),
-                                const SizedBox(height: 14),
-                                Text(
-                                  page['description']!,
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
-                                    fontSize: isShortScreen ? 14 : 15,
-                                    height: 1.4,
+
+                                const SizedBox(height: 12),
+
+                                // Description
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Text(
+                                    page['description']!,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: subtitleColor,
+                                      fontSize: isShortScreen ? 14 : 15,
+                                      height: 1.5,
+                                    ),
                                   ),
                                 ),
-                                const SizedBox(height: 10),
+
+                                const SizedBox(height: 16),
                               ],
                             ),
                           ),
@@ -141,55 +272,84 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     },
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    pages.length,
-                    (index) => AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      height: 8,
-                      width: _currentPage == index ? 28 : 8,
-                      decoration: BoxDecoration(
-                        color: _currentPage == index
-                            ? AppColors.primary
-                            : theme.colorScheme.outline,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: isShortScreen ? 16 : 24),
+
+                // Indicators & Navigation Controls
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _nextPage,
-                      child: Text(
-                        _currentPage == pages.length - 1
-                            ? 'Get Started'
-                            : 'Continue',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+                  child: Column(
+                    children: [
+                      // Smooth Pill Slide Indicators
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          pages.length,
+                          (index) => AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOutCubic,
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            height: 6,
+                            width: _currentPage == index ? 32 : 8,
+                            decoration: BoxDecoration(
+                              color: _currentPage == index
+                                  ? AppColors.primary
+                                  : borderColor,
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: _currentPage == index
+                                  ? [
+                                      BoxShadow(
+                                        color: AppColors.primary.withValues(alpha: 0.4),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ]
+                                  : null,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+
+                      SizedBox(height: isShortScreen ? 18 : 28),
+
+                      // Continue / Get Started Action Button
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: _nextPage,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            foregroundColor: Colors.white,
+                            elevation: 3,
+                            shadowColor: AppColors.primary.withValues(alpha: 0.4),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                _currentPage == pages.length - 1
+                                    ? 'Get Started'
+                                    : 'Continue',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.2,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              const Icon(
+                                Icons.arrow_forward_rounded,
+                                size: 18,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 8),
-                TextButton(
-                  onPressed: _openLogin,
-                  child: Text(
-                    'Skip',
-                    style: TextStyle(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.65),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
               ],
             ),
           ),
@@ -208,4 +368,4 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         return Icons.auto_awesome_rounded;
     }
   }
-}
+}

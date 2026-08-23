@@ -1,5 +1,6 @@
-import 'package:firebase_auth/firebase_auth.dart'; // 👈 Added Firebase Auth
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:soul_voice/core/theme/constants/app_colors.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -23,7 +24,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   bool hideCurrentPassword = true;
   bool hideNewPassword = true;
   bool hideConfirmPassword = true;
-  bool isLoading = false; // 👈 Added Loading State
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -117,9 +118,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final textColor = theme.colorScheme.onSurface;
+    final secondaryColor = isDark ? AppColors.textSecondary : const Color(0xFF6B5E52);
+    final inputFillColor = isDark ? const Color(0xFF182235) : const Color(0xFFFAF7F2);
+    final borderColor = isDark ? const Color(0xFF293449) : const Color(0xFFE8DFD1);
+
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text("Change Password"),
+        title: const Text(
+          "Change Password",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -135,39 +147,62 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   children: [
                     const SizedBox(height: 10),
 
-                    const Text(
-                      "Change Password",
+                    Text(
+                      "Update Security Credentials",
                       style: TextStyle(
-                        fontSize: 26,
+                        color: textColor,
+                        fontSize: 22,
                         fontWeight: FontWeight.bold,
+                        letterSpacing: -0.3,
                       ),
                     ),
 
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
 
-                    const Text(
-                      "Enter your current password and create a new password.",
+                    Text(
+                      "Enter your current password and create a secure new password for your account.",
                       style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey,
+                        color: secondaryColor,
+                        height: 1.4,
                       ),
                     ),
 
                     const SizedBox(height: 24),
 
                     // Current Password
+                    Text(
+                      'Current Password',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.2,
+                        color: textColor,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     TextFormField(
                       controller: currentPasswordController,
                       obscureText: hideCurrentPassword,
+                      style: TextStyle(color: textColor, fontSize: 15),
                       decoration: InputDecoration(
-                        labelText: "Current Password",
                         hintText: "Enter current password",
-                        prefixIcon: const Icon(Icons.lock_outline),
+                        hintStyle: TextStyle(
+                          color: secondaryColor.withValues(alpha: 0.7),
+                          fontSize: 14,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.lock_outline_rounded,
+                          size: 20,
+                          color: AppColors.primary,
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
                             hideCurrentPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                            size: 20,
+                            color: secondaryColor,
                           ),
                           onPressed: () {
                             setState(() {
@@ -175,7 +210,27 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             });
                           },
                         ),
-                        border: const OutlineInputBorder(),
+                        filled: true,
+                        fillColor: inputFillColor,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: borderColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: borderColor),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 1.8,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -185,21 +240,41 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
 
                     // New Password
+                    Text(
+                      'New Password',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.2,
+                        color: textColor,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     TextFormField(
                       controller: newPasswordController,
                       obscureText: hideNewPassword,
+                      style: TextStyle(color: textColor, fontSize: 15),
                       decoration: InputDecoration(
-                        labelText: "New Password",
-                        hintText: "Enter new password",
-                        prefixIcon: const Icon(Icons.lock),
+                        hintText: "Minimum 8 characters",
+                        hintStyle: TextStyle(
+                          color: secondaryColor.withValues(alpha: 0.7),
+                          fontSize: 14,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.lock_reset_rounded,
+                          size: 20,
+                          color: AppColors.primary,
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
                             hideNewPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                            size: 20,
+                            color: secondaryColor,
                           ),
                           onPressed: () {
                             setState(() {
@@ -207,7 +282,27 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             });
                           },
                         ),
-                        border: const OutlineInputBorder(),
+                        filled: true,
+                        fillColor: inputFillColor,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: borderColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: borderColor),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 1.8,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -222,21 +317,41 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 18),
 
                     // Confirm Password
+                    Text(
+                      'Confirm New Password',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.2,
+                        color: textColor,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
                     TextFormField(
                       controller: confirmPasswordController,
                       obscureText: hideConfirmPassword,
+                      style: TextStyle(color: textColor, fontSize: 15),
                       decoration: InputDecoration(
-                        labelText: "Confirm New Password",
                         hintText: "Re-enter new password",
-                        prefixIcon: const Icon(Icons.lock),
+                        hintStyle: TextStyle(
+                          color: secondaryColor.withValues(alpha: 0.7),
+                          fontSize: 14,
+                        ),
+                        prefixIcon: const Icon(
+                          Icons.lock_reset_rounded,
+                          size: 20,
+                          color: AppColors.primary,
+                        ),
                         suffixIcon: IconButton(
                           icon: Icon(
                             hideConfirmPassword
-                                ? Icons.visibility_off
-                                : Icons.visibility,
+                                ? Icons.visibility_off_outlined
+                                : Icons.visibility_outlined,
+                            size: 20,
+                            color: secondaryColor,
                           ),
                           onPressed: () {
                             setState(() {
@@ -244,7 +359,27 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             });
                           },
                         ),
-                        border: const OutlineInputBorder(),
+                        filled: true,
+                        fillColor: inputFillColor,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: borderColor),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: borderColor),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 1.8,
+                          ),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -259,30 +394,50 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       },
                     ),
 
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 14),
 
-                    const Text(
-                      "Password must contain at least 8 characters.",
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey,
-                      ),
+                    // Security requirement hint
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.check_circle_outline_rounded,
+                          size: 16,
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          "Password must contain at least 8 characters.",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: secondaryColor,
+                          ),
+                        ),
+                      ],
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 28),
 
                     // Change Password Button
                     SizedBox(
                       width: double.infinity,
-                      height: 50,
+                      height: 52,
                       child: ElevatedButton(
                         onPressed: isLoading ? null : changePassword,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          elevation: 3,
+                          shadowColor: AppColors.primary.withValues(alpha: 0.4),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
                         child: isLoading
                             ? const SizedBox(
                                 height: 22,
                                 width: 22,
                                 child: CircularProgressIndicator(
-                                  strokeWidth: 2,
+                                  strokeWidth: 2.2,
                                   color: Colors.white,
                                 ),
                               )
@@ -291,10 +446,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.2,
                                 ),
                               ),
                       ),
                     ),
+
+                    const SizedBox(height: 10),
                   ],
                 ),
               ),
