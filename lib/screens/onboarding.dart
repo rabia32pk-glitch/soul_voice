@@ -165,10 +165,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               children: [
                                 const SizedBox(height: 10),
 
-                                // Hero Illustration Card
+                                // Hero Illustration Card (Clean, no glow)
                                 Container(
-                                  width: isShortScreen ? 170 : 210,
-                                  height: isShortScreen ? 170 : 210,
+                                  width: isShortScreen ? 150 : 180,
+                                  height: isShortScreen ? 150 : 180,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: cardBackground,
@@ -176,40 +176,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                       color: borderColor,
                                       width: 1.5,
                                     ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: AppColors.primary.withValues(alpha: isDark ? 0.18 : 0.15),
-                                        blurRadius: 36,
-                                        spreadRadius: 4,
-                                        offset: const Offset(0, 10),
-                                      ),
-                                    ],
                                   ),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      // Inner ambient ring
-                                      Container(
-                                        width: isShortScreen ? 130 : 160,
-                                        height: isShortScreen ? 130 : 160,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          gradient: RadialGradient(
-                                            colors: [
-                                              AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.20),
-                                              AppColors.primary.withValues(alpha: 0.0),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-
-                                      // Main Icon
-                                      Icon(
-                                        _getIcon(page['icon']!),
-                                        size: isShortScreen ? 64 : 80,
-                                        color: AppColors.primary,
-                                      ),
-                                    ],
+                                  child: Center(
+                                    child: Icon(
+                                      _getIcon(page['icon']!),
+                                      size: isShortScreen ? 60 : 72,
+                                      color: AppColors.primary,
+                                    ),
                                   ),
                                 ),
 
@@ -294,15 +267,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                   ? AppColors.primary
                                   : borderColor,
                               borderRadius: BorderRadius.circular(10),
-                              boxShadow: _currentPage == index
-                                  ? [
-                                      BoxShadow(
-                                        color: AppColors.primary.withValues(alpha: 0.4),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ]
-                                  : null,
                             ),
                           ),
                         ),
