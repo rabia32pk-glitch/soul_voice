@@ -278,11 +278,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: AppColors.primary, width: 1.5),
                     ),
-                    child: const Icon(
-                      Icons.graphic_eq_rounded,
-                      color: AppColors.primary,
-                      size: 36,
-                    ),
+                    child: Image.asset('assets/f1.png', fit: BoxFit.contain),
                   ),
                 ),
 

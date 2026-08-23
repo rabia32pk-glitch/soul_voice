@@ -203,18 +203,15 @@ class _LoginScreenState extends State<LoginScreen> {
               // ================= LOGO =================
               Center(
                 child: Container(
-                  height: 68,
-                  width: 68,
+                  height: 80,
+                  width: 80,
+                  padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: surfaceColor,
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(color: AppColors.primary, width: 1.5),
                   ),
-                  child: const Icon(
-                    Icons.graphic_eq_rounded,
-                    color: AppColors.primary,
-                    size: 36,
-                  ),
+                  child: Image.asset('assets/f1.png', fit: BoxFit.contain),
                 ),
               ),
 

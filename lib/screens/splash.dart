@@ -48,11 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   0.15,
                 ), // Safe for all versions
               ),
-              child: const Icon(
-                Icons.record_voice_over_rounded,
-                size: 55,
-                color: AppColors.primary,
-              ),
+              child: Image.asset('assets/f1.png', fit: BoxFit.contain),
             ),
             const SizedBox(height: 20),
             Text(
