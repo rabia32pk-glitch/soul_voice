@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart'; // kIsWeb ke liye
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
-import 'package:soul_voice/screens/home_screen.dart';
+import 'package:soul_voice/screens/main_wrapper_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -99,7 +99,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const MainWrapperScreen()),
         (route) => false,
       );
     } on FirebaseAuthException catch (e) {
@@ -210,7 +210,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(builder: (_) => const MainWrapperScreen()),
         (route) => false,
       );
     } on FirebaseAuthException catch (e) {

@@ -18,7 +18,12 @@ import 'package:soul_voice/services/models/quote_model.dart';
 import 'package:soul_voice/services/quote_api_service.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final VoidCallback? onSeeAllCategories;
+
+  const HomeScreen({
+    super.key,
+    this.onSeeAllCategories,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -498,14 +503,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             TextButton(
                               onPressed: () {
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => const MainWrapperScreen(
-                                      initialIndex: 1,
-                                    ),
-                                  ),
-                                );
+                                if (widget.onSeeAllCategories != null) {
+                                  widget.onSeeAllCategories!();
+                                } else {
+                                  MainWrapperScreen.switchTab(context, 1);
+                                }
                               },
                               child: const Text(
                                 'See All',

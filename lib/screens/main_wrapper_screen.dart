@@ -13,6 +13,13 @@ class MainWrapperScreen extends StatefulWidget {
     this.initialIndex = 0,
   });
 
+  static void switchTab(BuildContext context, int index) {
+    final state = context.findAncestorStateOfType<_MainWrapperScreenState>();
+    if (state != null) {
+      state.setIndex(index);
+    }
+  }
+
   @override
   State<MainWrapperScreen> createState() => _MainWrapperScreenState();
 }
@@ -20,11 +27,21 @@ class MainWrapperScreen extends StatefulWidget {
 class _MainWrapperScreenState extends State<MainWrapperScreen> {
   late int _currentIndex;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    CategoriesScreen(),
-    FavoritesScreen(),
-    ProfileScreen(),
+  void setIndex(int index) {
+    if (index >= 0 && index < _screens.length) {
+      setState(() {
+        _currentIndex = index;
+      });
+    }
+  }
+
+  late final List<Widget> _screens = [
+    HomeScreen(
+      onSeeAllCategories: () => setIndex(1),
+    ),
+    const CategoriesScreen(),
+    const FavoritesScreen(),
+    const ProfileScreen(),
   ];
 
   @override
