@@ -107,61 +107,61 @@ class _NotificationsScreenState
         ),
       ),
 
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          const Text(
-            'Notification Preferences',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 650),
+            child: ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
+                const Text(
+                  'Notification Preferences',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 15),
+
+                // ==========================================
+                // DAILY QUOTES
+                // ==========================================
+                _NotificationTile(
+                  title: 'Daily Quotes',
+                  subtitle: 'Receive daily inspirational quotes',
+                  value: dailyQuotes,
+                  onChanged: (value) {
+                    _setDailyQuotes(value);
+                  },
+                ),
+
+                // ==========================================
+                // NEW QUOTES
+                // ==========================================
+                _NotificationTile(
+                  title: 'New Quotes',
+                  subtitle: 'Get notified when new quotes are available',
+                  value: newQuotes,
+                  onChanged: (value) {
+                    _setNewQuotes(value);
+                  },
+                ),
+
+                // ==========================================
+                // REMINDERS
+                // ==========================================
+                _NotificationTile(
+                  title: 'Reminders',
+                  subtitle: 'Receive reminders to check Soul Voice',
+                  value: reminders,
+                  onChanged: (value) {
+                    _setReminders(value);
+                  },
+                ),
+              ],
             ),
           ),
-
-          const SizedBox(height: 15),
-
-          // ==========================================
-          // DAILY QUOTES
-          // ==========================================
-
-          _NotificationTile(
-            title: 'Daily Quotes',
-            subtitle:
-                'Receive daily inspirational quotes',
-            value: dailyQuotes,
-            onChanged: (value) {
-              _setDailyQuotes(value);
-            },
-          ),
-
-          // ==========================================
-          // NEW QUOTES
-          // ==========================================
-
-          _NotificationTile(
-            title: 'New Quotes',
-            subtitle:
-                'Get notified when new quotes are available',
-            value: newQuotes,
-            onChanged: (value) {
-              _setNewQuotes(value);
-            },
-          ),
-
-          // ==========================================
-          // REMINDERS
-          // ==========================================
-
-          _NotificationTile(
-            title: 'Reminders',
-            subtitle:
-                'Receive reminders to check Soul Voice',
-            value: reminders,
-            onChanged: (value) {
-              _setReminders(value);
-            },
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -188,39 +188,26 @@ class _NotificationTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-
       decoration: BoxDecoration(
-        color: Theme.of(context)
-            .colorScheme
-            .surface,
-
-        borderRadius:
-            BorderRadius.circular(16),
-
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              Theme.of(context).dividerColor,
+          color: Theme.of(context).dividerColor,
         ),
       ),
-
       child: SwitchListTile(
         value: value,
-
         onChanged: onChanged,
-
-        activeThumbColor:
-            AppColors.primary,
-
+        activeThumbColor: AppColors.primary,
         title: Text(
           title,
           style: const TextStyle(
             fontWeight: FontWeight.w600,
           ),
         ),
-
-        subtitle: const Text(
-          'Receive notifications',
-          style: TextStyle(
+        subtitle: Text(
+          subtitle,
+          style: const TextStyle(
             fontSize: 12,
             color: AppColors.textSecondary,
           ),

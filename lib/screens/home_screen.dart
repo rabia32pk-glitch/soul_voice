@@ -366,286 +366,196 @@ class _HomeScreenState extends State<HomeScreen> {
               color: AppColors.primary,
               onRefresh: _refreshQuotes,
 
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                physics:
-                    const AlwaysScrollableScrollPhysics(),
-
-                padding:
-                    const EdgeInsets.fromLTRB(
-                  20,
-                  20,
-                  20,
-                  100,
-                ),
-
-                child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-
-                  children: [
-                    // =====================================================
-                    // HEADER
-                    // =====================================================
-
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
-
-                            children: [
-                              Text(
-                                'Assalam-o-Alaikum 👋',
-
-                                style: TextStyle(
-                                  color:
-                                      secondaryTextColor,
-                                  fontSize: 14,
-                                ),
-                              ),
-
-                              const SizedBox(
-                                height: 5,
-                              ),
-
-                              Text(
-                                'Welcome to Soul Voice',
-
-                                style: TextStyle(
-                                  color:
-                                      primaryTextColor,
-                                  fontSize: 24,
-                                  fontWeight:
-                                      FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        Container(
-                          height: 45,
-                          width: 45,
-
-                          decoration:
-                              BoxDecoration(
-                            color: surfaceColor,
-                            borderRadius:
-                                BorderRadius.circular(
-                              14,
-                            ),
-                            border: Border.all(
-                              color: borderColor,
-                            ),
-                          ),
-
-                          child: IconButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      const NotificationsScreen(),
-                                ),
-                              );
-                            },
-
-                            icon: Icon(
-                              Icons
-                                  .notifications_none_rounded,
-                              color:
-                                  primaryTextColor,
-                            ),
-                          ),
-                        ),
-                      ],
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 800),
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(
+                      20,
+                      20,
+                      20,
+                      100,
                     ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // =====================================================
+                        // HEADER
+                        // =====================================================
 
-                    const SizedBox(height: 22),
-
-                    // =====================================================
-                    // SEARCH
-                    // =====================================================
-
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                const SearchScreen(),
-                          ),
-                        );
-                      },
-
-                      child: Container(
-                        height: 52,
-
-                        padding:
-                            const EdgeInsets.symmetric(
-                          horizontal: 16,
-                        ),
-
-                        decoration:
-                            BoxDecoration(
-                          color: surfaceColor,
-                          borderRadius:
-                              BorderRadius.circular(
-                            16,
-                          ),
-                          border: Border.all(
-                            color: borderColor,
-                          ),
-                        ),
-
-                        child: Row(
+                        Row(
                           children: [
-                            Icon(
-                              Icons.search_rounded,
-                              color:
-                                  secondaryTextColor,
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Assalam-o-Alaikum 👋',
+                                    style: TextStyle(
+                                      color: secondaryTextColor,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    'Welcome to Soul Voice',
+                                    style: TextStyle(
+                                      color: primaryTextColor,
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
 
-                            const SizedBox(width: 12),
-
-                            Text(
-                              'Search quotes...',
-
-                              style: TextStyle(
-                                color:
-                                    secondaryTextColor,
-                                fontSize: 14,
+                            Container(
+                              height: 45,
+                              width: 45,
+                              decoration: BoxDecoration(
+                                color: surfaceColor,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(color: borderColor),
+                              ),
+                              child: IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => const NotificationsScreen(),
+                                    ),
+                                  );
+                                },
+                                icon: Icon(
+                                  Icons.notifications_none_rounded,
+                                  color: primaryTextColor,
+                                ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                    ),
 
-                    const SizedBox(height: 28),
+                        const SizedBox(height: 22),
 
-                    // =====================================================
-                    // CATEGORIES HEADER
-                    // =====================================================
+                        // =====================================================
+                        // SEARCH
+                        // =====================================================
 
-                    Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
-
-                      children: [
-                        Text(
-                          'Categories',
-
-                          style: TextStyle(
-                            color:
-                                primaryTextColor,
-                            fontSize: 20,
-                            fontWeight:
-                                FontWeight.bold,
-                          ),
-                        ),
-
-                        TextButton(
-                          onPressed: () {
-                            // =================================================
-                            // IMPORTANT:
-                            // See All ab MainWrapper ke Categories tab ko
-                            // open karega.
-                            // Is liye Bottom Navigation bhi show hogi.
-                            // =================================================
-
-                            Navigator.pushReplacement(
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) =>
-                                    const MainWrapperScreen(
-                                  initialIndex: 1,
-                                ),
+                                builder: (_) => const SearchScreen(),
                               ),
                             );
                           },
-
-                          child: const Text(
-                            'See All',
-
-                            style: TextStyle(
-                              color:
-                                  AppColors.primary,
+                          child: Container(
+                            height: 52,
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: surfaceColor,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: borderColor),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.search_rounded,
+                                  color: secondaryTextColor,
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  'Search quotes...',
+                                  style: TextStyle(
+                                    color: secondaryTextColor,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ],
-                    ),
 
-                    const SizedBox(height: 8),
+                        const SizedBox(height: 28),
 
-                    // =====================================================
-                    // HORIZONTAL CATEGORIES
-                    // =====================================================
+                        // =====================================================
+                        // CATEGORIES HEADER
+                        // =====================================================
 
-                    SizedBox(
-                      height: 105,
-
-                      child: ListView.separated(
-                        scrollDirection:
-                            Axis.horizontal,
-
-                        itemCount:
-                            _categories.length,
-
-                        separatorBuilder:
-                            (_, __) =>
-                                const SizedBox(
-                          width: 12,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Categories',
+                              style: TextStyle(
+                                color: primaryTextColor,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const MainWrapperScreen(
+                                      initialIndex: 1,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'See All',
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
 
-                        itemBuilder:
-                            (context, index) {
-                          final category =
-                              _categories[index];
+                        const SizedBox(height: 8),
 
-                          return _CategoryCard(
-                            key: ValueKey(
-                              category['tag'],
+                        // =====================================================
+                        // HORIZONTAL CATEGORIES
+                        // =====================================================
+
+                        SizedBox(
+                          height: 110,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _categories.length,
+                            separatorBuilder: (_, _) => const SizedBox(
+                              width: 12,
                             ),
+                            itemBuilder: (context, index) {
+                              final category = _categories[index];
 
-                            name:
-                                category['name']
-                                    as String,
-
-                            icon:
-                                category['icon']
-                                    as IconData,
-
-                            surfaceColor:
-                                surfaceColor,
-
-                            borderColor:
-                                borderColor,
-
-                            textColor:
-                                primaryTextColor,
-
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) =>
-                                      CategoryQuotesScreen(
-                                    category:
-                                        category[
-                                                'tag']
-                                            as String,
-                                  ),
-                                ),
+                              return _CategoryCard(
+                                key: ValueKey(category['tag']),
+                                name: category['name'] as String,
+                                icon: category['icon'] as IconData,
+                                surfaceColor: surfaceColor,
+                                borderColor: borderColor,
+                                textColor: primaryTextColor,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => CategoryQuotesScreen(
+                                        category: category['name'] as String,
+                                        categoryTag: category['tag'] as String,
+                                      ),
+                                    ),
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                      ),
-                    ),
+                          ),
+                        ),
 
                     const SizedBox(height: 28),
 
@@ -1027,10 +937,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
-  }
+  },
+);
+}
 }
 
 // =====================================================
@@ -1059,49 +971,38 @@ class _CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-
       child: Container(
         width: 105,
-
-        padding:
-            const EdgeInsets.all(14),
-
-        decoration:
-            BoxDecoration(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+        decoration: BoxDecoration(
           color: surfaceColor,
-
-          borderRadius:
-              BorderRadius.circular(18),
-
+          borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: borderColor,
           ),
         ),
-
         child: Column(
-          mainAxisAlignment:
-              MainAxisAlignment.center,
-
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               icon,
               color: AppColors.primary,
-              size: 28,
+              size: 26,
             ),
-
-            const SizedBox(height: 10),
-
-            Text(
-              name,
-
-              textAlign:
-                  TextAlign.center,
-
-              style: TextStyle(
-                color: textColor,
-                fontSize: 13,
-                fontWeight:
-                    FontWeight.w600,
+            const SizedBox(height: 8),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                name,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -1124,7 +1025,6 @@ class _QuoteCard extends StatelessWidget {
   final Color secondaryTextColor;
 
   const _QuoteCard({
-    super.key,
     required this.quote,
     required this.author,
     required this.surfaceColor,
@@ -1137,65 +1037,43 @@ class _QuoteCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-
-      padding:
-          const EdgeInsets.all(18),
-
-      decoration:
-          BoxDecoration(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
         color: surfaceColor,
-
-        borderRadius:
-            BorderRadius.circular(18),
-
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: borderColor,
         ),
       ),
-
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
-
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Icon(
                 Icons.format_quote_rounded,
                 color: AppColors.primary,
-                size: 30,
+                size: 28,
               ),
-
-              const SizedBox(width: 12),
-
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
-
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       quote,
-
                       style: TextStyle(
-                        color:
-                            primaryTextColor,
+                        color: primaryTextColor,
                         fontSize: 15,
                         height: 1.4,
                       ),
                     ),
-
                     const SizedBox(height: 8),
-
                     Text(
                       '— $author',
-
                       style: TextStyle(
-                        color:
-                            secondaryTextColor,
+                        color: secondaryTextColor,
                         fontSize: 12,
                       ),
                     ),
@@ -1204,18 +1082,13 @@ class _QuoteCard extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 8),
-
           Align(
-            alignment:
-                Alignment.centerRight,
-
+            alignment: Alignment.centerRight,
             child: _QuoteActions(
               quote: quote,
               author: author,
-              secondaryTextColor:
-                  secondaryTextColor,
+              secondaryTextColor: secondaryTextColor,
             ),
           ),
         ],
@@ -1246,31 +1119,24 @@ class _QuoteActions extends StatelessWidget {
       'author': author,
     };
 
-    return BlocBuilder<
-        FavoriteBloc,
-        FavoriteState>(
+    return BlocBuilder<FavoriteBloc, FavoriteState>(
       builder: (context, favState) {
-        final bool isFavorite =
-            favState.favoriteQuotes.any(
-          (item) =>
-              item['quote']?.toString() ==
-              quote,
+        final bool isFavorite = favState.favoriteQuotes.any(
+          (item) => item['quote']?.toString() == quote,
         );
 
         return Row(
-          mainAxisSize:
-              MainAxisSize.min,
-
+          mainAxisSize: MainAxisSize.min,
           children: [
             // =================================================
             // FAVORITE
             // =================================================
-
             IconButton(
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(),
+              visualDensity: VisualDensity.compact,
               onPressed: () {
-                context
-                    .read<FavoriteBloc>()
-                    .add(
+                context.read<FavoriteBloc>().add(
                       ToggleFavoriteEvent(
                         quoteMap,
                       ),
@@ -1285,40 +1151,30 @@ class _QuoteActions extends StatelessWidget {
                             ? 'Quote removed from favorites 💔'
                             : 'Quote added to favorites ❤️',
                       ),
-
-                      duration:
-                          const Duration(
-                        seconds: 1,
-                      ),
-
-                      behavior:
-                          SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 1),
+                      behavior: SnackBarBehavior.floating,
                     ),
                   );
               },
-
               icon: Icon(
                 isFavorite
                     ? Icons.favorite_rounded
                     : Icons.favorite_border_rounded,
-
-                color: isFavorite
-                    ? Colors.red
-                    : secondaryTextColor,
-
-                size: 25,
+                color: isFavorite ? Colors.red : secondaryTextColor,
+                size: 23,
               ),
             ),
+            const SizedBox(width: 4),
 
             // =================================================
             // COPY
             // =================================================
-
             IconButton(
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(),
+              visualDensity: VisualDensity.compact,
               onPressed: () async {
-                final text =
-                    '"$quote"\n— $author';
-
+                final text = '"$quote"\n— $author';
                 await Clipboard.setData(
                   ClipboardData(
                     text: text,
@@ -1333,42 +1189,40 @@ class _QuoteActions extends StatelessWidget {
                         content: Text(
                           'Quote copied successfully 📋',
                         ),
-
-                        duration:
-                            Duration(seconds: 1),
-
-                        behavior:
-                            SnackBarBehavior.floating,
+                        duration: Duration(seconds: 1),
+                        behavior: SnackBarBehavior.floating,
                       ),
                     );
                 }
               },
-
               icon: Icon(
                 Icons.copy_rounded,
-                color:
-                    secondaryTextColor,
-                size: 23,
+                color: secondaryTextColor,
+                size: 21,
               ),
             ),
+            const SizedBox(width: 4),
 
             // =================================================
             // SHARE
             // =================================================
-
             IconButton(
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(),
+              visualDensity: VisualDensity.compact,
               onPressed: () {
-                final shareText =
-                    '"$quote"\n— $author';
-
-                Share.share(shareText);
+                final shareText = '"$quote"\n— $author';
+                SharePlus.instance.share(
+                  ShareParams(
+                    text: shareText,
+                    subject: 'Soul Voice Quote',
+                  ),
+                );
               },
-
               icon: Icon(
                 Icons.share_outlined,
-                color:
-                    secondaryTextColor,
-                size: 23,
+                color: secondaryTextColor,
+                size: 21,
               ),
             ),
           ],

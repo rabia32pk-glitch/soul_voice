@@ -43,22 +43,23 @@ class AboutSoulVoiceScreen extends StatelessWidget {
       ),
 
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(
-            20,
-            10,
-            20,
-            30,
-          ),
-
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-
-              // =====================================================
-              // APP HEADER
-              // =====================================================
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 700),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(
+                20,
+                10,
+                20,
+                30,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // =====================================================
+                  // APP HEADER
+                  // =====================================================
 
               Center(
                 child: Column(
@@ -312,8 +313,10 @@ class AboutSoulVoiceScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  ),
+);
+}
 }
 
 // =====================================================

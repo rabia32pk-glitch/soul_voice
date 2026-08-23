@@ -165,139 +165,144 @@ class _SearchScreenState extends State<SearchScreen> {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              const SizedBox(height: 10),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 800),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  const SizedBox(height: 10),
 
-              // ================= SEARCH INPUT =================
-              TextField(
-                controller: _searchController,
-                autofocus: true,
-                style: TextStyle(color: primaryTextColor),
-                onSubmitted: (value) => _performSearch(value),
-                onChanged: (value) {
-                  _showSuggestions(value);
-                  if (value.isEmpty) {
-                    _performSearch('');
-                  }
-                },
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: surfaceColor,
-                  hintText: 'Search by category or keyword...',
-                  hintStyle: TextStyle(color: secondaryTextColor, fontSize: 14),
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 14,
-                    horizontal: 16,
-                  ),
-                  prefixIcon: Icon(
-                    Icons.search_rounded,
-                    color: secondaryTextColor,
-                  ),
-                  suffixIcon: _searchController.text.isNotEmpty
-                      ? IconButton(
-                          icon: Icon(
-                            Icons.close_rounded,
-                            color: secondaryTextColor,
-                            size: 20,
-                          ),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() {
-                              _suggestions = [];
-                              _searchResults = [];
-                              _hasSearched = false;
-                              _isLoading = false;
-                            });
-                          },
-                        )
-                      : null,
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: borderColor, width: 1),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide(color: borderColor, width: 1.5),
-                  ),
-                ),
-              ),
-
-              // ================= SUGGESTIONS LIST =================
-              if (_suggestions.isNotEmpty)
-                Container(
-                  width: double.infinity,
-                  constraints: const BoxConstraints(maxHeight: 220),
-                  margin: const EdgeInsets.only(top: 6),
-                  decoration: BoxDecoration(
-                    color: surfaceColor,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: borderColor),
-                  ),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: _suggestions.length,
-                    itemBuilder: (context, index) {
-                      final suggestion = _suggestions[index];
-                      return ListTile(
-                        dense: true,
-                        leading: Icon(
-                          Icons.search_rounded,
-                          color: secondaryTextColor,
-                        ),
-                        title: Text(
-                          suggestion,
-                          style: TextStyle(
-                            color: primaryTextColor,
-                            fontSize: 14,
-                          ),
-                        ),
-                        onTap: () {
-                          _searchController.text = suggestion;
-                          setState(() {
-                            _suggestions = [];
-                          });
-                          _performSearch(suggestion);
-                        },
-                      );
+                  // ================= SEARCH INPUT =================
+                  TextField(
+                    controller: _searchController,
+                    autofocus: true,
+                    style: TextStyle(color: primaryTextColor),
+                    onSubmitted: (value) => _performSearch(value),
+                    onChanged: (value) {
+                      _showSuggestions(value);
+                      if (value.isEmpty) {
+                        _performSearch('');
+                      }
                     },
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: surfaceColor,
+                      hintText: 'Search by category or keyword...',
+                      hintStyle: TextStyle(color: secondaryTextColor, fontSize: 14),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 14,
+                        horizontal: 16,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search_rounded,
+                        color: secondaryTextColor,
+                      ),
+                      suffixIcon: _searchController.text.isNotEmpty
+                          ? IconButton(
+                              icon: Icon(
+                                Icons.close_rounded,
+                                color: secondaryTextColor,
+                                size: 20,
+                              ),
+                              onPressed: () {
+                                _searchController.clear();
+                                setState(() {
+                                  _suggestions = [];
+                                  _searchResults = [];
+                                  _hasSearched = false;
+                                  _isLoading = false;
+                                });
+                              },
+                            )
+                          : null,
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: borderColor, width: 1),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide(color: borderColor, width: 1.5),
+                      ),
+                    ),
                   ),
-                ),
 
-              const SizedBox(height: 20),
-
-              // ================= RESULTS BODY =================
-              Expanded(
-                child: _isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primary,
-                        ),
-                      )
-                    : !_hasSearched
-                    ? _buildInitialState(primaryTextColor, secondaryTextColor)
-                    : _searchResults.isEmpty
-                    ? _buildEmptyState(primaryTextColor, secondaryTextColor)
-                    : ListView.separated(
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: _searchResults.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  // ================= SUGGESTIONS LIST =================
+                  if (_suggestions.isNotEmpty)
+                    Container(
+                      width: double.infinity,
+                      constraints: const BoxConstraints(maxHeight: 220),
+                      margin: const EdgeInsets.only(top: 6),
+                      decoration: BoxDecoration(
+                        color: surfaceColor,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: borderColor),
+                      ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: _suggestions.length,
                         itemBuilder: (context, index) {
-                          final quote = _searchResults[index];
-                          return _QuoteCard(
-                            quote: quote.content,
-                            author: quote.author,
-                            surfaceColor: surfaceColor,
-                            borderColor: borderColor,
-                            primaryTextColor: primaryTextColor,
-                            secondaryTextColor: secondaryTextColor,
+                          final suggestion = _suggestions[index];
+                          return ListTile(
+                            dense: true,
+                            leading: Icon(
+                              Icons.search_rounded,
+                              color: secondaryTextColor,
+                            ),
+                            title: Text(
+                              suggestion,
+                              style: TextStyle(
+                                color: primaryTextColor,
+                                fontSize: 14,
+                              ),
+                            ),
+                            onTap: () {
+                              _searchController.text = suggestion;
+                              setState(() {
+                                _suggestions = [];
+                              });
+                              _performSearch(suggestion);
+                            },
                           );
                         },
                       ),
+                    ),
+
+                  const SizedBox(height: 20),
+
+                  // ================= RESULTS BODY =================
+                  Expanded(
+                    child: _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.primary,
+                            ),
+                          )
+                        : !_hasSearched
+                        ? _buildInitialState(primaryTextColor, secondaryTextColor)
+                        : _searchResults.isEmpty
+                        ? _buildEmptyState(primaryTextColor, secondaryTextColor)
+                        : ListView.separated(
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: _searchResults.length,
+                            separatorBuilder: (_, _) => const SizedBox(height: 12),
+                            itemBuilder: (context, index) {
+                              final quote = _searchResults[index];
+                              return _QuoteCard(
+                                quote: quote.content,
+                                author: quote.author,
+                                surfaceColor: surfaceColor,
+                                borderColor: borderColor,
+                                primaryTextColor: primaryTextColor,
+                                secondaryTextColor: secondaryTextColor,
+                              );
+                            },
+                          ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -416,14 +421,13 @@ class _QuoteCard extends StatelessWidget {
               const Icon(
                 Icons.format_quote_rounded,
                 color: AppColors.primary,
-                size: 30,
+                size: 28,
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // PRINTING CLEANED TEXT WITHOUT HARDCODED QUOTES
                     Text(
                       cleanQuoteText,
                       style: TextStyle(
@@ -433,7 +437,7 @@ class _QuoteCard extends StatelessWidget {
                         height: 1.4,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     Text(
                       '- $author',
                       style: TextStyle(
@@ -447,7 +451,7 @@ class _QuoteCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
 
           // ================= ACTION BUTTONS =================
           BlocBuilder<FavoriteBloc, FavoriteState>(
@@ -461,6 +465,9 @@ class _QuoteCard extends StatelessWidget {
                 children: [
                   // ❤️ FAVORITE BUTTON
                   IconButton(
+                    padding: const EdgeInsets.all(6),
+                    constraints: const BoxConstraints(),
+                    visualDensity: VisualDensity.compact,
                     onPressed: () {
                       context.read<FavoriteBloc>().add(
                         ToggleFavoriteEvent(quoteMap),
@@ -475,6 +482,7 @@ class _QuoteCard extends StatelessWidget {
                                 : 'Quote added to favorites ❤️',
                           ),
                           duration: const Duration(seconds: 1),
+                          behavior: SnackBarBehavior.floating,
                         ),
                       );
                     },
@@ -483,11 +491,16 @@ class _QuoteCard extends StatelessWidget {
                           ? Icons.favorite_rounded
                           : Icons.favorite_border_rounded,
                       color: isFav ? Colors.red : secondaryTextColor,
+                      size: 23,
                     ),
                   ),
+                  const SizedBox(width: 4),
 
                   // 📋 COPY BUTTON
                   IconButton(
+                    padding: const EdgeInsets.all(6),
+                    constraints: const BoxConstraints(),
+                    visualDensity: VisualDensity.compact,
                     onPressed: () async {
                       final text = '$cleanQuoteText\n— $author';
                       await Clipboard.setData(ClipboardData(text: text));
@@ -498,20 +511,38 @@ class _QuoteCard extends StatelessWidget {
                           const SnackBar(
                             content: Text('Quote copied successfully 📋'),
                             duration: Duration(seconds: 1),
+                            behavior: SnackBarBehavior.floating,
                           ),
                         );
                       }
                     },
-                    icon: Icon(Icons.copy_rounded, color: secondaryTextColor),
+                    icon: Icon(
+                      Icons.copy_rounded,
+                      color: secondaryTextColor,
+                      size: 21,
+                    ),
                   ),
+                  const SizedBox(width: 4),
 
                   // ↗️ SHARE BUTTON
                   IconButton(
+                    padding: const EdgeInsets.all(6),
+                    constraints: const BoxConstraints(),
+                    visualDensity: VisualDensity.compact,
                     onPressed: () {
                       final shareText = '$cleanQuoteText\n— $author';
-                      Share.share(shareText);
+                      SharePlus.instance.share(
+                        ShareParams(
+                          text: shareText,
+                          subject: 'Soul Voice Quote',
+                        ),
+                      );
                     },
-                    icon: Icon(Icons.share_outlined, color: secondaryTextColor),
+                    icon: Icon(
+                      Icons.share_outlined,
+                      color: secondaryTextColor,
+                      size: 21,
+                    ),
                   ),
                 ],
               );

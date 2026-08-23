@@ -74,60 +74,63 @@ class FavoritesScreen extends StatelessWidget {
           // FAVORITES
           // ==============================
 
-          body: BlocBuilder<FavoriteBloc, FavoriteState>(
-            builder: (context, state) {
-              final favorites = state.favoriteQuotes;
+          body: SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: BlocBuilder<FavoriteBloc, FavoriteState>(
+                  builder: (context, state) {
+                    final favorites = state.favoriteQuotes;
 
-              // ==============================
-              // NO FAVORITES
-              // ==============================
+                    // ==============================
+                    // NO FAVORITES
+                    // ==============================
 
-              if (favorites.isEmpty) {
-                return Center(
-                  child: Text(
-                    'No favorites added yet',
-                    style: TextStyle(
-                      color: secondaryTextColor,
-                      fontSize: 16,
-                    ),
-                  ),
-                );
-              }
+                    if (favorites.isEmpty) {
+                      return Center(
+                        child: Text(
+                          'No favorites added yet',
+                          style: TextStyle(
+                            color: secondaryTextColor,
+                            fontSize: 16,
+                          ),
+                        ),
+                      );
+                    }
 
-              // ==============================
-              // FAVORITES LIST
-              // ==============================
+                    // ==============================
+                    // FAVORITES LIST
+                    // ==============================
 
-              return ListView.builder(
-                padding: const EdgeInsets.all(20),
-                itemCount: favorites.length,
+                    return ListView.builder(
+                      padding: const EdgeInsets.all(20),
+                      itemCount: favorites.length,
+                      itemBuilder: (context, index) {
+                        final item = favorites[index];
 
-                itemBuilder: (context, index) {
-                  final item = favorites[index];
+                        final quote = item['quote']?.toString() ?? '';
 
-                  final quote =
-                      item['quote']?.toString() ?? '';
+                        final author = item['author']?.toString() ?? 'Soul Voice';
 
-                  final author =
-                      item['author']?.toString() ??
-                          'Soul Voice';
+                        // ==============================
+                        // CUSTOM FAVORITE CARD
+                        // ==============================
 
-                  // ==============================
-                  // CUSTOM FAVORITE CARD
-                  // ==============================
-
-                  return CustomFavoriteCard(
-                    quoteData: item,
-                    quote: quote,
-                    author: author,
-                    surfaceColor: surfaceColor,
-                    borderColor: borderColor,
-                    primaryTextColor: primaryTextColor,
-                    secondaryTextColor: secondaryTextColor,
-                  );
-                },
-              );
-            },
+                        return CustomFavoriteCard(
+                          quoteData: item,
+                          quote: quote,
+                          author: author,
+                          surfaceColor: surfaceColor,
+                          borderColor: borderColor,
+                          primaryTextColor: primaryTextColor,
+                          secondaryTextColor: secondaryTextColor,
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
           ),
         );
       },

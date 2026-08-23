@@ -72,6 +72,7 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
 
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
+            color: navBackgroundColor,
             border: Border(
               top: BorderSide(
                 color: borderColor,
@@ -79,55 +80,49 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
               ),
             ),
           ),
-
-          child: BottomNavigationBar(
-            currentIndex: _currentIndex,
-
-            backgroundColor: navBackgroundColor,
-
-            selectedItemColor: AppColors.primary,
-
-            unselectedItemColor: unselectedColor,
-
-            type: BottomNavigationBarType.fixed,
-
-            elevation: 0,
-
-            onTap: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home_rounded,
+          child: SafeArea(
+            top: false,
+            child: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              backgroundColor: navBackgroundColor,
+              selectedItemColor: AppColors.primary,
+              unselectedItemColor: unselectedColor,
+              selectedFontSize: 12,
+              unselectedFontSize: 12,
+              type: BottomNavigationBarType.fixed,
+              elevation: 0,
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.home_rounded,
+                  ),
+                  label: 'Home',
                 ),
-                label: 'Home',
-              ),
-
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.grid_view_rounded,
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.grid_view_rounded,
+                  ),
+                  label: 'Categories',
                 ),
-                label: 'Categories',
-              ),
-
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.favorite_border_rounded,
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.favorite_border_rounded,
+                  ),
+                  label: 'Favorites',
                 ),
-                label: 'Favorites',
-              ),
-
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.person_outline_rounded,
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.person_outline_rounded,
+                  ),
+                  label: 'Profile',
                 ),
-                label: 'Profile',
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
