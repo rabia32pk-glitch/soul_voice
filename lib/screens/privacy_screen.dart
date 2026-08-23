@@ -80,7 +80,8 @@ class PrivacyScreen extends StatelessWidget {
                   icon: Icons.manage_accounts_outlined,
                   title: '4. Your Rights & Choices',
                   content:
-                      'You can update your display name and profile picture at any time from the Edit Profile screen.',
+                      '• Profile Control: You can update your display name and photo at any time in Edit Profile.\n'
+                      '• Account Deletion: You can permanently erase your account and all associated data anytime using the Delete Account option in Profile.',
                 ),
               ],
             ),
