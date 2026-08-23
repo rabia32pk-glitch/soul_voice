@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:soul_voice/screens/auth/login_screens.dart';
+import 'package:soul_voice/screens/onboarding.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
@@ -408,7 +409,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   if (context.mounted) {
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const OnboardingScreen(),
+                      ),
                       (route) => false,
                     );
                   }
