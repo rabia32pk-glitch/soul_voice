@@ -584,22 +584,22 @@ class _SampleOptionItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
+      child: Material(
         color: cardColor,
         borderRadius: BorderRadius.circular(18),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
-        leading: Container(
-          padding: const EdgeInsets.all(9),
-          decoration: BoxDecoration(
-            color: iconBoxColor,
-            borderRadius: BorderRadius.circular(12),
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          onTap: onTap,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+          leading: Container(
+            padding: const EdgeInsets.all(9),
+            decoration: BoxDecoration(
+              color: iconBoxColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: iconColor, size: 20),
           ),
-          child: Icon(icon, color: iconColor, size: 20),
-        ),
         title: Text(
           title,
           style: TextStyle(
@@ -617,6 +617,7 @@ class _SampleOptionItem extends StatelessWidget {
                     size: 22,
                   )
                 : null),
+        ),
       ),
     );
   }
@@ -824,26 +825,29 @@ class _SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
+      child: Material(
         color: surfaceColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        leading: Icon(icon, color: AppColors.primary),
-        title: Text(
-          title,
-          style: TextStyle(color: titleColor, fontWeight: FontWeight.w600),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: borderColor),
         ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(color: subtitleColor, fontSize: 12),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios_rounded,
-          color: subtitleColor,
-          size: 15,
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          onTap: onTap,
+          leading: Icon(icon, color: AppColors.primary),
+          title: Text(
+            title,
+            style: TextStyle(color: titleColor, fontWeight: FontWeight.w600),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: TextStyle(color: subtitleColor, fontSize: 12),
+          ),
+          trailing: Icon(
+            Icons.arrow_forward_ios_rounded,
+            color: subtitleColor,
+            size: 15,
+          ),
         ),
       ),
     );

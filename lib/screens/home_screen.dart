@@ -20,10 +20,7 @@ import 'package:soul_voice/services/quote_api_service.dart';
 class HomeScreen extends StatefulWidget {
   final VoidCallback? onSeeAllCategories;
 
-  const HomeScreen({
-    super.key,
-    this.onSeeAllCategories,
-  });
+  const HomeScreen({super.key, this.onSeeAllCategories});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -44,46 +41,18 @@ class _HomeScreenState extends State<HomeScreen> {
   static const int _pageSize = 20;
 
   final List<Map<String, dynamic>> _categories = [
-    {
-      'name': 'Faith',
-      'icon': Icons.auto_awesome_rounded,
-      'tag': 'faith',
-    },
-    {
-      'name': 'Life',
-      'icon': Icons.wb_sunny_outlined,
-      'tag': 'life',
-    },
+    {'name': 'Faith', 'icon': Icons.auto_awesome_rounded, 'tag': 'faith'},
+    {'name': 'Life', 'icon': Icons.wb_sunny_outlined, 'tag': 'life'},
     {
       'name': 'Wisdom',
       'icon': Icons.lightbulb_outline_rounded,
       'tag': 'wisdom',
     },
-    {
-      'name': 'Success',
-      'icon': Icons.trending_up_rounded,
-      'tag': 'success',
-    },
-    {
-      'name': 'Love',
-      'icon': Icons.favorite_border_rounded,
-      'tag': 'love',
-    },
-    {
-      'name': 'Peace',
-      'icon': Icons.spa_outlined,
-      'tag': 'peace',
-    },
-    {
-      'name': 'Courage',
-      'icon': Icons.shield_outlined,
-      'tag': 'courage',
-    },
-    {
-      'name': 'Hope',
-      'icon': Icons.wb_incandescent_outlined,
-      'tag': 'hope',
-    },
+    {'name': 'Success', 'icon': Icons.trending_up_rounded, 'tag': 'success'},
+    {'name': 'Love', 'icon': Icons.favorite_border_rounded, 'tag': 'love'},
+    {'name': 'Peace', 'icon': Icons.spa_outlined, 'tag': 'peace'},
+    {'name': 'Courage', 'icon': Icons.shield_outlined, 'tag': 'courage'},
+    {'name': 'Hope', 'icon': Icons.wb_incandescent_outlined, 'tag': 'hope'},
     {
       'name': 'Patience',
       'icon': Icons.hourglass_empty_rounded,
@@ -104,46 +73,22 @@ class _HomeScreenState extends State<HomeScreen> {
       'icon': Icons.sentiment_very_satisfied_rounded,
       'tag': 'happiness',
     },
-    {
-      'name': 'Motivation',
-      'icon': Icons.bolt_rounded,
-      'tag': 'motivation',
-    },
+    {'name': 'Motivation', 'icon': Icons.bolt_rounded, 'tag': 'motivation'},
     {
       'name': 'Friendship',
       'icon': Icons.people_outline_rounded,
       'tag': 'friendship',
     },
-    {
-      'name': 'Knowledge',
-      'icon': Icons.menu_book_rounded,
-      'tag': 'knowledge',
-    },
-    {
-      'name': 'Kindness',
-      'icon': Icons.handshake_outlined,
-      'tag': 'kindness',
-    },
-    {
-      'name': 'Time',
-      'icon': Icons.access_time_rounded,
-      'tag': 'time',
-    },
+    {'name': 'Knowledge', 'icon': Icons.menu_book_rounded, 'tag': 'knowledge'},
+    {'name': 'Kindness', 'icon': Icons.handshake_outlined, 'tag': 'kindness'},
+    {'name': 'Time', 'icon': Icons.access_time_rounded, 'tag': 'time'},
     {
       'name': 'Forgiveness',
       'icon': Icons.self_improvement_rounded,
       'tag': 'forgiveness',
     },
-    {
-      'name': 'Truth',
-      'icon': Icons.verified_outlined,
-      'tag': 'truth',
-    },
-    {
-      'name': 'Future',
-      'icon': Icons.explore_outlined,
-      'tag': 'future',
-    },
+    {'name': 'Truth', 'icon': Icons.verified_outlined, 'tag': 'truth'},
+    {'name': 'Future', 'icon': Icons.explore_outlined, 'tag': 'future'},
   ];
 
   final List<Map<String, String>> _dailyInspirationQuotes = [
@@ -158,8 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'author': 'Daily Inspiration',
     },
     {
-      'quote':
-          'Trust the process. Your time and success will definitely come.',
+      'quote': 'Trust the process. Your time and success will definitely come.',
       'author': 'Daily Inspiration',
     },
     {
@@ -173,13 +117,11 @@ class _HomeScreenState extends State<HomeScreen> {
       'author': 'Daily Inspiration',
     },
     {
-      'quote':
-          'Small daily improvements over time lead to stunning results.',
+      'quote': 'Small daily improvements over time lead to stunning results.',
       'author': 'Daily Inspiration',
     },
     {
-      'quote':
-          'Do not lose hope. You never know what tomorrow will bring.',
+      'quote': 'Do not lose hope. You never know what tomorrow will bring.',
       'author': 'Daily Inspiration',
     },
     {
@@ -206,9 +148,7 @@ class _HomeScreenState extends State<HomeScreen> {
       now.year,
       now.month,
       now.day,
-    ).difference(
-      DateTime(2025, 1, 1),
-    ).inDays;
+    ).difference(DateTime(2025, 1, 1)).inDays;
 
     final index = dayIndex % _dailyInspirationQuotes.length;
 
@@ -266,10 +206,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchMoreQuotes() async {
-    if (_isLoadingMore ||
-        _isLoadingInitial ||
-        _hasError ||
-        _hasMoreError) {
+    if (_isLoadingMore || _isLoadingInitial || _hasError || _hasMoreError) {
       return;
     }
 
@@ -286,13 +223,10 @@ class _HomeScreenState extends State<HomeScreen> {
         limit: _pageSize,
       );
 
-      final existingQuotesText =
-          _quotes.map((q) => q.content).toSet();
+      final existingQuotesText = _quotes.map((q) => q.content).toSet();
 
       final filteredNewQuotes = newQuotes
-          .where(
-            (q) => !existingQuotesText.contains(q.content),
-          )
+          .where((q) => !existingQuotesText.contains(q.content))
           .toList();
 
       filteredNewQuotes.shuffle(Random());
@@ -340,28 +274,21 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context, themeMode) {
         final isDark = themeMode == ThemeMode.dark;
 
-        final backgroundColor =
-            isDark ? AppColors.background : Colors.white;
+        final backgroundColor = isDark ? AppColors.background : Colors.white;
 
-        final surfaceColor =
-            isDark
-                ? AppColors.surface
-                : const Color(0xFFF7F7F7);
+        final surfaceColor = isDark
+            ? AppColors.surface
+            : const Color(0xFFF7F7F7);
 
-        final primaryTextColor =
-            isDark
-                ? AppColors.textPrimary
-                : Colors.black87;
+        final primaryTextColor = isDark
+            ? AppColors.textPrimary
+            : Colors.black87;
 
-        final secondaryTextColor =
-            isDark
-                ? AppColors.textSecondary
-                : Colors.black54;
+        final secondaryTextColor = isDark
+            ? AppColors.textSecondary
+            : Colors.black54;
 
-        final borderColor =
-            isDark
-                ? AppColors.border
-                : const Color(0xFFE0E0E0);
+        final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
 
         return Scaffold(
           backgroundColor: backgroundColor,
@@ -377,12 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: SingleChildScrollView(
                     controller: _scrollController,
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(
-                      20,
-                      20,
-                      20,
-                      100,
-                    ),
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -408,7 +330,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     'Welcome to Soul Voice',
                                     style: TextStyle(
                                       color: primaryTextColor,
-                                      fontSize: 24,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -429,7 +351,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (_) => const NotificationsScreen(),
+                                      builder: (_) =>
+                                          const NotificationsScreen(),
                                     ),
                                   );
                                 },
@@ -447,7 +370,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         // =====================================================
                         // SEARCH
                         // =====================================================
-
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -489,7 +411,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         // =====================================================
                         // CATEGORIES HEADER
                         // =====================================================
-
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -511,9 +432,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               },
                               child: const Text(
                                 'See All',
-                                style: TextStyle(
-                                  color: AppColors.primary,
-                                ),
+                                style: TextStyle(color: AppColors.primary),
                               ),
                             ),
                           ],
@@ -524,15 +443,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         // =====================================================
                         // HORIZONTAL CATEGORIES
                         // =====================================================
-
                         SizedBox(
                           height: 110,
                           child: ListView.separated(
                             scrollDirection: Axis.horizontal,
                             itemCount: _categories.length,
-                            separatorBuilder: (_, _) => const SizedBox(
-                              width: 12,
-                            ),
+                            separatorBuilder: (_, _) =>
+                                const SizedBox(width: 12),
                             itemBuilder: (context, index) {
                               final category = _categories[index];
 
@@ -559,392 +476,292 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
 
-                    const SizedBox(height: 28),
+                        const SizedBox(height: 28),
 
-                    // =====================================================
-                    // DAILY INSPIRATION
-                    // =====================================================
+                        // =====================================================
+                        // DAILY INSPIRATION
+                        // =====================================================
+                        Container(
+                          width: double.infinity,
 
-                    Container(
-                      width: double.infinity,
+                          padding: const EdgeInsets.all(22),
 
-                      padding:
-                          const EdgeInsets.all(
-                        22,
-                      ),
+                          decoration: BoxDecoration(
+                            color: surfaceColor,
+                            borderRadius: BorderRadius.circular(22),
+                            border: Border.all(color: borderColor),
+                          ),
 
-                      decoration:
-                          BoxDecoration(
-                        color: surfaceColor,
-                        borderRadius:
-                            BorderRadius.circular(
-                          22,
-                        ),
-                        border: Border.all(
-                          color: borderColor,
-                        ),
-                      ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
 
-                      child: Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start,
-
-                        children: [
-                          const Row(
                             children: [
-                              Icon(
-                                Icons
-                                    .auto_awesome_rounded,
-                                color:
-                                    AppColors.primary,
-                                size: 20,
+                              const Row(
+                                children: [
+                                  Icon(
+                                    Icons.auto_awesome_rounded,
+                                    color: AppColors.primary,
+                                    size: 20,
+                                  ),
+
+                                  SizedBox(width: 8),
+
+                                  Text(
+                                    "Today's Inspiration",
+
+                                    style: TextStyle(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
                               ),
 
-                              SizedBox(width: 8),
+                              const SizedBox(height: 18),
+
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+
+                                children: [
+                                  const Icon(
+                                    Icons.format_quote_rounded,
+                                    color: AppColors.primary,
+                                    size: 30,
+                                  ),
+
+                                  const SizedBox(width: 12),
+
+                                  Expanded(
+                                    child: Text(
+                                      todayQuoteMap['quote']!,
+
+                                      style: TextStyle(
+                                        color: primaryTextColor,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                        height: 1.4,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              const SizedBox(height: 14),
 
                               Text(
-                                "Today's Inspiration",
+                                todayQuoteMap['author']!,
 
                                 style: TextStyle(
-                                  color:
-                                      AppColors.primary,
-                                  fontWeight:
-                                      FontWeight.bold,
-                                  fontSize: 14,
+                                  color: secondaryTextColor,
+                                  fontSize: 13,
+                                ),
+                              ),
+
+                              const SizedBox(height: 8),
+
+                              Align(
+                                alignment: Alignment.centerRight,
+
+                                child: _QuoteActions(
+                                  quote: todayQuoteMap['quote']!,
+
+                                  author: todayQuoteMap['author']!,
+
+                                  secondaryTextColor: secondaryTextColor,
                                 ),
                               ),
                             ],
                           ),
-
-                          const SizedBox(height: 18),
-
-                          Row(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
-
-                            children: [
-                              const Icon(
-                                Icons
-                                    .format_quote_rounded,
-                                color:
-                                    AppColors.primary,
-                                size: 30,
-                              ),
-
-                              const SizedBox(width: 12),
-
-                              Expanded(
-                                child: Text(
-                                  todayQuoteMap[
-                                      'quote']!,
-
-                                  style: TextStyle(
-                                    color:
-                                        primaryTextColor,
-                                    fontSize: 20,
-                                    fontWeight:
-                                        FontWeight.w600,
-                                    height: 1.4,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-
-                          const SizedBox(height: 14),
-
-                          Text(
-                            todayQuoteMap[
-                                'author']!,
-
-                            style: TextStyle(
-                              color:
-                                  secondaryTextColor,
-                              fontSize: 13,
-                            ),
-                          ),
-
-                          const SizedBox(height: 8),
-
-                          Align(
-                            alignment:
-                                Alignment.centerRight,
-
-                            child: _QuoteActions(
-                              quote:
-                                  todayQuoteMap[
-                                      'quote']!,
-
-                              author:
-                                  todayQuoteMap[
-                                      'author']!,
-
-                              secondaryTextColor:
-                                  secondaryTextColor,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 28),
-
-                    // =====================================================
-                    // FEATURED QUOTES
-                    // =====================================================
-
-                    Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.spaceBetween,
-
-                      children: [
-                        Text(
-                          'Featured Quotes',
-
-                          style: TextStyle(
-                            color:
-                                primaryTextColor,
-                            fontSize: 20,
-                            fontWeight:
-                                FontWeight.bold,
-                          ),
                         ),
 
-                        IconButton(
-                          onPressed:
-                              _refreshQuotes,
+                        const SizedBox(height: 28),
 
-                          icon: const Icon(
-                            Icons.refresh_rounded,
-                            color:
-                                AppColors.primary,
-                          ),
-                        ),
-                      ],
-                    ),
+                        // =====================================================
+                        // FEATURED QUOTES
+                        // =====================================================
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
 
-                    const SizedBox(height: 8),
-
-                    // =====================================================
-                    // QUOTES
-                    // =====================================================
-
-                    if (_isLoadingInitial)
-                      const Center(
-                        child: Padding(
-                          padding:
-                              EdgeInsets.all(35),
-
-                          child:
-                              CircularProgressIndicator(
-                            color:
-                                AppColors.primary,
-                          ),
-                        ),
-                      )
-
-                    else if (_hasError &&
-                        _quotes.isEmpty)
-                      Container(
-                        width: double.infinity,
-
-                        padding:
-                            const EdgeInsets.all(
-                          22,
-                        ),
-
-                        decoration:
-                            BoxDecoration(
-                          color: surfaceColor,
-                          borderRadius:
-                              BorderRadius.circular(
-                            18,
-                          ),
-                          border: Border.all(
-                            color: borderColor,
-                          ),
-                        ),
-
-                        child: Column(
                           children: [
-                            const Icon(
-                              Icons
-                                  .cloud_off_rounded,
-                              color:
-                                  AppColors.primary,
-                              size: 40,
-                            ),
-
-                            const SizedBox(
-                              height: 12,
-                            ),
-
                             Text(
-                              'Unable to load quotes',
+                              'Featured Quotes',
 
                               style: TextStyle(
-                                color:
-                                    primaryTextColor,
-                                fontSize: 16,
-                                fontWeight:
-                                    FontWeight.bold,
+                                color: primaryTextColor,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
 
-                            const SizedBox(
-                              height: 6,
-                            ),
+                            IconButton(
+                              onPressed: _refreshQuotes,
 
-                            Text(
-                              'Please check your internet connection and try again.',
-
-                              textAlign:
-                                  TextAlign.center,
-
-                              style: TextStyle(
-                                color:
-                                    secondaryTextColor,
-                                fontSize: 13,
-                              ),
-                            ),
-
-                            const SizedBox(
-                              height: 15,
-                            ),
-
-                            ElevatedButton(
-                              onPressed:
-                                  _fetchInitialQuotes,
-
-                              child:
-                                  const Text(
-                                'Try Again',
+                              icon: const Icon(
+                                Icons.refresh_rounded,
+                                color: AppColors.primary,
                               ),
                             ),
                           ],
                         ),
-                      )
 
-                    else if (_quotes.isEmpty)
-                      Container(
-                        width: double.infinity,
+                        const SizedBox(height: 8),
 
-                        padding:
-                            const EdgeInsets.all(
-                          25,
-                        ),
+                        // =====================================================
+                        // QUOTES
+                        // =====================================================
+                        if (_isLoadingInitial)
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(35),
 
-                        child: Text(
-                          'No quotes found.',
-
-                          textAlign:
-                              TextAlign.center,
-
-                          style: TextStyle(
-                            color:
-                                secondaryTextColor,
-                          ),
-                        ),
-                      )
-
-                    else
-                      Column(
-                        children: [
-                          ..._quotes.map(
-                            (quote) => Padding(
-                              key: ValueKey(
-                                quote.content,
-                              ),
-
-                              padding:
-                                  const EdgeInsets.only(
-                                bottom: 12,
-                              ),
-
-                              child: _QuoteCard(
-                                quote:
-                                    quote.content,
-
-                                author:
-                                    quote.author,
-
-                                surfaceColor:
-                                    surfaceColor,
-
-                                borderColor:
-                                    borderColor,
-
-                                primaryTextColor:
-                                    primaryTextColor,
-
-                                secondaryTextColor:
-                                    secondaryTextColor,
+                              child: CircularProgressIndicator(
+                                color: AppColors.primary,
                               ),
                             ),
-                          ),
+                          )
+                        else if (_hasError && _quotes.isEmpty)
+                          Container(
+                            width: double.infinity,
 
-                          if (_isLoadingMore)
-                            const Padding(
-                              padding:
-                                  EdgeInsets.symmetric(
-                                vertical: 20,
-                              ),
+                            padding: const EdgeInsets.all(22),
 
-                              child: Center(
-                                child:
-                                    CircularProgressIndicator(
-                                  color:
-                                      AppColors.primary,
+                            decoration: BoxDecoration(
+                              color: surfaceColor,
+                              borderRadius: BorderRadius.circular(18),
+                              border: Border.all(color: borderColor),
+                            ),
+
+                            child: Column(
+                              children: [
+                                const Icon(
+                                  Icons.cloud_off_rounded,
+                                  color: AppColors.primary,
+                                  size: 40,
+                                ),
+
+                                const SizedBox(height: 12),
+
+                                Text(
+                                  'Unable to load quotes',
+
+                                  style: TextStyle(
+                                    color: primaryTextColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 6),
+
+                                Text(
+                                  'Please check your internet connection and try again.',
+
+                                  textAlign: TextAlign.center,
+
+                                  style: TextStyle(
+                                    color: secondaryTextColor,
+                                    fontSize: 13,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 15),
+
+                                ElevatedButton(
+                                  onPressed: _fetchInitialQuotes,
+
+                                  child: const Text('Try Again'),
+                                ),
+                              ],
+                            ),
+                          )
+                        else if (_quotes.isEmpty)
+                          Container(
+                            width: double.infinity,
+
+                            padding: const EdgeInsets.all(25),
+
+                            child: Text(
+                              'No quotes found.',
+
+                              textAlign: TextAlign.center,
+
+                              style: TextStyle(color: secondaryTextColor),
+                            ),
+                          )
+                        else
+                          Column(
+                            children: [
+                              ..._quotes.map(
+                                (quote) => Padding(
+                                  key: ValueKey(quote.content),
+
+                                  padding: const EdgeInsets.only(bottom: 12),
+
+                                  child: _QuoteCard(
+                                    quote: quote.content,
+
+                                    author: quote.author,
+
+                                    surfaceColor: surfaceColor,
+
+                                    borderColor: borderColor,
+
+                                    primaryTextColor: primaryTextColor,
+
+                                    secondaryTextColor: secondaryTextColor,
+                                  ),
                                 ),
                               ),
-                            )
 
-                          else if (_hasMoreError)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(
-                                vertical: 16,
-                              ),
+                              if (_isLoadingMore)
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 20),
 
-                              child: Center(
-                                child:
-                                    TextButton.icon(
-                                  onPressed:
-                                      _fetchMoreQuotes,
-
-                                  icon: const Icon(
-                                    Icons
-                                        .refresh_rounded,
-                                    color:
-                                        AppColors.primary,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                )
+                              else if (_hasMoreError)
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 16,
                                   ),
 
-                                  label:
-                                      const Text(
-                                    'Failed to load more. Tap to retry',
+                                  child: Center(
+                                    child: TextButton.icon(
+                                      onPressed: _fetchMoreQuotes,
 
-                                    style:
-                                        TextStyle(
-                                      color:
-                                          AppColors.primary,
+                                      icon: const Icon(
+                                        Icons.refresh_rounded,
+                                        color: AppColors.primary,
+                                      ),
+
+                                      label: const Text(
+                                        'Failed to load more. Tap to retry',
+
+                                        style: TextStyle(
+                                          color: AppColors.primary,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ),
-                        ],
-                      ),
-                  ],
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
-  },
-);
-}
+  }
 }
 
 // =====================================================
@@ -979,19 +796,13 @@ class _CategoryCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: surfaceColor,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: borderColor,
-          ),
+          border: Border.all(color: borderColor),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon,
-              color: AppColors.primary,
-              size: 26,
-            ),
+            Icon(icon, color: AppColors.primary, size: 26),
             const SizedBox(height: 8),
             FittedBox(
               fit: BoxFit.scaleDown,
@@ -1043,9 +854,7 @@ class _QuoteCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: surfaceColor,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: borderColor,
-        ),
+        border: Border.all(color: borderColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1074,10 +883,7 @@ class _QuoteCard extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       '— $author',
-                      style: TextStyle(
-                        color: secondaryTextColor,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: secondaryTextColor, fontSize: 12),
                     ),
                   ],
                 ),
@@ -1116,10 +922,7 @@ class _QuoteActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<String, dynamic> quoteMap = {
-      'quote': quote,
-      'author': author,
-    };
+    final Map<String, dynamic> quoteMap = {'quote': quote, 'author': author};
 
     return BlocBuilder<FavoriteBloc, FavoriteState>(
       builder: (context, favState) {
@@ -1138,11 +941,7 @@ class _QuoteActions extends StatelessWidget {
               constraints: const BoxConstraints(),
               visualDensity: VisualDensity.compact,
               onPressed: () {
-                context.read<FavoriteBloc>().add(
-                      ToggleFavoriteEvent(
-                        quoteMap,
-                      ),
-                    );
+                context.read<FavoriteBloc>().add(ToggleFavoriteEvent(quoteMap));
 
                 ScaffoldMessenger.of(context)
                   ..hideCurrentSnackBar()
@@ -1177,20 +976,14 @@ class _QuoteActions extends StatelessWidget {
               visualDensity: VisualDensity.compact,
               onPressed: () async {
                 final text = '"$quote"\n— $author';
-                await Clipboard.setData(
-                  ClipboardData(
-                    text: text,
-                  ),
-                );
+                await Clipboard.setData(ClipboardData(text: text));
 
                 if (context.mounted) {
                   ScaffoldMessenger.of(context)
                     ..hideCurrentSnackBar()
                     ..showSnackBar(
                       const SnackBar(
-                        content: Text(
-                          'Quote copied successfully 📋',
-                        ),
+                        content: Text('Quote copied successfully 📋'),
                         duration: Duration(seconds: 1),
                         behavior: SnackBarBehavior.floating,
                       ),
@@ -1215,10 +1008,7 @@ class _QuoteActions extends StatelessWidget {
               onPressed: () {
                 final shareText = '"$quote"\n— $author';
                 SharePlus.instance.share(
-                  ShareParams(
-                    text: shareText,
-                    subject: 'Soul Voice Quote',
-                  ),
+                  ShareParams(text: shareText, subject: 'Soul Voice Quote'),
                 );
               },
               icon: Icon(
