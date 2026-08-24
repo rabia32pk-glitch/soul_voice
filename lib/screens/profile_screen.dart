@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:soul_voice/screens/auth/login_screens.dart';
-import 'package:soul_voice/screens/onboarding.dart';
 import 'package:soul_voice/services/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
