@@ -1,12 +1,10 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart'; // kIsWeb ke liye
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/auth/forgot_password.dart';
 import 'package:soul_voice/screens/auth/signup_screen.dart';
 import 'package:soul_voice/screens/main_wrapper_screen.dart';
+import 'package:soul_voice/services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,14 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // ================= INTERNET CHECK METHOD =================
   Future<bool> _hasInternetConnection() async {
-    final List<ConnectivityResult> connectivityResult = await Connectivity()
-        .checkConnectivity();
-
-    if (connectivityResult.contains(ConnectivityResult.none) ||
-        connectivityResult.isEmpty) {
-      return false;
-    }
-    return true;
+    return AuthService.instance.hasInternetConnection();
   }
 
   // ================= EMAIL LOGIN =================
@@ -106,52 +97,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // ================= GOOGLE SIGN-IN =================
   Future<void> _signInWithGoogle() async {
-    final bool hasInternet = await _hasInternetConnection();
-    if (!hasInternet) {
-      _showMessage('No internet connection. Please check your network!');
-      return;
-    }
+    FocusScope.of(context).unfocus();
 
     setState(() {
       _isLoading = true;
     });
 
     try {
-      const String webClientId =
-          '33449994871-4pfst0aj5bi0p9fdm7qookmrn1o2i208.apps.googleusercontent.com';
-
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        clientId: kIsWeb ? webClientId : null,
-        serverClientId: webClientId,
-      );
-
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-
-      if (googleUser == null) {
-        setState(() {
-          _isLoading = false;
-        });
-        return;
-      }
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final AuthResult result = await AuthService.instance.signInWithGoogle();
 
       if (!mounted) return;
 
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const MainWrapperScreen()),
-      );
-    } on FirebaseAuthException catch (e) {
-      _showMessage(e.message ?? 'Google Sign-In failed.');
+      if (result.isCancelled) {
+        return;
+      }
+
+      if (result.isSuccess && result.user != null) {
+        _showMessage('Signed in with Google successfully!');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainWrapperScreen()),
+        );
+      } else if (result.errorMessage != null) {
+        _showMessage(result.errorMessage!);
+      }
     } catch (e) {
       _showMessage('Google Sign-In Error: $e');
     } finally {

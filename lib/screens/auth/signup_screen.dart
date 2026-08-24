@@ -1,10 +1,8 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart'; // kIsWeb ke liye
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/main_wrapper_screen.dart';
+import 'package:soul_voice/services/auth_service.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -31,14 +29,7 @@ class _SignupScreenState extends State<SignupScreen> {
 
   // ================= INTERNET CHECK METHOD =================
   Future<bool> _hasInternetConnection() async {
-    final List<ConnectivityResult> connectivityResult = await Connectivity()
-        .checkConnectivity();
-
-    if (connectivityResult.contains(ConnectivityResult.none) ||
-        connectivityResult.isEmpty) {
-      return false;
-    }
-    return true;
+    return AuthService.instance.hasInternetConnection();
   }
 
   // ================= DISPOSE =================
@@ -157,67 +148,34 @@ class _SignupScreenState extends State<SignupScreen> {
   Future<void> _signUpWithGoogle() async {
     FocusScope.of(context).unfocus();
 
-    final bool hasInternet = await _hasInternetConnection();
-    if (!hasInternet) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No internet connection. Please check your network!'),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-
     setState(() {
       _isLoading = true;
     });
 
     try {
-      const String webClientId =
-          '33449994871-4pfst0aj5bi0p9fdm7qookmrn1o2i208.apps.googleusercontent.com';
+      final AuthResult result = await AuthService.instance.signInWithGoogle();
 
-      final GoogleSignIn googleSignIn = GoogleSignIn(
-        clientId: kIsWeb ? webClientId : null,
-        serverClientId: webClientId,
-      );
+      if (!mounted) return;
 
-      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-
-      if (googleUser == null) {
-        setState(() {
-          _isLoading = false;
-        });
+      if (result.isCancelled) {
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
+      if (result.isSuccess && result.user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Signed in with Google successfully!')),
+        );
 
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      await FirebaseAuth.instance.signInWithCredential(credential);
-
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Signed in with Google successfully!')),
-      );
-
-      Navigator.pushAndRemoveUntil(
-        context,
-        MaterialPageRoute(builder: (_) => const MainWrapperScreen()),
-        (route) => false,
-      );
-    } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.message ?? 'Google Sign-In failed.')),
-      );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (_) => const MainWrapperScreen()),
+          (route) => false,
+        );
+      } else if (result.errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(result.errorMessage!)),
+        );
+      }
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
