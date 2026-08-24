@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "33449994871-va7s0938igpcdjm434lnv6b8s06145pl.apps.googleusercontent.com",
+          "client_id": "33449994871-923b9gcdjd8gcve5abb188lq73ad5lav.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.soul_voice",
-            "certificate_hash": "edc5e19d6815e81c1a4f7fc626a47a47b98e8b5a"
+            "certificate_hash": "776fb943eaa71dde8222902ace5007fc70fabc14"
           }
         },
         {
