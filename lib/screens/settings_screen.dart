@@ -62,104 +62,115 @@ class AccountSettingsScreen extends StatelessWidget {
         ),
         iconTheme: IconThemeData(color: primaryTextColor),
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          Text(
-            'Preferences',
-            style: TextStyle(
-              color: primaryTextColor,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 650),
+            child: ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
+                Text(
+                  'Preferences',
+                  style: TextStyle(
+                    color: primaryTextColor,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                // 1. Help & Support
+                _SettingsTile(
+                  icon: Icons.help_outline_rounded,
+                  title: 'Help & Support',
+                  subtitle: 'Get in touch with us',
+                  surfaceColor: surfaceColor,
+                  borderColor: borderColor,
+                  titleColor: primaryTextColor,
+                  subtitleColor: secondaryTextColor,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HelpSupportScreen()),
+                    );
+                  },
+                ),
+
+                // 2. Share App
+                _SettingsTile(
+                  icon: Icons.share_rounded,
+                  title: 'Share Soul Voice',
+                  subtitle: 'Share with your friends',
+                  surfaceColor: surfaceColor,
+                  borderColor: borderColor,
+                  titleColor: primaryTextColor,
+                  subtitleColor: secondaryTextColor,
+                  onTap: () async {
+                    const appLink =
+                        'https://play.google.com/store/apps/details?id=com.example.soul_voice';
+
+                    try {
+                      final result = await SharePlus.instance.share(
+                        ShareParams(
+                          text:
+                              'Check out Soul Voice app for daily quotes and inspiration!\nDownload now: $appLink',
+                          subject: 'Soul Voice App',
+                        ),
+                      );
+
+                      if (result.status == ShareResultStatus.unavailable &&
+                          context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              'Sharing is not supported on this platform/device.',
+                            ),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Sharing is not available on this device.'),
+                        ),
+                      );
+                    }
+                  },
+                ),
+
+                // 3. Rate Us
+                _SettingsTile(
+                  icon: Icons.star_border_rounded,
+                  title: 'Rate Us',
+                  subtitle: 'Give us your feedback',
+                  surfaceColor: surfaceColor,
+                  borderColor: borderColor,
+                  titleColor: primaryTextColor,
+                  subtitleColor: secondaryTextColor,
+                  onTap: () => _openStoreRating(context),
+                ),
+
+                // 4. About Soul Voice
+                _SettingsTile(
+                  icon: Icons.info_outline_rounded,
+                  title: 'About Service',
+                  subtitle: 'App information and details',
+                  surfaceColor: surfaceColor,
+                  borderColor: borderColor,
+                  titleColor: primaryTextColor,
+                  subtitleColor: secondaryTextColor,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const AboutSoulVoiceScreen()),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 14),
-
-          // 1. Help & Support
-          _SettingsTile(
-            icon: Icons.help_outline_rounded,
-            title: 'Help & Support',
-            subtitle: 'Get in touch with us',
-            surfaceColor: surfaceColor,
-            borderColor: borderColor,
-            titleColor: primaryTextColor,
-            subtitleColor: secondaryTextColor,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const HelpSupportScreen()),
-              );
-            },
-          ),
-
-          // 2. Share App
-          _SettingsTile(
-            icon: Icons.share_rounded,
-            title: 'Share Soul Voice',
-            subtitle: 'Share with your friends',
-            surfaceColor: surfaceColor,
-            borderColor: borderColor,
-            titleColor: primaryTextColor,
-            subtitleColor: secondaryTextColor,
-            onTap: () async {
-              const appLink =
-                  'https://play.google.com/store/apps/details?id=com.example.soul_voice';
-
-              try {
-                final result = await Share.share(
-                  'Check out Soul Voice app for daily quotes and inspiration!\nDownload now: $appLink',
-                );
-
-                if (result.status == ShareResultStatus.unavailable &&
-                    context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Sharing is not supported on this platform/device.',
-                      ),
-                    ),
-                  );
-                }
-              } catch (e) {
-                if (!context.mounted) return;
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Sharing is not available on this device.'),
-                  ),
-                );
-              }
-            },
-          ),
-
-          // 3. Rate Us
-          _SettingsTile(
-            icon: Icons.star_border_rounded,
-            title: 'Rate Us',
-            subtitle: 'Give us your feedback',
-            surfaceColor: surfaceColor,
-            borderColor: borderColor,
-            titleColor: primaryTextColor,
-            subtitleColor: secondaryTextColor,
-            onTap: () => _openStoreRating(context),
-          ),
-
-          // 4. About Soul Voice
-          _SettingsTile(
-            icon: Icons.info_outline_rounded,
-            title: 'About Service',
-            subtitle: 'App information and details',
-            surfaceColor: surfaceColor,
-            borderColor: borderColor,
-            titleColor: primaryTextColor,
-            subtitleColor: secondaryTextColor,
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const AboutSoulVoiceScreen()),
-              );
-            },
-          ),
-        ],
+        ),
       ),
     );
   }

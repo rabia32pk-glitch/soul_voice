@@ -158,6 +158,9 @@ class CustomFavoriteCard extends StatelessWidget {
             children: [
               // COPY
               IconButton(
+                padding: const EdgeInsets.all(6),
+                constraints: const BoxConstraints(),
+                visualDensity: VisualDensity.compact,
                 tooltip: 'Copy',
                 onPressed: () {
                   _copyQuote(context);
@@ -165,12 +168,16 @@ class CustomFavoriteCard extends StatelessWidget {
                 icon: Icon(
                   Icons.copy_rounded,
                   color: secondaryTextColor,
-                  size: 23,
+                  size: 21,
                 ),
               ),
+              const SizedBox(width: 4),
 
               // SHARE
               IconButton(
+                padding: const EdgeInsets.all(6),
+                constraints: const BoxConstraints(),
+                visualDensity: VisualDensity.compact,
                 tooltip: 'Share',
                 onPressed: () {
                   _shareQuote();
@@ -178,12 +185,16 @@ class CustomFavoriteCard extends StatelessWidget {
                 icon: Icon(
                   Icons.share_rounded,
                   color: secondaryTextColor,
-                  size: 23,
+                  size: 21,
                 ),
               ),
+              const SizedBox(width: 4),
 
               // FAVORITE
               IconButton(
+                padding: const EdgeInsets.all(6),
+                constraints: const BoxConstraints(),
+                visualDensity: VisualDensity.compact,
                 tooltip: 'Remove from favorites',
                 onPressed: () {
                   _removeFavorite(context);
@@ -191,7 +202,7 @@ class CustomFavoriteCard extends StatelessWidget {
                 icon: const Icon(
                   Icons.favorite_rounded,
                   color: Colors.red,
-                  size: 28,
+                  size: 24,
                 ),
               ),
             ],

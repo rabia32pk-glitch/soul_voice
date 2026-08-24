@@ -79,93 +79,100 @@ class _CategoryQuotesScreenState extends State<CategoryQuotesScreen> {
             ),
             centerTitle: true,
           ),
-          body: FutureBuilder<List<QuoteModel>>(
-            future: _quotesFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                );
-              }
+          body: SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 800),
+                child: FutureBuilder<List<QuoteModel>>(
+                  future: _quotesFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(color: AppColors.primary),
+                      );
+                    }
 
-              if (snapshot.hasError ||
-                  !snapshot.hasData ||
-                  snapshot.data!.isEmpty) {
-                return Center(
-                  child: Text(
-                    'No quotes found for "$categoryTitle"',
-                    style: TextStyle(color: secondaryTextColor, fontSize: 16),
-                  ),
-                );
-              }
+                    if (snapshot.hasError ||
+                        !snapshot.hasData ||
+                        snapshot.data!.isEmpty) {
+                      return Center(
+                        child: Text(
+                          'No quotes found for "$categoryTitle"',
+                          style: TextStyle(color: secondaryTextColor, fontSize: 16),
+                        ),
+                      );
+                    }
 
-              final quotes = snapshot.data!;
+                    final quotes = snapshot.data!;
 
-              return ListView.separated(
-                padding: const EdgeInsets.all(20),
-                itemCount: quotes.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final quote = quotes[index];
-                  return Container(
-                    padding: const EdgeInsets.all(18),
-                    decoration: BoxDecoration(
-                      color: surfaceColor,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: borderColor),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Icon(
-                              Icons.format_quote_rounded,
-                              color: AppColors.primary,
-                              size: 30,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
+                    return ListView.separated(
+                      padding: const EdgeInsets.all(20),
+                      itemCount: quotes.length,
+                      separatorBuilder: (_, _) => const SizedBox(height: 12),
+                      itemBuilder: (context, index) {
+                        final quote = quotes[index];
+                        return Container(
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            color: surfaceColor,
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(color: borderColor),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    quote.content,
-                                    style: TextStyle(
-                                      color: primaryTextColor,
-                                      fontSize: 15,
-                                      height: 1.4,
-                                    ),
+                                  const Icon(
+                                    Icons.format_quote_rounded,
+                                    color: AppColors.primary,
+                                    size: 28,
                                   ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    '— ${quote.author}',
-                                    style: TextStyle(
-                                      color: secondaryTextColor,
-                                      fontSize: 12,
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          quote.content,
+                                          style: TextStyle(
+                                            color: primaryTextColor,
+                                            fontSize: 15,
+                                            height: 1.4,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          '— ${quote.author}',
+                                          style: TextStyle(
+                                            color: secondaryTextColor,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: _CategoryQuoteActions(
-                            quote: quote.content,
-                            author: quote.author,
-                            secondaryTextColor: secondaryTextColor,
+                              const SizedBox(height: 8),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: _CategoryQuoteActions(
+                                  quote: quote.content,
+                                  author: quote.author,
+                                  secondaryTextColor: secondaryTextColor,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            },
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
           ),
         );
       },
@@ -198,6 +205,9 @@ class _CategoryQuoteActions extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(),
+              visualDensity: VisualDensity.compact,
               onPressed: () {
                 context.read<FavoriteBloc>().add(ToggleFavoriteEvent(quoteMap));
                 ScaffoldMessenger.of(context)
@@ -219,36 +229,53 @@ class _CategoryQuoteActions extends StatelessWidget {
                     ? Icons.favorite_rounded
                     : Icons.favorite_border_rounded,
                 color: isFavorite ? Colors.red : secondaryTextColor,
-                size: 24,
+                size: 23,
               ),
             ),
+            const SizedBox(width: 4),
             IconButton(
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(),
+              visualDensity: VisualDensity.compact,
               onPressed: () async {
                 await Clipboard.setData(
                   ClipboardData(text: '"$quote"\n— $author'),
                 );
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(
-                    const SnackBar(
-                      content: Text('Quote copied 📋'),
-                      duration: Duration(seconds: 1),
-                      behavior: SnackBarBehavior.floating,
-                    ),
-                  );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context)
+                    ..hideCurrentSnackBar()
+                    ..showSnackBar(
+                      const SnackBar(
+                        content: Text('Quote copied 📋'),
+                        duration: Duration(seconds: 1),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                }
               },
               icon: Icon(
                 Icons.copy_rounded,
                 color: secondaryTextColor,
-                size: 22,
+                size: 21,
               ),
             ),
+            const SizedBox(width: 4),
             IconButton(
-              onPressed: () => Share.share('"$quote"\n— $author'),
+              padding: const EdgeInsets.all(6),
+              constraints: const BoxConstraints(),
+              visualDensity: VisualDensity.compact,
+              onPressed: () {
+                SharePlus.instance.share(
+                  ShareParams(
+                    text: '"$quote"\n— $author',
+                    subject: 'Soul Voice Quote',
+                  ),
+                );
+              },
               icon: Icon(
                 Icons.share_outlined,
                 color: secondaryTextColor,
-                size: 22,
+                size: 21,
               ),
             ),
           ],

@@ -76,150 +76,157 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
         ),
         iconTheme: IconThemeData(color: primaryTextColor),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment:CrossAxisAlignment.start,
-          children: [
-            // Header Card
-            Container(
-              width: double.infinity,
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 650),
+            child: SingleChildScrollView(
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
-              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
-                    Icons.support_agent_rounded,
-                    size: 48,
-                    color: AppColors.primary,
+                  // Header Card
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                    ),
+                    child: Column(
+                      children: [
+                        const Icon(
+                          Icons.support_agent_rounded,
+                          size: 48,
+                          color: AppColors.primary,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'How can we help you?',
+                          style: TextStyle(
+                            color: primaryTextColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          'We are here to assist you with any issues in Soul Voice.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: secondaryTextColor,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 10),
+
+                  const SizedBox(height: 25),
+
+                  // FAQs Section
                   Text(
-                    'How can we help you?',
+                    'Frequently Asked Questions',
                     style: TextStyle(
                       color: primaryTextColor,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 12),
+
+                  ..._faqs.map((faq) {
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        color: surfaceColor,
+                        borderRadius: BorderRadius.circular(14),
+                        border: Border.all(color: borderColor),
+                      ),
+                      child: ExpansionTile(
+                        shape: const Border(),
+                        title: Text(
+                          faq['question']!,
+                          style: TextStyle(
+                            color: primaryTextColor,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                            child: Text(
+                              faq['answer']!,
+                              style: TextStyle(
+                                color: secondaryTextColor,
+                                fontSize: 13,
+                                height: 1.4,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+
+                  const SizedBox(height: 25),
+
+                  // Direct Contact Form
                   Text(
-                    'We are here to assist you with any issues in Soul Voice.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: secondaryTextColor,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 25),
-
-            // FAQs Section
-            Text(
-              'Frequently Asked Questions',
-              style: TextStyle(
-                color: primaryTextColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            ..._faqs.map((faq) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                  color: surfaceColor,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: borderColor),
-                ),
-                child: ExpansionTile(
-                  shape: const Border(),
-                  title: Text(
-                    faq['question']!,
+                    'Send us a message',
                     style: TextStyle(
                       color: primaryTextColor,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: Text(
-                        faq['answer']!,
-                        style: TextStyle(
-                          color: secondaryTextColor,
-                          fontSize: 13,
-                          height: 1.4,
-                        ),
-                      ),
+                  const SizedBox(height: 12),
+
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: surfaceColor,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: borderColor),
                     ),
-                  ],
-                ),
-              );
-            }),
-
-            const SizedBox(height: 25),
-
-            // Direct Contact Form
-            Text(
-              'Send us a message',
-              style: TextStyle(
-                color: primaryTextColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: surfaceColor,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: borderColor),
-              ),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _messageController,
-                    maxLines: 4,
-                    style: TextStyle(color: primaryTextColor),
-                    decoration: InputDecoration(
-                      hintText: 'Describe your question or issue...',
-                      hintStyle: TextStyle(color: secondaryTextColor, fontSize: 13),
-                      border: InputBorder.none,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: _sendMessage,
-                      icon: const Icon(Icons.send_rounded, size: 18),
-                      label: const Text('Send Message'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                    child: Column(
+                      children: [
+                        TextField(
+                          controller: _messageController,
+                          maxLines: 4,
+                          style: TextStyle(color: primaryTextColor),
+                          decoration: InputDecoration(
+                            hintText: 'Describe your question or issue...',
+                            hintStyle: TextStyle(color: secondaryTextColor, fontSize: 13),
+                            border: InputBorder.none,
+                          ),
                         ),
-                      ),
+                        const SizedBox(height: 10),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton.icon(
+                            onPressed: _sendMessage,
+                            icon: const Icon(Icons.send_rounded, size: 18),
+                            label: const Text('Send Message'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ],
+          ),
         ),
       ),
     );

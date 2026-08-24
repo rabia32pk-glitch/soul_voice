@@ -13,6 +13,13 @@ class MainWrapperScreen extends StatefulWidget {
     this.initialIndex = 0,
   });
 
+  static void switchTab(BuildContext context, int index) {
+    final state = context.findAncestorStateOfType<_MainWrapperScreenState>();
+    if (state != null) {
+      state.setIndex(index);
+    }
+  }
+
   @override
   State<MainWrapperScreen> createState() => _MainWrapperScreenState();
 }
@@ -20,11 +27,21 @@ class MainWrapperScreen extends StatefulWidget {
 class _MainWrapperScreenState extends State<MainWrapperScreen> {
   late int _currentIndex;
 
-  final List<Widget> _screens = const [
-    HomeScreen(),
-    CategoriesScreen(),
-    FavoritesScreen(),
-    ProfileScreen(),
+  void setIndex(int index) {
+    if (index >= 0 && index < _screens.length) {
+      setState(() {
+        _currentIndex = index;
+      });
+    }
+  }
+
+  late final List<Widget> _screens = [
+    HomeScreen(
+      onSeeAllCategories: () => setIndex(1),
+    ),
+    const CategoriesScreen(),
+    const FavoritesScreen(),
+    const ProfileScreen(),
   ];
 
   @override
@@ -72,6 +89,7 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
 
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
+            color: navBackgroundColor,
             border: Border(
               top: BorderSide(
                 color: borderColor,
@@ -79,55 +97,49 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
               ),
             ),
           ),
-
-          child: BottomNavigationBar(
-            currentIndex: _currentIndex,
-
-            backgroundColor: navBackgroundColor,
-
-            selectedItemColor: AppColors.primary,
-
-            unselectedItemColor: unselectedColor,
-
-            type: BottomNavigationBarType.fixed,
-
-            elevation: 0,
-
-            onTap: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
-
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home_rounded,
+          child: SafeArea(
+            top: false,
+            child: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              backgroundColor: navBackgroundColor,
+              selectedItemColor: AppColors.primary,
+              unselectedItemColor: unselectedColor,
+              selectedFontSize: 12,
+              unselectedFontSize: 12,
+              type: BottomNavigationBarType.fixed,
+              elevation: 0,
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                });
+              },
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.home_rounded,
+                  ),
+                  label: 'Home',
                 ),
-                label: 'Home',
-              ),
-
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.grid_view_rounded,
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.grid_view_rounded,
+                  ),
+                  label: 'Categories',
                 ),
-                label: 'Categories',
-              ),
-
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.favorite_border_rounded,
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.favorite_border_rounded,
+                  ),
+                  label: 'Favorites',
                 ),
-                label: 'Favorites',
-              ),
-
-              BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.person_outline_rounded,
+                BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.person_outline_rounded,
+                  ),
+                  label: 'Profile',
                 ),
-                label: 'Profile',
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
