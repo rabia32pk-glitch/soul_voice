@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:soul_voice/screens/auth/login_screens.dart';
 import 'package:soul_voice/screens/onboarding.dart';
+import 'package:soul_voice/services/auth_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
@@ -25,8 +26,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  String _name = 'rabia';
-  String _email = 'abc@gmail.com';
+  String _name = 'User';
+  String _email = '';
+  String? _photoUrl;
   String? _imagePath;
 
   @override
@@ -40,8 +42,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefs = await SharedPreferences.getInstance();
 
     if (user != null) {
-      _email = user.email ?? 'abc@gmail.com';
-      _name = user.displayName ?? 'rabia';
+      _email = user.email ?? '';
+      _name = (user.displayName != null && user.displayName!.isNotEmpty)
+          ? user.displayName!
+          : (user.email?.split('@').first ?? 'User');
+      _photoUrl = user.photoURL;
 
       try {
         final userDoc = await FirebaseFirestore.instance
@@ -53,6 +58,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           final data = userDoc.data()!;
           if (data['name'] != null && data['name'].toString().isNotEmpty) {
             _name = data['name'];
+          }
+          if (data['photoUrl'] != null &&
+              data['photoUrl'].toString().isNotEmpty) {
+            _photoUrl = data['photoUrl'];
           }
         }
       } catch (e) {
@@ -150,18 +159,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           : const Color(0xFFF7F1E5),
                                     ),
                                     child: ClipOval(
-                                      child:
-                                          _imagePath != null &&
+                                      child: _imagePath != null &&
                                               File(_imagePath!).existsSync()
                                           ? Image.file(
                                               File(_imagePath!),
                                               fit: BoxFit.cover,
                                             )
-                                          : Icon(
-                                              Icons.person,
-                                              color: goldenIconColor,
-                                              size: 52,
-                                            ),
+                                          : (_photoUrl != null &&
+                                                  _photoUrl!.isNotEmpty)
+                                              ? Image.network(
+                                                  _photoUrl!,
+                                                  fit: BoxFit.cover,
+                                                  errorBuilder:
+                                                      (context, error, stackTrace) => Icon(
+                                                    Icons.person,
+                                                    color: goldenIconColor,
+                                                    size: 52,
+                                                  ),
+                                                )
+                                              : Icon(
+                                                  Icons.person,
+                                                  color: goldenIconColor,
+                                                  size: 52,
+                                                ),
                                     ),
                                   ),
                                 ),
@@ -407,14 +427,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: () async {
                 Navigator.pop(ctx);
                 try {
-                  // 1. Firebase Sign Out
-                  await FirebaseAuth.instance.signOut();
+                  // 1. Complete Sign Out (Firebase + Google + SharedPrefs)
+                  await AuthService.instance.signOut();
 
-                  // 2. Clear local session data
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.clear();
-
-                  // 3. Navigate to Login Screen and clear stack
+                  // 2. Navigate to Onboarding Screen and clear stack
                   if (context.mounted) {
                     Navigator.pushAndRemoveUntil(
                       context,
