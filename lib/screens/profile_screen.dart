@@ -127,7 +127,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 650),
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 8,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -154,33 +157,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: isDark
-                                          ? AppColors.primary.withValues(alpha: 0.2)
+                                          ? AppColors.primary.withValues(
+                                              alpha: 0.2,
+                                            )
                                           : const Color(0xFFF7F1E5),
                                     ),
                                     child: ClipOval(
-                                      child: _imagePath != null &&
+                                      child:
+                                          _imagePath != null &&
                                               File(_imagePath!).existsSync()
                                           ? Image.file(
                                               File(_imagePath!),
                                               fit: BoxFit.cover,
                                             )
                                           : (_photoUrl != null &&
-                                                  _photoUrl!.isNotEmpty)
-                                              ? Image.network(
-                                                  _photoUrl!,
-                                                  fit: BoxFit.cover,
-                                                  errorBuilder:
-                                                      (context, error, stackTrace) => Icon(
+                                                _photoUrl!.isNotEmpty)
+                                          ? Image.network(
+                                              _photoUrl!,
+                                              fit: BoxFit.cover,
+                                              errorBuilder:
+                                                  (
+                                                    context,
+                                                    error,
+                                                    stackTrace,
+                                                  ) => Icon(
                                                     Icons.person,
                                                     color: goldenIconColor,
                                                     size: 52,
                                                   ),
-                                                )
-                                              : Icon(
-                                                  Icons.person,
-                                                  color: goldenIconColor,
-                                                  size: 52,
-                                                ),
+                                            )
+                                          : Icon(
+                                              Icons.person,
+                                              color: goldenIconColor,
+                                              size: 52,
+                                            ),
                                     ),
                                   ),
                                 ),
@@ -279,7 +289,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // =====================================================
                       // SECTION: APPEARANCE
                       // =====================================================
-                      _SectionHeader(title: 'Appearance', color: primaryTextColor),
+                      _SectionHeader(
+                        title: 'Appearance',
+                        color: primaryTextColor,
+                      ),
                       const SizedBox(height: 10),
 
                       _SampleOptionItem(
@@ -313,7 +326,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // =====================================================
                       // SECTION: INFORMATION
                       // =====================================================
-                      _SectionHeader(title: 'Information', color: primaryTextColor),
+                      _SectionHeader(
+                        title: 'Information',
+                        color: primaryTextColor,
+                      ),
                       const SizedBox(height: 10),
 
                       _SampleOptionItem(
@@ -433,9 +449,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   if (context.mounted) {
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(
-                        builder: (_) => const LoginScreen(),
-                      ),
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
                       (route) => false,
                     );
                   }
@@ -711,7 +725,9 @@ class SettingsScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const HelpSupportScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const HelpSupportScreen(),
+                      ),
                     );
                   },
                 ),
@@ -752,7 +768,9 @@ class SettingsScreen extends StatelessWidget {
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Sharing is not available on this device.'),
+                          content: Text(
+                            'Sharing is not available on this device.',
+                          ),
                         ),
                       );
                     }
@@ -783,7 +801,9 @@ class SettingsScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const AboutSoulVoiceScreen()),
+                      MaterialPageRoute(
+                        builder: (_) => const AboutSoulVoiceScreen(),
+                      ),
                     );
                   },
                 ),
