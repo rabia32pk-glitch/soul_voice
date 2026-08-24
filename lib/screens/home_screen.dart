@@ -12,7 +12,7 @@ import 'package:soul_voice/screens/favorite_bloc.dart';
 import 'package:soul_voice/screens/favorite_event.dart';
 import 'package:soul_voice/screens/favorite_state.dart';
 import 'package:soul_voice/screens/main_wrapper_screen.dart';
-import 'package:soul_voice/screens/notifications_screen.dart';
+// import 'package:soul_voice/screens/notifications_screen.dart';
 import 'package:soul_voice/screens/search_screen.dart';
 import 'package:soul_voice/services/models/quote_model.dart';
 import 'package:soul_voice/services/quote_api_service.dart';
@@ -338,30 +338,30 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
 
-                            Container(
-                              height: 45,
-                              width: 45,
-                              decoration: BoxDecoration(
-                                color: surfaceColor,
-                                borderRadius: BorderRadius.circular(14),
-                                border: Border.all(color: borderColor),
-                              ),
-                              child: IconButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          const NotificationsScreen(),
-                                    ),
-                                  );
-                                },
-                                icon: Icon(
-                                  Icons.notifications_none_rounded,
-                                  color: primaryTextColor,
-                                ),
-                              ),
-                            ),
+                            // Container(
+                            //   height: 45,
+                            //   width: 45,
+                            //   decoration: BoxDecoration(
+                            //     color: surfaceColor,
+                            //     borderRadius: BorderRadius.circular(14),
+                            //     border: Border.all(color: borderColor),
+                            //   ),
+                            //   child: IconButton(
+                            //     onPressed: () {
+                            //       Navigator.push(
+                            //         context,
+                            //         MaterialPageRoute(
+                            //           builder: (_) =>
+                            //               const NotificationsScreen(),
+                            //         ),
+                            //       );
+                            //     },
+                            //     icon: Icon(
+                            //       Icons.notifications_none_rounded,
+                            //       color: primaryTextColor,
+                            //     ),
+                            //   ),
+                            // ),
                           ],
                         ),
 
