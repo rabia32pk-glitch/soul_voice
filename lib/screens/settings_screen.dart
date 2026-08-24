@@ -201,26 +201,29 @@ class _SettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
+      child: Material(
         color: surfaceColor,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: borderColor),
-      ),
-      child: ListTile(
-        onTap: onTap,
-        leading: Icon(icon, color: AppColors.primary),
-        title: Text(
-          title,
-          style: TextStyle(color: titleColor, fontWeight: FontWeight.w600),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(color: borderColor),
         ),
-        subtitle: Text(
-          subtitle,
-          style: TextStyle(color: subtitleColor, fontSize: 12),
-        ),
-        trailing: Icon(
-          Icons.arrow_forward_ios_rounded,
-          color: subtitleColor,
-          size: 15,
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          onTap: onTap,
+          leading: Icon(icon, color: AppColors.primary),
+          title: Text(
+            title,
+            style: TextStyle(color: titleColor, fontWeight: FontWeight.w600),
+          ),
+          subtitle: Text(
+            subtitle,
+            style: TextStyle(color: subtitleColor, fontSize: 12),
+          ),
+          trailing: Icon(
+            Icons.arrow_forward_ios_rounded,
+            color: subtitleColor,
+            size: 15,
+          ),
         ),
       ),
     );
