@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/main_wrapper_screen.dart';
-import 'package:soul_voice/screens/onboarding.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,20 +22,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
     if (!mounted) return;
 
-    final prefs = await SharedPreferences.getInstance();
-    final bool seenOnboarding = prefs.getBool('seen_onboarding') ?? false;
-
-    if (!mounted) return;
-
-    if (seenOnboarding) {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const MainWrapperScreen()),
-      );
-    } else {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-      );
-    }
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (context) => const MainWrapperScreen()),
+    );
   }
 
   @override
