@@ -1,4 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'favorite_event.dart';
 import 'favorite_state.dart';
@@ -6,6 +8,7 @@ import 'favorite_state.dart';
 class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
   FavoriteBloc() : super(const FavoriteState()) {
     on<ToggleFavoriteEvent>(_toggleFavorite);
+    _loadFavorites();
   }
 
   void _toggleFavorite(
@@ -40,6 +43,7 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
       updatedFavorites.add(
         Map<String, dynamic>.from(event.quote),
       );
+      _saveFavorites();
     }
 
     // ==============================================
@@ -51,5 +55,21 @@ class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
         favoriteQuotes: updatedFavorites,
       ),
     );
+    _saveFavorites();
   }
-}
+  Future<void> _loadFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = prefs.getString('favoriteQuotes');
+    if (jsonString != null) {
+      final List<dynamic> list = jsonDecode(jsonString);
+      final favorites = list.map((e) => Map<String, dynamic>.from(e)).toList();
+      emit(state.copyWith(favoriteQuotes: favorites));
+    }
+  }
+
+  Future<void> _saveFavorites() async {
+    final prefs = await SharedPreferences.getInstance();
+    final jsonString = jsonEncode(state.favoriteQuotes);
+    await prefs.setString('favoriteQuotes', jsonString);
+  }
+}
