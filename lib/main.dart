@@ -8,15 +8,7 @@ import 'package:soul_voice/screens/splash.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider<ThemeCubit>(create: (context) => ThemeCubit()),
-        BlocProvider<FavoriteBloc>(create: (context) => FavoriteBloc()),
-      ],
-      child: const SoulVoiceApp(),
-    ),
-  );
+  runApp(const SoulVoiceApp());
 }
 
 class SoulVoiceApp extends StatelessWidget {
@@ -24,17 +16,23 @@ class SoulVoiceApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeCubit, ThemeMode>(
-      builder: (context, themeMode) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Soul Voice',
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeMode,
-          home: const SplashScreen(),
-        );
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ThemeCubit>(create: (context) => ThemeCubit()),
+        BlocProvider<FavoriteBloc>(create: (context) => FavoriteBloc()),
+      ],
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Soul Voice',
+            theme: AppTheme.lightTheme,
+            darkTheme: AppTheme.darkTheme,
+            themeMode: themeMode,
+            home: const SplashScreen(),
+          );
+        },
+      ),
     );
   }
 }

@@ -77,7 +77,15 @@ class SettingsScreen extends StatelessWidget {
                               color: AppColors.primary.withValues(alpha: 0.15),
                               border: Border.all(color: AppColors.primary, width: 2),
                             ),
-                            child: Image.asset('assets/f1.png', fit: BoxFit.contain),
+                            child: Image.asset(
+                              'assets/f1.png',
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) => const Icon(
+                                Icons.record_voice_over_rounded,
+                                size: 32,
+                                color: AppColors.primary,
+                              ),
+                            ),
                           ),
                           const SizedBox(width: 16),
                           Expanded(

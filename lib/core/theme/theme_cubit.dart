@@ -10,8 +10,10 @@ class ThemeCubit extends Cubit<ThemeMode> {
 
   void _loadTheme() async {
     final prefs = await SharedPreferences.getInstance();
+    if (isClosed) return;
     final isDark = prefs.getBool('isDarkMode');
 
+    if (isClosed) return;
     if (isDark != null) {
       // Agar user ne pehle se light/dark toggle kiya hai to wo setting load hogi
       emit(isDark ? ThemeMode.dark : ThemeMode.light);
@@ -27,6 +29,7 @@ class ThemeCubit extends Cubit<ThemeMode> {
 
   void setTheme(bool isDark) async {
     final prefs = await SharedPreferences.getInstance();
+    if (isClosed) return;
     emit(isDark ? ThemeMode.dark : ThemeMode.light);
     await prefs.setBool('isDarkMode', isDark);
   }

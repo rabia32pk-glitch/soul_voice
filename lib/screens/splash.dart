@@ -49,7 +49,15 @@ class _SplashScreenState extends State<SplashScreen> {
                     shape: BoxShape.circle,
                     color: AppColors.primary.withValues(alpha: 0.15),
                   ),
-                  child: Image.asset('assets/f1.png', fit: BoxFit.contain),
+                  child: Image.asset(
+                    'assets/f1.png',
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => const Icon(
+                      Icons.record_voice_over_rounded,
+                      size: 50,
+                      color: AppColors.primary,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Text(
