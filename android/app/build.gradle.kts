@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.soul_voice"
+    namespace = "com.innovexa.soul_voice"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = "28.2.13676358"
 
@@ -15,7 +15,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.soul_voice"
+        applicationId = "com.innovexa.soul_voice"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
