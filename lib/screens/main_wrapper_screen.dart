@@ -3,7 +3,7 @@ import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/screens/categories_screen.dart';
 import 'package:soul_voice/screens/favourite_screens.dart';
 import 'package:soul_voice/screens/home_screen.dart';
-import 'package:soul_voice/screens/profile_screen.dart';
+import 'package:soul_voice/screens/settings_screen.dart';
 
 class MainWrapperScreen extends StatefulWidget {
   final int initialIndex;
@@ -41,14 +41,12 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
     ),
     const CategoriesScreen(),
     const FavoritesScreen(),
-    const ProfileScreen(),
+    const SettingsScreen(),
   ];
 
   @override
   void initState() {
     super.initState();
-
-    // initialIndex decide karega ke kaunsi screen open hogi
     _currentIndex = widget.initialIndex;
   }
 
@@ -66,27 +64,21 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
         isDark ? AppColors.border : const Color(0xFFE0E0E0);
 
     return PopScope(
-      // Agar Home par hain to app close hone di jayegi
       canPop: _currentIndex == 0,
-
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
 
-        // Agar Home ke ilawa kisi tab par hain
-        // to back press par Home par aa jayenge
         if (_currentIndex != 0) {
           setState(() {
             _currentIndex = 0;
           });
         }
       },
-
       child: Scaffold(
         body: IndexedStack(
           index: _currentIndex,
           children: _screens,
         ),
-
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
             color: navBackgroundColor,
@@ -130,13 +122,19 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
                   icon: Icon(
                     Icons.favorite_border_rounded,
                   ),
+                  activeIcon: Icon(
+                    Icons.favorite_rounded,
+                  ),
                   label: 'Favorites',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(
-                    Icons.person_outline_rounded,
+                    Icons.settings_outlined,
                   ),
-                  label: 'Profile',
+                  activeIcon: Icon(
+                    Icons.settings_rounded,
+                  ),
+                  label: 'Settings',
                 ),
               ],
             ),

@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:soul_voice/core/theme/constants/app_colors.dart';
 
 class PrivacyScreen extends StatelessWidget {
   const PrivacyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final primaryTextColor = isDark ? AppColors.textPrimary : const Color(0xFF2C241D);
+    final secondaryTextColor = isDark ? AppColors.textSecondary : const Color(0xFF6B5E52);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Privacy & Data Policy',
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: primaryTextColor,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: SafeArea(
@@ -19,69 +28,72 @@ class PrivacyScreen extends StatelessWidget {
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
-                const Icon(Icons.shield_outlined, size: 60, color: Colors.blue),
+                const Icon(
+                  Icons.shield_outlined,
+                  size: 60,
+                  color: AppColors.primary,
+                ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Your Privacy Matters',
+                Text(
+                  'Your Privacy is Protected',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: primaryTextColor,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Learn how Soul Voice collects, uses, and protects your information.',
+                  'Soul Voice is built with an offline-first architecture prioritizing your complete privacy.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.65),
+                    color: secondaryTextColor,
                     height: 1.4,
                   ),
                 ),
                 const SizedBox(height: 25),
 
-                // 1. What Data We Collect
+                // 1. Data Collection
                 _buildPolicyCard(
                   context,
-                  icon: Icons.assignment_outlined,
-                  title: '1. What Data We Collect',
+                  icon: Icons.no_accounts_outlined,
+                  title: '1. No Personal Data Collected',
                   content:
-                      '• Account Info: Your Name and Email Address provided during sign-up or Google Sign-In.\n'
-                      '• Profile Media: Profile picture uploaded from your device.\n'
-                      '• App Activity: Basic interaction and crash logs to maintain app stability.',
+                      'Soul Voice operates without requiring any account registration or login.\n'
+                      'We do not collect names, email addresses, phone numbers, location data, or contact lists.',
                 ),
                 const SizedBox(height: 15),
 
-                // 2. Why We Collect Your Data
+                // 2. Local Storage Only
                 _buildPolicyCard(
                   context,
-                  icon: Icons.psychology_outlined,
-                  title: '2. Why We Collect Your Data',
+                  icon: Icons.smartphone_outlined,
+                  title: '2. Local Device Storage',
                   content:
-                      '• Authentication: To securely identify you and keep your account safe.\n'
-                      '• Personalization: To display your name and profile picture in Soul Voice.\n'
-                      '• App Operations: To ensure smooth profile updates and features functionality.',
+                      'All your app preferences, selected theme (Light/Dark mode), and favorite bookmarked quotes are stored locally on your device using encrypted app sandbox storage.\n'
+                      'Your saved data never leaves your device.',
                 ),
                 const SizedBox(height: 15),
 
-                // 3. How Your Data Is Stored & Protected
+                // 3. Third-Party Sharing
                 _buildPolicyCard(
                   context,
-                  icon: Icons.lock_clock_outlined,
-                  title: '3. Data Storage & Protection',
+                  icon: Icons.lock_outline_rounded,
+                  title: '3. Zero Third-Party Sharing',
                   content:
-                      'Your data is securely stored in Google Firebase cloud infrastructure.\n'
-                      'We DO NOT sell, rent, or share your personal data with third-party advertisers.',
+                      'We DO NOT sell, rent, monetize, or share your usage data or information with any third-party advertisers or data brokers.',
                 ),
                 const SizedBox(height: 15),
 
-                // 4. Your Rights
+                // 4. Contact Us
                 _buildPolicyCard(
                   context,
-                  icon: Icons.manage_accounts_outlined,
-                  title: '4. Your Rights & Choices',
+                  icon: Icons.mail_outline_rounded,
+                  title: '4. Contact & Support',
                   content:
-                      '• Profile Control: You can update your display name and photo at any time in Edit Profile.\n'
-                      '• Account Deletion: You can permanently erase your account and all associated data anytime using the Delete Account option in Profile.',
+                      'If you have any questions regarding privacy or feedback, you can reach out directly to our team at:\n'
+                      'innovexa.technologies01@gmail.com',
                 ),
               ],
             ),
@@ -97,15 +109,16 @@ class PrivacyScreen extends StatelessWidget {
     required String title,
     required String content,
   }) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Card(
       elevation: 0,
-      color: Theme.of(
-        context,
-      ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
+      color: isDark ? AppColors.surface : Colors.white,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.15),
+          color: isDark ? AppColors.border : const Color(0xFFE8DFD1),
         ),
       ),
       child: Padding(
@@ -115,7 +128,7 @@ class PrivacyScreen extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, color: Colors.blue, size: 22),
+                Icon(icon, color: AppColors.primary, size: 22),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -134,9 +147,7 @@ class PrivacyScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 height: 1.5,
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.8),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
               ),
             ),
           ],

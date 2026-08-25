@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
-import 'package:soul_voice/screens/auth/login_screens.dart';
+import 'package:soul_voice/screens/main_wrapper_screen.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -18,29 +19,34 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'tag': 'WISDOM & KNOWLEDGE',
       'title': 'Discover Deep Wisdom',
       'description':
-          'Explore timeless quotes, profound Islamic thoughts, and daily inspiration to uplift your soul.',
+          'Explore timeless quotes, profound inspirational thoughts, and daily wisdom to uplift your soul.',
       'icon': 'auto_awesome',
     },
     {
-      'tag': 'MULTI-LINGUAL EXPERIENCE',
-      'title': 'Learn In Your Language',
+      'tag': 'DAILY INSPIRATION',
+      'title': 'Daily Soulful Motivation',
       'description':
-          'Seamlessly read and reflect on curated content across English, Roman Urdu, and Punjabi.',
+          'Seamlessly read, search, and reflect on curated inspirational quotes anytime, anywhere.',
       'icon': 'menu_book',
     },
     {
       'tag': 'GROWTH & MINDFULNESS',
-      'title': 'Reflect, Save & Grow',
+      'title': 'Reflect, Save & Share',
       'description':
           'Bookmark your favorite quotes offline, share light with friends, and cultivate positive daily habits.',
       'icon': 'favorite',
     },
   ];
 
-  void _openLogin() {
+  Future<void> _openHome() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('seen_onboarding', true);
+
+    if (!mounted) return;
+
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      MaterialPageRoute(builder: (context) => const MainWrapperScreen()),
     );
   }
 
@@ -51,7 +57,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         curve: Curves.easeInOutCubic,
       );
     } else {
-      _openLogin();
+      _openHome();
     }
   }
 
@@ -123,7 +129,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       // Skip Button
                       if (_currentPage < pages.length - 1)
                         TextButton(
-                          onPressed: _openLogin,
+                          onPressed: _openHome,
                           style: TextButton.styleFrom(
                             foregroundColor: subtitleColor,
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),

@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
@@ -18,19 +16,23 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
   final List<Map<String, String>> _faqs = [
     {
       'question': 'How do I save my favorite quotes?',
-      'answer': 'You can tap the heart icon on any quote screen or home screen to save it directly to your "My Favorites" list.',
+      'answer':
+          'You can tap the heart icon on any quote card or detail screen to save it directly to your Favorites tab.',
     },
     {
-      'question': 'How do I toggle Dark Mode?',
-      'answer': 'Go to your Profile screen and use the "Dark Theme" switch to toggle between Light and Dark mode.',
+      'question': 'How do I toggle Dark Theme?',
+      'answer':
+          'Go to the Settings tab and toggle the "Dark Theme" switch to seamlessly switch between Light and Dark modes.',
+    },
+    {
+      'question': 'Does Soul Voice work offline?',
+      'answer':
+          'Yes! Soul Voice is built with offline support so you can access hundreds of inspirational quotes and favorites anytime without an active internet connection.',
     },
     {
       'question': 'Is Soul Voice free to use?',
-      'answer': 'Yes, Soul Voice is completely free to use with full access to daily inspirational quotes and settings.',
-    },
-    {
-      'question': 'How can I reset my profile data?',
-      'answer': 'You can edit your profile from the Profile screen or clear app data using the "Delete Account" option.',
+      'answer':
+          'Yes, Soul Voice is 100% free to use with full access to all categories, search, favorites, and settings.',
     },
   ];
 
@@ -60,36 +62,18 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
       _isSending = true;
     });
 
-    final user = FirebaseAuth.instance.currentUser;
-    final userEmail = user?.email ?? 'Not provided';
-    final userName = user?.displayName ?? 'Soul Voice User';
     const supportEmail = 'innovexa.technologies01@gmail.com';
 
-    // 1. Save to Cloud Firestore for backup record
-    try {
-      await FirebaseFirestore.instance.collection('support_messages').add({
-        'userId': user?.uid ?? 'guest',
-        'userName': userName,
-        'userEmail': userEmail,
-        'message': message,
-        'targetEmail': supportEmail,
-        'createdAt': FieldValue.serverTimestamp(),
-      });
-    } catch (e) {
-      debugPrint('Firestore support message backup error: $e');
-    }
-
-    // 2. Open email client with pre-filled support email
+    // Open email client with pre-filled support email
     final Uri emailUri = Uri(
       scheme: 'mailto',
       path: supportEmail,
       query: _encodeQueryParameters({
-        'subject': 'Soul Voice Support Request - $userName',
+        'subject': 'Soul Voice User Support & Feedback',
         'body':
-            'User: $userName ($userEmail)\n\n'
             'Message:\n$message\n\n'
             '---------------------------\n'
-            'Sent from Soul Voice Application',
+            'Sent from Soul Voice App',
       }),
     );
 
@@ -110,7 +94,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
       _messageController.clear();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Thank you! Opening email to innovexa.technologies01@gmail.com...'),
+          content: Text('Opening email app to send message...'),
           backgroundColor: AppColors.primary,
         ),
       );
@@ -123,7 +107,8 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
     final backgroundColor = isDark ? AppColors.background : Colors.white;
     final surfaceColor = isDark ? AppColors.surface : const Color(0xFFF7F7F7);
     final primaryTextColor = isDark ? AppColors.textPrimary : Colors.black87;
-    final secondaryTextColor = isDark ? AppColors.textSecondary : Colors.black54;
+    final secondaryTextColor =
+        isDark ? AppColors.textSecondary : Colors.black54;
     final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
 
     return Scaffold(
@@ -156,7 +141,9 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.primary.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: AppColors.primary.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Column(
                       children: [
@@ -176,7 +163,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          'We are here to assist you with any issues in Soul Voice.',
+                          'We are here to assist you with any questions about Soul Voice.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: secondaryTextColor,
@@ -262,8 +249,11 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                           maxLines: 4,
                           style: TextStyle(color: primaryTextColor),
                           decoration: InputDecoration(
-                            hintText: 'Describe your question or issue...',
-                            hintStyle: TextStyle(color: secondaryTextColor, fontSize: 13),
+                            hintText: 'Describe your question or feedback...',
+                            hintStyle: TextStyle(
+                              color: secondaryTextColor,
+                              fontSize: 13,
+                            ),
                             border: InputBorder.none,
                           ),
                         ),
@@ -282,7 +272,9 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                                     ),
                                   )
                                 : const Icon(Icons.send_rounded, size: 18),
-                            label: Text(_isSending ? 'Sending...' : 'Send Message'),
+                            label: Text(
+                              _isSending ? 'Opening Email...' : 'Send Message',
+                            ),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
                               foregroundColor: Colors.white,

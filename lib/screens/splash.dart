@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
+import 'package:soul_voice/screens/main_wrapper_screen.dart';
 import 'package:soul_voice/screens/onboarding.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -18,15 +20,24 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _navigateToNext() async {
-    // 2 second wait
     await Future.delayed(const Duration(seconds: 2));
 
-    // Check ki widget abhi bhi tree mein active hai ya nahi
     if (!mounted) return;
 
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const OnboardingScreen()),
-    );
+    final prefs = await SharedPreferences.getInstance();
+    final bool seenOnboarding = prefs.getBool('seen_onboarding') ?? false;
+
+    if (!mounted) return;
+
+    if (seenOnboarding) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const MainWrapperScreen()),
+      );
+    } else {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+      );
+    }
   }
 
   @override
