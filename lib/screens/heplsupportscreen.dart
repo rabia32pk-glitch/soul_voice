@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 
 class HelpSupportScreen extends StatefulWidget {
@@ -10,6 +13,7 @@ class HelpSupportScreen extends StatefulWidget {
 
 class _HelpSupportScreenState extends State<HelpSupportScreen> {
   final _messageController = TextEditingController();
+  bool _isSending = false;
 
   final List<Map<String, String>> _faqs = [
     {
@@ -36,21 +40,81 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
     super.dispose();
   }
 
-  void _sendMessage() {
-    if (_messageController.text.trim().isEmpty) {
+  String? _encodeQueryParameters(Map<String, String> params) {
+    return params.entries
+        .map((MapEntry<String, String> e) =>
+            '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
+        .join('&');
+  }
+
+  Future<void> _sendMessage() async {
+    final message = _messageController.text.trim();
+    if (message.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please enter a message before sending.')),
       );
       return;
     }
 
-    _messageController.clear();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Thank you! Your message has been sent to support.'),
-        backgroundColor: AppColors.primary,
-      ),
+    setState(() {
+      _isSending = true;
+    });
+
+    final user = FirebaseAuth.instance.currentUser;
+    final userEmail = user?.email ?? 'Not provided';
+    final userName = user?.displayName ?? 'Soul Voice User';
+    const supportEmail = 'innovexa.technologies01@gmail.com';
+
+    // 1. Save to Cloud Firestore for backup record
+    try {
+      await FirebaseFirestore.instance.collection('support_messages').add({
+        'userId': user?.uid ?? 'guest',
+        'userName': userName,
+        'userEmail': userEmail,
+        'message': message,
+        'targetEmail': supportEmail,
+        'createdAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      debugPrint('Firestore support message backup error: $e');
+    }
+
+    // 2. Open email client with pre-filled support email
+    final Uri emailUri = Uri(
+      scheme: 'mailto',
+      path: supportEmail,
+      query: _encodeQueryParameters({
+        'subject': 'Soul Voice Support Request - $userName',
+        'body':
+            'User: $userName ($userEmail)\n\n'
+            'Message:\n$message\n\n'
+            '---------------------------\n'
+            'Sent from Soul Voice Application',
+      }),
     );
+
+    try {
+      if (await canLaunchUrl(emailUri)) {
+        await launchUrl(emailUri);
+      } else {
+        await launchUrl(emailUri, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      debugPrint('Could not launch email app: $e');
+    }
+
+    if (mounted) {
+      setState(() {
+        _isSending = false;
+      });
+      _messageController.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Thank you! Opening email to innovexa.technologies01@gmail.com...'),
+          backgroundColor: AppColors.primary,
+        ),
+      );
+    }
   }
 
   @override
@@ -207,9 +271,18 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton.icon(
-                            onPressed: _sendMessage,
-                            icon: const Icon(Icons.send_rounded, size: 18),
-                            label: const Text('Send Message'),
+                            onPressed: _isSending ? null : _sendMessage,
+                            icon: _isSending
+                                ? const SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Icon(Icons.send_rounded, size: 18),
+                            label: Text(_isSending ? 'Sending...' : 'Send Message'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColors.primary,
                               foregroundColor: Colors.white,
