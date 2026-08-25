@@ -219,51 +219,50 @@ class _SearchScreenState extends State<SearchScreen> {
                       width: double.infinity,
                       constraints: const BoxConstraints(maxHeight: 220),
                       margin: const EdgeInsets.only(top: 6),
-                      decoration: BoxDecoration(
+                      child: Material(
                         color: surfaceColor,
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: borderColor),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: ListView.separated(
-                        shrinkWrap: true,
-                        itemCount: _filteredSuggestions.length,
-                        separatorBuilder: (_, _) => Divider(
-                          height: 1,
-                          color: borderColor.withValues(alpha: 0.5),
+                        elevation: 4,
+                        shadowColor: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                          side: BorderSide(color: borderColor),
                         ),
-                        itemBuilder: (context, index) {
-                          final suggestion = _filteredSuggestions[index];
-                          return ListTile(
-                            dense: true,
-                            leading: const Icon(
-                              Icons.search_rounded,
-                              color: AppColors.primary,
-                              size: 18,
-                            ),
-                            title: Text(
-                              suggestion,
-                              style: TextStyle(
-                                color: primaryTextColor,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                        clipBehavior: Clip.antiAlias,
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          itemCount: _filteredSuggestions.length,
+                          separatorBuilder: (_, _) => Divider(
+                            height: 1,
+                            color: borderColor.withValues(alpha: 0.5),
+                          ),
+                          itemBuilder: (context, index) {
+                            final suggestion = _filteredSuggestions[index];
+                            return ListTile(
+                              dense: true,
+                              leading: const Icon(
+                                Icons.search_rounded,
+                                color: AppColors.primary,
+                                size: 18,
                               ),
-                            ),
-                            onTap: () {
-                              _searchController.text = suggestion;
-                              setState(() {
-                                _filteredSuggestions = [];
-                              });
-                              _performSearch(suggestion);
-                            },
-                          );
-                        },
+                              title: Text(
+                                suggestion,
+                                style: TextStyle(
+                                  color: primaryTextColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              onTap: () {
+                                _searchController.text = suggestion;
+                                setState(() {
+                                  _filteredSuggestions = [];
+                                });
+                                _performSearch(suggestion);
+                              },
+                            );
+                          },
+                        ),
                       ),
                     ),
 

@@ -136,40 +136,50 @@ class SettingsScreen extends StatelessWidget {
 
                     Container(
                       margin: const EdgeInsets.only(bottom: 12),
-                      decoration: BoxDecoration(
+                      child: Material(
                         color: surfaceColor,
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: borderColor),
-                      ),
-                      child: SwitchListTile.adaptive(
-                        value: isDark,
-                        activeThumbColor: AppColors.primary,
-                        onChanged: (val) {
-                          context.read<ThemeCubit>().setTheme(val);
-                        },
-                        secondary: Container(
-                          padding: const EdgeInsets.all(9),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Icon(
-                            isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
-                            color: AppColors.primary,
-                            size: 20,
-                          ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18),
+                          side: BorderSide(color: borderColor),
                         ),
-                        title: Text(
-                          'Dark Theme',
-                          style: TextStyle(
-                            color: primaryTextColor,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 15,
+                        clipBehavior: Clip.antiAlias,
+                        child: SwitchListTile.adaptive(
+                          value: isDark,
+                          activeThumbColor: AppColors.primary,
+                          onChanged: (val) {
+                            context.read<ThemeCubit>().setTheme(val);
+                          },
+                          secondary: Container(
+                            padding: const EdgeInsets.all(9),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              isDark
+                                  ? Icons.dark_mode_rounded
+                                  : Icons.light_mode_rounded,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
                           ),
-                        ),
-                        subtitle: Text(
-                          isDark ? 'Dark mode enabled' : 'Light mode enabled',
-                          style: TextStyle(color: secondaryTextColor, fontSize: 12),
+                          title: Text(
+                            'Dark Theme',
+                            style: TextStyle(
+                              color: primaryTextColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 15,
+                            ),
+                          ),
+                          subtitle: Text(
+                            isDark
+                                ? 'Dark mode enabled'
+                                : 'Light mode enabled',
+                            style: TextStyle(
+                              color: secondaryTextColor,
+                              fontSize: 12,
+                            ),
+                          ),
                         ),
                       ),
                     ),

@@ -190,21 +190,23 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                   ..._faqs.map((faq) {
                     return Container(
                       margin: const EdgeInsets.only(bottom: 10),
-                      decoration: BoxDecoration(
+                      child: Material(
                         color: surfaceColor,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: borderColor),
-                      ),
-                      child: ExpansionTile(
-                        shape: const Border(),
-                        title: Text(
-                          faq['question']!,
-                          style: TextStyle(
-                            color: primaryTextColor,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                          side: BorderSide(color: borderColor),
                         ),
+                        clipBehavior: Clip.antiAlias,
+                        child: ExpansionTile(
+                          shape: const Border(),
+                          title: Text(
+                            faq['question']!,
+                            style: TextStyle(
+                              color: primaryTextColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         children: [
                           Padding(
                             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
@@ -218,6 +220,7 @@ class _HelpSupportScreenState extends State<HelpSupportScreen> {
                             ),
                           ),
                         ],
+                        ),
                       ),
                     );
                   }),
