@@ -21,11 +21,6 @@ class CategoriesScreen extends StatelessWidget {
     final backgroundColor =
         isDark ? AppColors.background : Colors.white;
 
-    final surfaceColor =
-        isDark
-            ? AppColors.surface
-            : const Color(0xFFF7F7F7);
-
     final primaryTextColor =
         isDark
             ? AppColors.textPrimary
@@ -36,196 +31,252 @@ class CategoriesScreen extends StatelessWidget {
             ? AppColors.textSecondary
             : Colors.black54;
 
-    final borderColor =
-        isDark
-            ? AppColors.border
-            : const Color(0xFFE0E0E0);
-
     final categories = [
       {
         'name': 'Faith',
         'tag': 'faith',
         'icon': Icons.auto_awesome_rounded,
-        'description':
-            'Quotes about faith, belief, and hope',
-        'image':
-            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=600&auto=format&fit=crop',
+        'description': 'Quotes about faith, belief, and hope',
+        'gradient': [
+          const Color(0xFF2E1C0C),
+          const Color(0xFF8D5B14),
+          const Color(0xFF1F1206),
+        ],
+        'accent': const Color(0xFFFFD54F),
       },
       {
         'name': 'Life',
         'tag': 'life',
         'icon': Icons.wb_sunny_outlined,
-        'description':
-            'Quotes about life and the journey',
-        'image':
-            'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600&auto=format&fit=crop',
+        'description': 'Quotes about life and the journey',
+        'gradient': [
+          const Color(0xFF1A2A3A),
+          const Color(0xFF2E5B70),
+          const Color(0xFF101B24),
+        ],
+        'accent': const Color(0xFF81D4FA),
       },
       {
         'name': 'Wisdom',
         'tag': 'wisdom',
         'icon': Icons.lightbulb_outline_rounded,
-        'description':
-            'Words of wisdom and knowledge',
-        'image':
-            'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=600&auto=format&fit=crop',
+        'description': 'Words of wisdom and knowledge',
+        'gradient': [
+          const Color(0xFF1E1B4B),
+          const Color(0xFF3730A3),
+          const Color(0xFF0F172A),
+        ],
+        'accent': const Color(0xFFA5B4FC),
       },
       {
         'name': 'Success',
         'tag': 'success',
         'icon': Icons.trending_up_rounded,
-        'description':
-            'Motivation to achieve your goals',
-        'image':
-            'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop',
+        'description': 'Motivation to achieve your goals',
+        'gradient': [
+          const Color(0xFF064E3B),
+          const Color(0xFF047857),
+          const Color(0xFF022C22),
+        ],
+        'accent': const Color(0xFF6EE7B7),
       },
       {
         'name': 'Love',
         'tag': 'love',
         'icon': Icons.favorite_border_rounded,
-        'description':
-            'Quotes about love, affection, and care',
-        'image':
-            'https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=600&auto=format&fit=crop',
+        'description': 'Quotes about love, affection, and care',
+        'gradient': [
+          const Color(0xFF4C0519),
+          const Color(0xFF9F1239),
+          const Color(0xFF2B020D),
+        ],
+        'accent': const Color(0xFFFDA4AF),
       },
       {
         'name': 'Peace',
         'tag': 'peace',
         'icon': Icons.spa_outlined,
-        'description':
-            'Calm, serene, and peaceful thoughts',
-        'image':
-            'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=600&auto=format&fit=crop',
+        'description': 'Calm, serene, and peaceful thoughts',
+        'gradient': [
+          const Color(0xFF083344),
+          const Color(0xFF0E7490),
+          const Color(0xFF041F2B),
+        ],
+        'accent': const Color(0xFF67E8F9),
       },
       {
         'name': 'Courage',
         'tag': 'courage',
         'icon': Icons.shield_outlined,
-        'description':
-            'Bravery and boldness in adversity',
-        'image':
-            'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop',
+        'description': 'Bravery and boldness in adversity',
+        'gradient': [
+          const Color(0xFF450A0A),
+          const Color(0xFF991B1B),
+          const Color(0xFF260404),
+        ],
+        'accent': const Color(0xFFFCA5A5),
       },
       {
         'name': 'Hope',
         'tag': 'hope',
         'icon': Icons.wb_incandescent_outlined,
-        'description':
-            'Light for difficult times',
-        'image':
-            'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?q=80&w=600&auto=format&fit=crop',
+        'description': 'Light for difficult times',
+        'gradient': [
+          const Color(0xFF3B2404),
+          const Color(0xFFB45309),
+          const Color(0xFF1E1303),
+        ],
+        'accent': const Color(0xFFFDE047),
       },
       {
         'name': 'Patience',
         'tag': 'patience',
         'icon': Icons.hourglass_empty_rounded,
-        'description':
-            'Strength in waiting and endurance',
-        'image':
-            'https://images.unsplash.com/photo-1501139083538-0139583c060f?q=80&w=600&auto=format&fit=crop',
+        'description': 'Strength in waiting and endurance',
+        'gradient': [
+          const Color(0xFF292524),
+          const Color(0xFF57534E),
+          const Color(0xFF141211),
+        ],
+        'accent': const Color(0xFFE7E5E4),
       },
       {
         'name': 'Gratitude',
         'tag': 'gratitude',
         'icon': Icons.volunteer_activism_outlined,
-        'description':
-            'Thankfulness and appreciation',
-        'image':
-            'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=600&auto=format&fit=crop',
+        'description': 'Thankfulness and appreciation',
+        'gradient': [
+          const Color(0xFF3B1A45),
+          const Color(0xFF701A75),
+          const Color(0xFF200926),
+        ],
+        'accent': const Color(0xFFF0ABFC),
       },
       {
         'name': 'Strength',
         'tag': 'strength',
         'icon': Icons.fitness_center_rounded,
-        'description':
-            'Inner power and resilience',
-        'image':
-            'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop',
+        'description': 'Inner power and resilience',
+        'gradient': [
+          const Color(0xFF1E293B),
+          const Color(0xFF334155),
+          const Color(0xFF0F172A),
+        ],
+        'accent': const Color(0xFFCBD5E1),
       },
       {
         'name': 'Happiness',
         'tag': 'happiness',
         'icon': Icons.sentiment_very_satisfied_rounded,
-        'description':
-            'Joy, smiles, and positive vibes',
-        'image':
-            'https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?q=80&w=600&auto=format&fit=crop',
+        'description': 'Joy, smiles, and positive vibes',
+        'gradient': [
+          const Color(0xFF431407),
+          const Color(0xFF9A3412),
+          const Color(0xFF240A04),
+        ],
+        'accent': const Color(0xFFFDBA74),
       },
       {
         'name': 'Motivation',
         'tag': 'motivation',
         'icon': Icons.bolt_rounded,
-        'description':
-            'Inspiration to keep pushing forward',
-        'image':
-            'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=600&auto=format&fit=crop',
+        'description': 'Inspiration to keep pushing forward',
+        'gradient': [
+          const Color(0xFF3B0764),
+          const Color(0xFF6B21A8),
+          const Color(0xFF1E0338),
+        ],
+        'accent': const Color(0xFFD8B4FE),
       },
       {
         'name': 'Friendship',
         'tag': 'friendship',
         'icon': Icons.people_outline_rounded,
-        'description':
-            'Bonds of true companionship',
-        'image':
-            'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=600&auto=format&fit=crop',
+        'description': 'Bonds of true companionship',
+        'gradient': [
+          const Color(0xFF134E4A),
+          const Color(0xFF0F766E),
+          const Color(0xFF042F2E),
+        ],
+        'accent': const Color(0xFF5EEAD4),
       },
       {
         'name': 'Knowledge',
         'tag': 'knowledge',
         'icon': Icons.menu_book_rounded,
-        'description':
-            'Learning and intellectual growth',
-        'image':
-            'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?q=80&w=600&auto=format&fit=crop',
+        'description': 'Learning and intellectual growth',
+        'gradient': [
+          const Color(0xFF172554),
+          const Color(0xFF1E40AF),
+          const Color(0xFF0B132B),
+        ],
+        'accent': const Color(0xFF93C5FD),
       },
       {
         'name': 'Kindness',
         'tag': 'kindness',
         'icon': Icons.handshake_outlined,
-        'description':
-            'Compassion and gentle actions',
-        'image':
-            'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?q=80&w=600&auto=format&fit=crop',
+        'description': 'Compassion and gentle actions',
+        'gradient': [
+          const Color(0xFF2E1065),
+          const Color(0xFF5B21B6),
+          const Color(0xFF170638),
+        ],
+        'accent': const Color(0xFFC4B5FD),
       },
       {
         'name': 'Time',
         'tag': 'time',
         'icon': Icons.access_time_rounded,
-        'description':
-            'Valuing moments and seasons',
-        'image':
-            'https://images.unsplash.com/photo-1508962914676-134849a727f0?q=80&w=600&auto=format&fit=crop',
+        'description': 'Valuing moments and seasons',
+        'gradient': [
+          const Color(0xFF18181B),
+          const Color(0xFF3F3F46),
+          const Color(0xFF09090B),
+        ],
+        'accent': const Color(0xFFD4D4D8),
       },
       {
         'name': 'Forgiveness',
         'tag': 'forgiveness',
         'icon': Icons.self_improvement_rounded,
-        'description':
-            'Letting go and healing the heart',
-        'image':
-            'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=600&auto=format&fit=crop',
+        'description': 'Letting go and healing the heart',
+        'gradient': [
+          const Color(0xFF064E3B),
+          const Color(0xFF059669),
+          const Color(0xFF022C22),
+        ],
+        'accent': const Color(0xFFA7F3D0),
       },
       {
         'name': 'Truth',
         'tag': 'truth',
         'icon': Icons.verified_outlined,
-        'description':
-            'Honesty, integrity, and reality',
-        'image':
-            'https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=600&auto=format&fit=crop',
+        'description': 'Honesty, integrity, and reality',
+        'gradient': [
+          const Color(0xFF0C4A6E),
+          const Color(0xFF0369A1),
+          const Color(0xFF082F49),
+        ],
+        'accent': const Color(0xFF7DD3FC),
       },
       {
         'name': 'Future',
         'tag': 'future',
         'icon': Icons.explore_outlined,
-        'description':
-            'Looking ahead with hope',
-        'image':
-            'https://images.unsplash.com/photo-1509114397022-ed747cca3f65?q=80&w=600&auto=format&fit=crop',
+        'description': 'Looking ahead with hope',
+        'gradient': [
+          const Color(0xFF1E1B4B),
+          const Color(0xFF3730A3),
+          const Color(0xFF0D0B2E),
+        ],
+        'accent': const Color(0xFFA5B4FC),
       },
     ];
 
     final screenWidth = MediaQuery.of(context).size.width;
-    final crossAxisCount = screenWidth >= 900 ? 4 : (screenWidth >= 600 ? 3 : 2);
+    final crossAxisCount =
+        screenWidth >= 900 ? 4 : (screenWidth >= 600 ? 3 : 2);
     final childAspectRatio = screenWidth < 360 ? 1.05 : 1.15;
 
     return Scaffold(
@@ -274,6 +325,7 @@ class CategoriesScreen extends StatelessWidget {
                   const SizedBox(height: 22),
                   Expanded(
                     child: GridView.builder(
+                      physics: const BouncingScrollPhysics(),
                       itemCount: categories.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: crossAxisCount,
@@ -288,9 +340,9 @@ class CategoriesScreen extends StatelessWidget {
                           name: category['name'] as String,
                           icon: category['icon'] as IconData,
                           description: category['description'] as String,
-                          imageUrl: category['image'] as String,
-                          surfaceColor: surfaceColor,
-                          borderColor: borderColor,
+                          gradientColors:
+                              category['gradient'] as List<Color>,
+                          accentColor: category['accent'] as Color,
                           onTap: () {
                             Navigator.push(
                               context,
@@ -317,135 +369,150 @@ class CategoriesScreen extends StatelessWidget {
 }
 
 // =====================================================
-// CATEGORY CARD
+// CATEGORY CARD (100% OFFLINE GRADIENT & GLASSMORPHISM)
 // =====================================================
 
 class _CategoryCard extends StatelessWidget {
   final String name;
   final IconData icon;
   final String description;
-  final String imageUrl;
-  final Color surfaceColor;
-  final Color borderColor;
+  final List<Color> gradientColors;
+  final Color accentColor;
   final VoidCallback onTap;
 
   const _CategoryCard({
     required this.name,
     required this.icon,
     required this.description,
-    required this.imageUrl,
-    required this.surfaceColor,
-    required this.borderColor,
+    required this.gradientColors,
+    required this.accentColor,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: ClipRRect(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
         borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: Container(
-                color: surfaceColor,
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: surfaceColor,
+        child: Ink(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: gradientColors,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: gradientColors.first.withValues(alpha: 0.35),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            border: Border.all(
+              color: Colors.white.withValues(alpha: 0.15),
+              width: 1,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              children: [
+                // 1. Ambient Radial Highlight (Top Right)
+                Positioned(
+                  top: -20,
+                  right: -20,
+                  child: Container(
+                    width: 90,
+                    height: 90,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          accentColor.withValues(alpha: 0.25),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-            Positioned.fill(
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: borderColor,
+
+                // 2. Large Translucent Background Watermark Icon (Bottom Right)
+                Positioned(
+                  right: -10,
+                  bottom: -10,
+                  child: Opacity(
+                    opacity: 0.12,
+                    child: Icon(
+                      icon,
+                      size: 90,
+                      color: Colors.white,
+                    ),
                   ),
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withValues(
-                        alpha: 0.15,
+                ),
+
+                // 3. Card Content
+                Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Glassmorphic Icon Badge
+                      Container(
+                        height: 38,
+                        width: 38,
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.12),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.2),
+                          ),
+                        ),
+                        child: Icon(
+                          icon,
+                          color: accentColor,
+                          size: 20,
+                        ),
                       ),
-                      Colors.black.withValues(
-                        alpha: 0.75,
+
+                      // Text Info
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            description,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.82),
+                              fontSize: 11,
+                              height: 1.25,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      height: 38,
-                      width: 38,
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(
-                          alpha: 0.35,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: Colors.white.withValues(
-                            alpha: 0.2,
-                          ),
-                        ),
-                      ),
-                      child: Icon(
-                        icon,
-                        color: AppColors.primary,
-                        size: 20,
-                      ),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          name,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(
-                                color: Colors.black54,
-                                offset: Offset(0, 1),
-                                blurRadius: 3,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          description,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: Colors.white.withValues(
-                              alpha: 0.85,
-                            ),
-                            fontSize: 11,
-                            height: 1.25,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
