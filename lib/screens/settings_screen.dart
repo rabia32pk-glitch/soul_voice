@@ -1,72 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:soul_voice/core/theme/constants/app_colors.dart';
 import 'package:soul_voice/core/theme/theme_cubit.dart';
 import 'package:soul_voice/screens/about_soul_voice_screen.dart';
 import 'package:soul_voice/screens/heplsupportscreen.dart';
-import 'package:soul_voice/screens/notifications_screen.dart';
 import 'package:soul_voice/screens/privacy_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
-
-  Future<void> _openStoreRating(BuildContext context) async {
-    const packageName = 'com.example.soul_voice';
-
-    final Uri appStoreUrl = Uri.parse('market://details?id=$packageName');
-    final Uri webStoreUrl = Uri.parse(
-      'https://play.google.com/store/apps/details?id=$packageName',
-    );
-
-    try {
-      if (await canLaunchUrl(appStoreUrl)) {
-        await launchUrl(appStoreUrl, mode: LaunchMode.externalApplication);
-      } else if (await canLaunchUrl(webStoreUrl)) {
-        await launchUrl(webStoreUrl, mode: LaunchMode.externalApplication);
-      } else {
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Could not launch Play Store')),
-        );
-      }
-    } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Could not open store link: $e')),
-      );
-    }
-  }
-
-  Future<void> _shareApp(BuildContext context) async {
-    const appLink =
-        'https://play.google.com/store/apps/details?id=com.example.soul_voice';
-
-    try {
-      final result = await SharePlus.instance.share(
-        ShareParams(
-          text:
-              'Check out Soul Voice for daily inspirational quotes and inner peace!\nDownload now: $appLink',
-          subject: 'Soul Voice App',
-        ),
-      );
-
-      if (result.status == ShareResultStatus.unavailable && context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Sharing is not supported on this device.'),
-          ),
-        );
-      }
-    } catch (e) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Sharing is not available on this device.')),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -235,35 +177,9 @@ class SettingsScreen extends StatelessWidget {
                     const SizedBox(height: 18),
 
                     // ==========================================
-                    // SECTION 2: PREFERENCES
+                    // SECTION 2: SUPPORT
                     // ==========================================
-                    _SectionHeader(title: 'Preferences', color: primaryTextColor),
-                    const SizedBox(height: 10),
-
-                    _SettingsOptionTile(
-                      icon: Icons.notifications_active_outlined,
-                      title: 'Notification Settings',
-                      subtitle: 'Daily quotes and reminder alerts',
-                      surfaceColor: surfaceColor,
-                      borderColor: borderColor,
-                      titleColor: primaryTextColor,
-                      subtitleColor: secondaryTextColor,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const NotificationsScreen(),
-                          ),
-                        );
-                      },
-                    ),
-
-                    const SizedBox(height: 18),
-
-                    // ==========================================
-                    // SECTION 3: SUPPORT & SHARING
-                    // ==========================================
-                    _SectionHeader(title: 'Support & Community', color: primaryTextColor),
+                    _SectionHeader(title: 'Support', color: primaryTextColor),
                     const SizedBox(height: 10),
 
                     _SettingsOptionTile(
@@ -284,32 +200,10 @@ class SettingsScreen extends StatelessWidget {
                       },
                     ),
 
-                    _SettingsOptionTile(
-                      icon: Icons.share_rounded,
-                      title: 'Share Soul Voice',
-                      subtitle: 'Share inspirational light with friends',
-                      surfaceColor: surfaceColor,
-                      borderColor: borderColor,
-                      titleColor: primaryTextColor,
-                      subtitleColor: secondaryTextColor,
-                      onTap: () => _shareApp(context),
-                    ),
-
-                    _SettingsOptionTile(
-                      icon: Icons.star_border_rounded,
-                      title: 'Rate Us',
-                      subtitle: 'Rate Soul Voice on Google Play',
-                      surfaceColor: surfaceColor,
-                      borderColor: borderColor,
-                      titleColor: primaryTextColor,
-                      subtitleColor: secondaryTextColor,
-                      onTap: () => _openStoreRating(context),
-                    ),
-
                     const SizedBox(height: 18),
 
                     // ==========================================
-                    // SECTION 4: ABOUT & LEGAL
+                    // SECTION 3: ABOUT & LEGAL
                     // ==========================================
                     _SectionHeader(title: 'About & Legal', color: primaryTextColor),
                     const SizedBox(height: 10),
