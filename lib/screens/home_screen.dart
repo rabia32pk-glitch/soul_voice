@@ -900,9 +900,7 @@ class _QuoteActions extends StatelessWidget {
 
     return BlocBuilder<FavoriteBloc, FavoriteState>(
       builder: (context, favState) {
-        final bool isFavorite = favState.favoriteQuotes.any(
-          (item) => item['quote']?.toString() == quote,
-        );
+        final bool isFavorite = favState.isFavoriteText(quote);
 
         return Row(
           mainAxisSize: MainAxisSize.min,

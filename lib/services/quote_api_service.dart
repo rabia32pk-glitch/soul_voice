@@ -86,7 +86,7 @@ class QuoteApiService {
             ),
           )
           .timeout(
-            const Duration(seconds: 7),
+            const Duration(milliseconds: 2500),
           );
 
       if (response.statusCode == 200) {
@@ -119,7 +119,7 @@ class QuoteApiService {
             ),
           )
           .timeout(
-            const Duration(seconds: 20),
+            const Duration(milliseconds: 3000),
           );
 
       if (response.statusCode == 200) {
@@ -467,8 +467,7 @@ class QuoteApiService {
     int limit = 20,
     int page = 1,
   }) async {
-    final skip =
-        (page - 1) * limit;
+    final skip = (page - 1) * limit;
 
     try {
       final response = await http
@@ -478,28 +477,39 @@ class QuoteApiService {
             ),
           )
           .timeout(
-            const Duration(seconds: 8),
+            const Duration(seconds: 4),
           );
 
       if (response.statusCode == 200) {
-        final data =
-            jsonDecode(response.body);
+        final data = jsonDecode(response.body);
 
-        final List<dynamic> quotesJson =
-            data['quotes'] ?? [];
+        final List<dynamic> quotesJson = data['quotes'] ?? [];
 
-        final quotes = quotesJson
-            .map(
-              (json) =>
-                  QuoteModel.fromJson(json),
-            )
-            .toList();
+        if (quotesJson.isNotEmpty) {
+          final quotes = quotesJson
+              .map(
+                (json) => QuoteModel.fromJson(json),
+              )
+              .toList();
 
-        return _removeDuplicates(
-          quotes,
-        );
+          final cleaned = _removeDuplicates(quotes);
+          if (cleaned.isNotEmpty) {
+            return cleaned;
+          }
+        }
       }
     } catch (_) {}
+
+    // ============================================================
+    // OFFLINE FALLBACK (600+ CURATED QUOTES)
+    // ============================================================
+    final allFallback = _getAllFallbackQuotes();
+    if (allFallback.isEmpty) return [];
+
+    if (skip < allFallback.length) {
+      final end = min(skip + limit, allFallback.length);
+      return allFallback.sublist(skip, end);
+    }
 
     return [];
   }
@@ -527,7 +537,7 @@ class QuoteApiService {
             Uri.parse(url),
           )
           .timeout(
-            const Duration(seconds: 15),
+            const Duration(milliseconds: 2500),
           );
 
       if (response.statusCode == 200) {

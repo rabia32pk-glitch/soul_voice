@@ -923,9 +923,7 @@ class _CategoryQuotesScreenState
               'author': quote.author,
             };
 
-            final isFav = favState.favoriteQuotes.any(
-              (q) => q['quote'] == quote.content,
-            );
+            final isFav = favState.isFavoriteText(quote.content);
 
             // =========================================
             // QUOTE CARD

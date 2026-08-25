@@ -1,75 +1,176 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:soul_voice/services/favorite_storage_service.dart';
 
 import 'favorite_event.dart';
 import 'favorite_state.dart';
 
 class FavoriteBloc extends Bloc<FavoriteEvent, FavoriteState> {
-  FavoriteBloc() : super(const FavoriteState()) {
-    on<ToggleFavoriteEvent>(_toggleFavorite);
-    _loadFavorites();
+  final FavoriteStorageService _storageService;
+
+  FavoriteBloc({FavoriteStorageService? storageService})
+      : _storageService = storageService ?? FavoriteStorageService(),
+        super(const FavoriteState(isLoading: true)) {
+    on<LoadFavoritesEvent>(_onLoadFavorites);
+    on<ToggleFavoriteEvent>(_onToggleFavorite);
+    on<AddFavoriteEvent>(_onAddFavorite);
+    on<RemoveFavoriteEvent>(_onRemoveFavorite);
+    on<ClearFavoritesEvent>(_onClearFavorites);
+
+    // Initial load from local storage
+    add(const LoadFavoritesEvent());
   }
 
-  void _toggleFavorite(
+  // ============================================================
+  // LOAD FAVORITES
+  // ============================================================
+  Future<void> _onLoadFavorites(
+    LoadFavoritesEvent event,
+    Emitter<FavoriteState> emit,
+  ) async {
+    final favorites = await _storageService.loadFavorites();
+    emit(
+      state.copyWith(
+        favoriteQuotes: favorites,
+        isLoading: false,
+      ),
+    );
+  }
+
+  // ============================================================
+  // TOGGLE FAVORITE
+  // ============================================================
+  Future<void> _onToggleFavorite(
     ToggleFavoriteEvent event,
     Emitter<FavoriteState> emit,
-  ) {
-    // Current favorites ki new list banao
+  ) async {
+    final targetQuote = event.quote;
+    if (targetQuote == null) return;
+
     final updatedFavorites = List<Map<String, dynamic>>.from(
       state.favoriteQuotes,
     );
 
-    // Quote ko uske text se identify karo
     final existingIndex = updatedFavorites.indexWhere(
-      (item) =>
-          item['quote']?.toString() ==
-          event.quote['quote']?.toString(),
+      (item) => FavoriteStorageService.isSameQuote(item, targetQuote),
     );
 
     if (existingIndex != -1) {
-      // ==============================================
-      // ALREADY FAVORITE
       // Remove from favorites
-      // ==============================================
-
       updatedFavorites.removeAt(existingIndex);
     } else {
-      // ==============================================
-      // NOT FAVORITE
-      // Add to favorites
-      // ==============================================
+      // Add to favorites (insert at the beginning so newest favorite is at top)
+      Map<String, dynamic> quoteMap;
+      if (targetQuote is Map) {
+        quoteMap = targetQuote.map((k, v) => MapEntry(k.toString(), v));
+      } else if (targetQuote is String) {
+        quoteMap = {'quote': targetQuote, 'author': 'Soul Voice'};
+      } else {
+        quoteMap = {
+          'quote': targetQuote.content ?? targetQuote.toString(),
+          'author': targetQuote.author ?? 'Soul Voice',
+        };
+      }
 
-      updatedFavorites.add(
-        Map<String, dynamic>.from(event.quote),
-      );
-      _saveFavorites();
+      final normalized = FavoriteStorageService.normalizeQuote(quoteMap);
+      updatedFavorites.insert(0, normalized);
     }
-
-    // ==============================================
-    // NEW STATE
-    // ==============================================
 
     emit(
       state.copyWith(
         favoriteQuotes: updatedFavorites,
       ),
     );
-    _saveFavorites();
+
+    await _storageService.saveFavorites(updatedFavorites);
   }
-  Future<void> _loadFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = prefs.getString('favoriteQuotes');
-    if (jsonString != null) {
-      final List<dynamic> list = jsonDecode(jsonString);
-      final favorites = list.map((e) => Map<String, dynamic>.from(e)).toList();
-      emit(state.copyWith(favoriteQuotes: favorites));
+
+  // ============================================================
+  // ADD FAVORITE
+  // ============================================================
+  Future<void> _onAddFavorite(
+    AddFavoriteEvent event,
+    Emitter<FavoriteState> emit,
+  ) async {
+    final targetQuote = event.quote;
+    if (targetQuote == null) return;
+
+    final updatedFavorites = List<Map<String, dynamic>>.from(
+      state.favoriteQuotes,
+    );
+
+    final exists = updatedFavorites.any(
+      (item) => FavoriteStorageService.isSameQuote(item, targetQuote),
+    );
+
+    if (!exists) {
+      Map<String, dynamic> quoteMap;
+      if (targetQuote is Map) {
+        quoteMap = targetQuote.map((k, v) => MapEntry(k.toString(), v));
+      } else if (targetQuote is String) {
+        quoteMap = {'quote': targetQuote, 'author': 'Soul Voice'};
+      } else {
+        quoteMap = {
+          'quote': targetQuote.content ?? targetQuote.toString(),
+          'author': targetQuote.author ?? 'Soul Voice',
+        };
+      }
+
+      final normalized = FavoriteStorageService.normalizeQuote(quoteMap);
+      updatedFavorites.insert(0, normalized);
+
+      emit(
+        state.copyWith(
+          favoriteQuotes: updatedFavorites,
+        ),
+      );
+
+      await _storageService.saveFavorites(updatedFavorites);
     }
   }
 
-  Future<void> _saveFavorites() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jsonString = jsonEncode(state.favoriteQuotes);
-    await prefs.setString('favoriteQuotes', jsonString);
+  // ============================================================
+  // REMOVE FAVORITE
+  // ============================================================
+  Future<void> _onRemoveFavorite(
+    RemoveFavoriteEvent event,
+    Emitter<FavoriteState> emit,
+  ) async {
+    final targetQuote = event.quote;
+    if (targetQuote == null) return;
+
+    final updatedFavorites = List<Map<String, dynamic>>.from(
+      state.favoriteQuotes,
+    );
+
+    final initialLength = updatedFavorites.length;
+    updatedFavorites.removeWhere(
+      (item) => FavoriteStorageService.isSameQuote(item, targetQuote),
+    );
+
+    if (updatedFavorites.length != initialLength) {
+      emit(
+        state.copyWith(
+          favoriteQuotes: updatedFavorites,
+        ),
+      );
+
+      await _storageService.saveFavorites(updatedFavorites);
+    }
   }
-}
+
+  // ============================================================
+  // CLEAR FAVORITES
+  // ============================================================
+  Future<void> _onClearFavorites(
+    ClearFavoritesEvent event,
+    Emitter<FavoriteState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        favoriteQuotes: const [],
+      ),
+    );
+
+    await _storageService.clearFavorites();
+  }
+}

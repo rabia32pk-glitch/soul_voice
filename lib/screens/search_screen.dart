@@ -568,9 +568,7 @@ class _QuoteCard extends StatelessWidget {
           // ================= ACTION BUTTONS =================
           BlocBuilder<FavoriteBloc, FavoriteState>(
             builder: (context, favState) {
-              final isFav = favState.favoriteQuotes.any(
-                (q) => _cleanText(q['quote'] ?? '') == cleanQuoteText,
-              );
+              final isFav = favState.isFavoriteText(cleanQuoteText);
 
               return Row(
                 mainAxisAlignment: MainAxisAlignment.end,
