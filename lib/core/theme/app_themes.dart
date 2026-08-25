@@ -69,22 +69,22 @@ class AppTheme {
   static ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
 
-    scaffoldBackgroundColor: Colors.black,
+    scaffoldBackgroundColor: AppColors.background,
 
     colorScheme: const ColorScheme.dark(
       primary: AppColors.primary,
       secondary: AppColors.success,
-      surface: Color(0xFF121212),
+      surface: AppColors.surface,
     ),
 
     appBarTheme: const AppBarTheme(
-      backgroundColor: Colors.black,
-      foregroundColor: Colors.white,
+      backgroundColor: AppColors.background,
+      foregroundColor: AppColors.textPrimary,
       elevation: 0,
     ),
 
-    cardTheme: CardThemeData(
-      color: const Color(0xFF121212),
+    cardTheme: const CardThemeData(
+      color: AppColors.surface,
       elevation: 0,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(
@@ -94,9 +94,9 @@ class AppTheme {
 
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: const Color(0xFF121212),
+      fillColor: AppColors.surface,
 
-      hintStyle: const TextStyle(color: Colors.white70),
+      hintStyle: const TextStyle(color: AppColors.textSecondary),
 
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
