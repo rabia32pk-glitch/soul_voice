@@ -221,7 +221,6 @@ class _SearchScreenState extends State<SearchScreen> {
                       margin: const EdgeInsets.only(top: 6),
                       child: Material(
                         color: surfaceColor,
-                        borderRadius: BorderRadius.circular(16),
                         elevation: 4,
                         shadowColor: Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
                         shape: RoundedRectangleBorder(
