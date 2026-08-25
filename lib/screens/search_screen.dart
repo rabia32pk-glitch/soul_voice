@@ -25,71 +25,56 @@ class _SearchScreenState extends State<SearchScreen> {
   bool _isLoading = false;
   bool _hasSearched = false;
 
-  // ================= SUGGESTIONS LIST =================
-  final List<String> allSuggestions = [
-    // A
-    'Apple', 'Amazing', 'Adventure', 'Achievement', 'Attitude', 'Angel', 'Art', 'Alone',
-    // B
-    'Beauty', 'Believe', 'Bravery', 'Business', 'Balance', 'Blessing', 'Brother', 'Better',
-    // C
-    'Camera', 'Car', 'Coffee', 'Computer', 'Confidence', 'Courage', 'Change', 'Career',
-    // D
-    'Dream', 'Dreams', 'Daily', 'Danger', 'Dance', 'Decision', 'Desire', 'Destiny',
-    // E
-    'Education', 'Energy', 'Emotion', 'Enjoy', 'Effort', 'Experience', 'Equality', 'Excitement',
-    // F
-    'Faith', 'Family', 'Friendship', 'Freedom', 'Future', 'Focus', 'Fear', 'Forgiveness',
-    // G
-    'Goal', 'Goals', 'Good', 'Growth', 'Gratitude', 'Greatness', 'Gift', 'Guidance',
-    // H
-    'Hope', 'Happiness', 'Health', 'Heart', 'Honesty', 'Home', 'Help', 'Hardwork',
-    // I
-    'Inspiration', 'Important', 'Ideas', 'Intelligence', 'Improvement', 'Independence', 'Innovation', 'Integrity',
-    // J
-    'Joy', 'Journey', 'Justice', 'Job', 'Joke', 'Judgement', 'Jump', 'Jubilation',
-    // K
-    'Knowledge', 'Kindness', 'King', 'Keep', 'Key', 'Kids', 'Knowledgeable', 'Karma',
-    // L
-    'Love', 'Life', 'Luck', 'Leadership', 'Learning', 'Laugh', 'Light', 'Loyalty',
-    // M
-    'Mobile', 'Makeup', 'Medicine', 'Mango', 'Manager', 'Motivation', 'Money', 'Mind',
-    // N
-    'Nature', 'Never', 'New', 'Night', 'Name', 'Nation', 'Nice', 'Nothing',
-    // O
-    'Opportunity', 'Optimism', 'Open', 'Original', 'Objective', 'Ocean', 'Overcome', 'Outstanding',
-    // P
-    'Peace', 'Power', 'Passion', 'Patience', 'Positive', 'Purpose', 'Progress', 'Promise',
-    // Q
-    'Quality', 'Quiet', 'Quick', 'Question', 'Queen', 'Quest', 'Quote', 'Quotable',
-    // R
-    'Respect', 'Relationship', 'Success', 'Rise', 'Reality', 'Reason', 'Resilience', 'Reward',
-    // S
-    'Success', 'Smile', 'Strength', 'Study', 'Support', 'Self', 'Soul',
-    // T
-    'Trust', 'Time', 'Truth', 'Talent', 'Team', 'Together', 'Thought', 'Tomorrow',
-    // U
-    'Unity', 'Understanding', 'Unique', 'Useful', 'Ultimate', 'Universe', 'Upgrade', 'Urgent',
-    // V
-    'Victory', 'Value', 'Vision', 'Voice', 'Vitality', 'Virtue', 'Volunteer',
-    // W
-    'Wisdom', 'Work', 'World', 'Wonderful', 'Wealth', 'Welcome', 'Winning', 'Wish',
-    // X
-    'Xenon', 'Xylophone', 'Xenial', 'Xeric', 'Xylem', 'Xenophobia', 'Xerophyte', 'Xylograph',
-    // Y
-    'Youth', 'Young', 'Yes', 'Yesterday', 'Year', 'Yourself', 'Yoga', 'Yard',
-    // Z
-    'Zeal', 'Zero', 'Zone', 'Zest', 'Zen', 'Zoom', 'Zodiac', 'Zigzag',
+  // ================= POPULAR INSPIRATIONAL SUGGESTIONS =================
+  final List<String> allSuggestions = const [
+    'Faith',
+    'Wisdom',
+    'Peace',
+    'Patience',
+    'Love',
+    'Life',
+    'Success',
+    'Courage',
+    'Hope',
+    'Gratitude',
+    'Strength',
+    'Happiness',
+    'Motivation',
+    'Friendship',
+    'Knowledge',
+    'Kindness',
+    'Time',
+    'Forgiveness',
+    'Truth',
+    'Future',
+    'Prayer',
+    'Sabr',
+    'Heart',
+    'Smile',
+    'Goals',
+    'Dreams',
+    'Mind',
+    'Allah',
+    'Dua',
+    'Effort',
+    'Joy',
+    'Trust',
+    'Honesty',
+    'Hardwork',
+    'Destiny',
+    'Reflection',
   ];
 
-  List<String> _suggestions = [];
+  List<String> _filteredSuggestions = [];
 
   void _showSuggestions(String query) {
+    final clean = query.trim().toLowerCase();
     setState(() {
-      if (query.trim().isEmpty) {
-        _suggestions = [];
+      if (clean.isEmpty) {
+        _filteredSuggestions = [];
       } else {
-        _suggestions = allSuggestions
-            .where((word) => word.toLowerCase().startsWith(query.toLowerCase()))
+        _filteredSuggestions = allSuggestions
+            .where((word) => word.toLowerCase().contains(clean))
             .toList();
       }
     });
@@ -111,16 +96,18 @@ class _SearchScreenState extends State<SearchScreen> {
     setState(() {
       _isLoading = true;
       _hasSearched = true;
-      _suggestions = [];
+      _filteredSuggestions = [];
     });
 
     try {
-      final results = await _apiService.getQuotesByCategory(trimmedQuery);
+      final results = await _apiService.searchQuotes(trimmedQuery);
+      if (!mounted) return;
       setState(() {
         _searchResults = results;
         _isLoading = false;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _searchResults = [];
         _isLoading = false;
@@ -137,13 +124,11 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final backgroundColor = isDark ? AppColors.background : Colors.white;
-    final surfaceColor = isDark ? AppColors.surface : const Color(0xFFF7F7F7);
-    final primaryTextColor = isDark ? AppColors.textPrimary : Colors.black87;
-    final secondaryTextColor = isDark
-        ? AppColors.textSecondary
-        : Colors.black54;
-    final borderColor = isDark ? AppColors.border : const Color(0xFFE0E0E0);
+    final backgroundColor = isDark ? AppColors.background : const Color(0xFFFBF8F2);
+    final surfaceColor = isDark ? AppColors.surface : Colors.white;
+    final primaryTextColor = isDark ? AppColors.textPrimary : const Color(0xFF2C241D);
+    final secondaryTextColor = isDark ? AppColors.textSecondary : const Color(0xFF6B5E52);
+    final borderColor = isDark ? AppColors.border : const Color(0xFFE8DFD1);
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -189,7 +174,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: surfaceColor,
-                      hintText: 'Search by category or keyword...',
+                      hintText: 'Search by keyword, topic or author...',
                       hintStyle: TextStyle(color: secondaryTextColor, fontSize: 14),
                       contentPadding: const EdgeInsets.symmetric(
                         vertical: 14,
@@ -209,7 +194,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               onPressed: () {
                                 _searchController.clear();
                                 setState(() {
-                                  _suggestions = [];
+                                  _filteredSuggestions = [];
                                   _searchResults = [];
                                   _hasSearched = false;
                                   _isLoading = false;
@@ -223,44 +208,57 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide(color: borderColor, width: 1.5),
+                        borderSide: BorderSide(color: AppColors.primary, width: 1.5),
                       ),
                     ),
                   ),
 
                   // ================= SUGGESTIONS LIST =================
-                  if (_suggestions.isNotEmpty)
+                  if (_filteredSuggestions.isNotEmpty)
                     Container(
                       width: double.infinity,
                       constraints: const BoxConstraints(maxHeight: 220),
                       margin: const EdgeInsets.only(top: 6),
                       decoration: BoxDecoration(
                         color: surfaceColor,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: borderColor),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      child: ListView.builder(
+                      child: ListView.separated(
                         shrinkWrap: true,
-                        itemCount: _suggestions.length,
+                        itemCount: _filteredSuggestions.length,
+                        separatorBuilder: (_, _) => Divider(
+                          height: 1,
+                          color: borderColor.withValues(alpha: 0.5),
+                        ),
                         itemBuilder: (context, index) {
-                          final suggestion = _suggestions[index];
+                          final suggestion = _filteredSuggestions[index];
                           return ListTile(
                             dense: true,
-                            leading: Icon(
+                            leading: const Icon(
                               Icons.search_rounded,
-                              color: secondaryTextColor,
+                              color: AppColors.primary,
+                              size: 18,
                             ),
                             title: Text(
                               suggestion,
                               style: TextStyle(
                                 color: primaryTextColor,
                                 fontSize: 14,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             onTap: () {
                               _searchController.text = suggestion;
                               setState(() {
-                                _suggestions = [];
+                                _filteredSuggestions = [];
                               });
                               _performSearch(suggestion);
                             },
@@ -269,7 +267,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     ),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
 
                   // ================= RESULTS BODY =================
                   Expanded(
@@ -280,9 +278,19 @@ class _SearchScreenState extends State<SearchScreen> {
                             ),
                           )
                         : !_hasSearched
-                        ? _buildInitialState(primaryTextColor, secondaryTextColor)
+                        ? _buildInitialState(
+                            primaryTextColor,
+                            secondaryTextColor,
+                            surfaceColor,
+                            borderColor,
+                          )
                         : _searchResults.isEmpty
-                        ? _buildEmptyState(primaryTextColor, secondaryTextColor)
+                        ? _buildEmptyState(
+                            primaryTextColor,
+                            secondaryTextColor,
+                            surfaceColor,
+                            borderColor,
+                          )
                         : ListView.separated(
                             physics: const BouncingScrollPhysics(),
                             itemCount: _searchResults.length,
@@ -309,21 +317,49 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  // ================= INITIAL STATE =================
-  Widget _buildInitialState(Color primaryTextColor, Color secondaryTextColor) {
+  // ================= INITIAL STATE WITH QUICK TAGS =================
+  Widget _buildInitialState(
+    Color primaryTextColor,
+    Color secondaryTextColor,
+    Color surfaceColor,
+    Color borderColor,
+  ) {
+    const popularTags = [
+      'Faith',
+      'Peace',
+      'Wisdom',
+      'Success',
+      'Patience',
+      'Love',
+      'Hope',
+      'Gratitude',
+      'Strength',
+      'Happiness',
+      'Kindness',
+      'Future',
+    ];
+
     return Center(
       child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.manage_search_rounded,
-              size: 70,
-              color: secondaryTextColor,
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withValues(alpha: 0.12),
+              ),
+              child: const Icon(
+                Icons.manage_search_rounded,
+                size: 54,
+                color: AppColors.primary,
+              ),
             ),
             const SizedBox(height: 16),
             Text(
-              'Find Your Motivation',
+              'Search Any Topic or Keyword',
               style: TextStyle(
                 color: primaryTextColor,
                 fontSize: 18,
@@ -332,9 +368,45 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Type keywords like "faith", "life", or "wisdom" to search quotes.',
+              'Type any word, category, or author name to find quotes.',
               textAlign: TextAlign.center,
               style: TextStyle(color: secondaryTextColor, fontSize: 13),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Popular Topics',
+              style: TextStyle(
+                color: primaryTextColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: popularTags.map((tag) {
+                return ActionChip(
+                  label: Text(
+                    tag,
+                    style: TextStyle(
+                      color: primaryTextColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  backgroundColor: surfaceColor,
+                  side: BorderSide(color: borderColor),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  onPressed: () {
+                    _searchController.text = tag;
+                    _performSearch(tag);
+                  },
+                );
+              }).toList(),
             ),
           ],
         ),
@@ -343,15 +415,23 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   // ================= EMPTY STATE =================
-  Widget _buildEmptyState(Color primaryTextColor, Color secondaryTextColor) {
+  Widget _buildEmptyState(
+    Color primaryTextColor,
+    Color secondaryTextColor,
+    Color surfaceColor,
+    Color borderColor,
+  ) {
+    const suggestedTags = ['Faith', 'Life', 'Wisdom', 'Peace', 'Hope', 'Patience'];
+
     return Center(
       child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Icon(
               Icons.search_off_rounded,
-              size: 60,
+              size: 58,
               color: AppColors.primary,
             ),
             const SizedBox(height: 14),
@@ -365,9 +445,44 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              'We couldn\'t find anything for "${_searchController.text}".',
+              'We couldn\'t find any quotes matching "${_searchController.text}".',
               textAlign: TextAlign.center,
               style: TextStyle(color: secondaryTextColor, fontSize: 13),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Try searching for:',
+              style: TextStyle(
+                color: primaryTextColor,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              alignment: WrapAlignment.center,
+              children: suggestedTags.map((tag) {
+                return ActionChip(
+                  label: Text(
+                    tag,
+                    style: TextStyle(
+                      color: primaryTextColor,
+                      fontSize: 12,
+                    ),
+                  ),
+                  backgroundColor: surfaceColor,
+                  side: BorderSide(color: borderColor),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  onPressed: () {
+                    _searchController.text = tag;
+                    _performSearch(tag);
+                  },
+                );
+              }).toList(),
             ),
           ],
         ),
@@ -394,7 +509,6 @@ class _QuoteCard extends StatelessWidget {
     required this.secondaryTextColor,
   });
 
-  // Function to remove all quotation marks
   String _cleanText(String text) {
     return text.replaceAll(RegExp(r'["“”‘’`\\]'), '').trim();
   }
@@ -439,7 +553,7 @@ class _QuoteCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '- $author',
+                      '— $author',
                       style: TextStyle(
                         color: secondaryTextColor,
                         fontSize: 12,

@@ -148,6 +148,318 @@ class QuoteApiService {
   }
 
   // ============================================================
+  // COMPREHENSIVE SEARCH (ONLINE API + 600+ OFFLINE QUOTES)
+  // ============================================================
+
+  Future<List<QuoteModel>> searchQuotes(String query) async {
+    final cleanQuery = query.trim().toLowerCase();
+    if (cleanQuery.isEmpty) return [];
+
+    final List<QuoteModel> results = [];
+    final Set<String> seen = {};
+
+    // 1. Live Online API Search
+    try {
+      final url =
+          '$_baseUrl/search?q=${Uri.encodeQueryComponent(cleanQuery)}&limit=50';
+      final response = await http
+          .get(Uri.parse(url))
+          .timeout(const Duration(seconds: 4));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List<dynamic> quotesJson = data['quotes'] ?? [];
+        for (final json in quotesJson) {
+          final model = _cleanQuoteModel(QuoteModel.fromJson(json));
+          if (model.content.isNotEmpty &&
+              seen.add(model.content.toLowerCase())) {
+            results.add(model);
+          }
+        }
+      }
+    } catch (_) {}
+
+    // 2. Intelligent Topic / Keyword Mapping
+    final Map<String, List<String>> keywordMap = {
+      'faith': [
+        'islam',
+        'allah',
+        'dua',
+        'prayer',
+        'god',
+        'believe',
+        'belief',
+        'worship',
+        'spirit',
+        'spiritual',
+        'soul',
+        'holy',
+        'religion',
+        'quran',
+        'iman',
+        'deen'
+      ],
+      'peace': [
+        'calm',
+        'quiet',
+        'serene',
+        'tranquil',
+        'relax',
+        'silence',
+        'harmony',
+        'stillness',
+        'rest',
+        'soothe'
+      ],
+      'wisdom': [
+        'wise',
+        'knowledge',
+        'learn',
+        'lesson',
+        'mind',
+        'intellect',
+        'insight',
+        'smart',
+        'thought',
+        'think',
+        'advice'
+      ],
+      'success': [
+        'win',
+        'achieve',
+        'goal',
+        'work',
+        'hardwork',
+        'effort',
+        'career',
+        'money',
+        'business',
+        'rich',
+        'victory',
+        'champion'
+      ],
+      'love': [
+        'heart',
+        'care',
+        'affection',
+        'romance',
+        'compassion',
+        'beloved',
+        'family',
+        'kind'
+      ],
+      'courage': [
+        'brave',
+        'fear',
+        'strength',
+        'strong',
+        'bold',
+        'hero',
+        'fight',
+        'stand',
+        'confident',
+        'confidence'
+      ],
+      'hope': [
+        'bright',
+        'tomorrow',
+        'future',
+        'optimism',
+        'light',
+        'dream',
+        'dreams',
+        'wish',
+        'shine'
+      ],
+      'patience': [
+        'sabr',
+        'wait',
+        'endure',
+        'calm',
+        'perseverance',
+        'persist',
+        'time',
+        'slow'
+      ],
+      'gratitude': [
+        'thanks',
+        'thankful',
+        'grateful',
+        'shukr',
+        'blessing',
+        'blessed',
+        'appreciate',
+        'gift'
+      ],
+      'strength': [
+        'power',
+        'strong',
+        'resilience',
+        'tough',
+        'invincible',
+        'energy',
+        'force'
+      ],
+      'happiness': [
+        'happy',
+        'joy',
+        'smile',
+        'laugh',
+        'delight',
+        'glad',
+        'cheerful',
+        'positive'
+      ],
+      'motivation': [
+        'inspire',
+        'inspiration',
+        'motivate',
+        'drive',
+        'focus',
+        'start',
+        'action',
+        'determination'
+      ],
+      'friendship': [
+        'friend',
+        'friends',
+        'buddy',
+        'companion',
+        'loyalty',
+        'together',
+        'brother'
+      ],
+      'knowledge': [
+        'study',
+        'book',
+        'read',
+        'education',
+        'school',
+        'learn',
+        'skill'
+      ],
+      'kindness': [
+        'kind',
+        'help',
+        'gentle',
+        'generous',
+        'giving',
+        'share',
+        'goodness'
+      ],
+      'time': [
+        'moment',
+        'now',
+        'today',
+        'clock',
+        'hour',
+        'day',
+        'years',
+        'passed',
+        'early',
+        'late'
+      ],
+      'forgiveness': [
+        'forgive',
+        'mercy',
+        'sorry',
+        'apology',
+        'pardon',
+        'mistake',
+        'clean'
+      ],
+      'truth': [
+        'true',
+        'honest',
+        'honesty',
+        'integrity',
+        'real',
+        'reality',
+        'sincere',
+        'trust'
+      ],
+      'future': [
+        'destiny',
+        'ahead',
+        'next',
+        'plan',
+        'create',
+        'build',
+        'tomorrow',
+        'vision'
+      ],
+      'life': [
+        'alive',
+        'living',
+        'human',
+        'world',
+        'journey',
+        'experience',
+        'nature',
+        'live'
+      ],
+    };
+
+    final allCategoryKeys = [
+      'faith',
+      'life',
+      'wisdom',
+      'success',
+      'love',
+      'peace',
+      'courage',
+      'hope',
+      'patience',
+      'gratitude',
+      'strength',
+      'happiness',
+      'motivation',
+      'friendship',
+      'knowledge',
+      'kindness',
+      'time',
+      'forgiveness',
+      'truth',
+      'future',
+    ];
+
+    // 3. Category match or keyword match in offline database
+    for (final category in allCategoryKeys) {
+      bool isMatch =
+          category.contains(cleanQuery) || cleanQuery.contains(category);
+      if (!isMatch && keywordMap.containsKey(category)) {
+        final keywords = keywordMap[category]!;
+        if (keywords.any(
+            (kw) => cleanQuery.contains(kw) || kw.contains(cleanQuery))) {
+          isMatch = true;
+        }
+      }
+
+      if (isMatch) {
+        final catQuotes = _getCategoryFallback(category);
+        for (final q in catQuotes) {
+          if (seen.add(q.content.toLowerCase())) {
+            results.add(q);
+          }
+        }
+      }
+    }
+
+    // 4. Substring Search across ALL offline quotes (quote text + author)
+    final allLocal = _getAllFallbackQuotes();
+    for (final q in allLocal) {
+      if (q.content.toLowerCase().contains(cleanQuery) ||
+          q.author.toLowerCase().contains(cleanQuery)) {
+        if (seen.add(q.content.toLowerCase())) {
+          results.add(q);
+        }
+      }
+    }
+
+    return results;
+  }
+
+  // ============================================================
   // NORMAL PAGINATION
   // ============================================================
 
